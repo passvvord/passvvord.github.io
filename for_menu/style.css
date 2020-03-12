@@ -13,7 +13,14 @@ a {
 }
 
 header {
+	margin-left: 10px;
 	font-size: 80px;
+	color: #adbdc3;
+}
+
+::selection {
+	color: #000;
+	background: #fff;
 }
 
 @font-face {
@@ -47,30 +54,35 @@ header {
 	height: 200px;
 	text-align: center;
 	line-height: 200px;
-	transition-duration: 0.5s;
 	font-size: 50px;
 }
 
 .labs > div:hover > a > .lab_num {
-	height: 100px;
-	line-height: 100px;
+	height: 150px;
+	line-height: 150px;
 	border-bottom: 1px solid #fff;
 }
 
 .labs > div > a > .lab_num , .labs > div > .download {
-	background: rgba(20,20,20,0.55);
+	/*background: rgba(20,20,20,0.55);*/
+	backdrop-filter: blur(5px) brightness(50%);
+	transition-duration: 0.3s;
+}
+
+.labs > div:hover > a > .lab_num , .labs > div:hover > .download {
+	backdrop-filter: blur(0px) brightness(50%);
 }
 
 .labs > div > .download > a {
 	width: 100px;
-	height: 100px;
+	height: 50px;
 }
 
 .labs > div > .download > a > div {
 	width: 100px;
-	height: 100px;
+	height: 50px;
 	text-align: center;
-	line-height: 90px;
+	line-height: 45px;
 	font-size: 30px;
 	
 }
@@ -90,3 +102,8 @@ header {
 .bg08 {	background: url(08.png);}
 .bg09 {	background: url(09.png);}
 .bg10 {	background: url(10.png);}
+
+
+.bg06, .bg07, .bg08, .bg09, .bg10 {
+	filter: blur(5px);
+}
