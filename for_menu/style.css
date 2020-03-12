@@ -5,6 +5,7 @@ body {
 	background: #dce3e6;
 	color: #576e7a;
 	font-family: blogger;
+	overflow-x: hidden;
 }
 
 a {
@@ -37,6 +38,7 @@ header {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
+	justify-content: space-evenly;
 }
 
 .labs > div {
