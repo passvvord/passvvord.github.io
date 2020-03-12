@@ -14,8 +14,8 @@ a {
 }
 
 header {
-	margin-left: 10px;
-	font-size: 80px;
+	margin-left: 1vh;
+	font-size: 8vh;
 	color: #adbdc3;
 }
 
@@ -42,50 +42,46 @@ header {
 }
 
 .labs > div {
-	width: 200px;
-	height: 200px;
-	border-radius: 10px;
-	margin: 10px;
+	width: 20vh;
+	height: 20vh;
+	border-radius: 1vh;
+	margin: 1vh;
 	background-size: 100%;
 	color: #ffffff;
 	overflow: hidden;
 }
 
 .labs > div > a > .lab_num {
-	width: 200px;
-	height: 200px;
+	width: 20vh;
+	height: 20vh;
 	text-align: center;
-	line-height: 200px;
-	font-size: 50px;
+	line-height: 20vh;
+	font-size: 5vh;
 }
 
 .labs > div:hover > a > .lab_num {
-	height: 150px;
-	line-height: 150px;
-	border-bottom: 1px solid #fff;
+	height: 15vh;
+	line-height: 15vh;
+	border-bottom: 0.1vh solid #fff;
 }
 
 .labs > div > a > .lab_num , .labs > div > .download {
 	/*background: rgba(20,20,20,0.55);*/
-	backdrop-filter: blur(5px) brightness(50%);
+	backdrop-filter: brightness(40%);
 	transition-duration: 0.3s;
 }
 
-.labs > div:hover > a > .lab_num , .labs > div:hover > .download {
-	backdrop-filter: blur(0px) brightness(50%);
-}
-
 .labs > div > .download > a {
-	width: 100px;
-	height: 50px;
+	width: 10vh;
+	height: 5vh;
 }
 
 .labs > div > .download > a > div {
-	width: 100px;
-	height: 50px;
+	width: 10vh;
+	height: 5vh;
 	text-align: center;
-	line-height: 45px;
-	font-size: 30px;
+	line-height: 4.5vh;
+	font-size: 3vh;
 	
 }
 
