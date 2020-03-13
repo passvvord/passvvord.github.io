@@ -13,7 +13,7 @@
 }
 
 body {
-	min-width: 40vh;
+	min-width: 45vh;
 	background: #dce3e6;
 	font-family: blogger;
 }
@@ -27,7 +27,7 @@ header {
 	padding-bottom: 2vh;
 	font-size: var(--header_font_s);
 	font-family: blogger_b;
-	color: var(--index_header_color);
+	color: #c5d1d6;
 	box-shadow: inset 0px -2vh 2vh -2vh #57707a;
 }
 
@@ -72,8 +72,8 @@ header {
 }
 
 .labs > div > a > .lab_num , .labs > div > .download {
-	/*background: rgba(20,20,20,0.55);*/
-	backdrop-filter: brightness(40%);
+	background: rgba(20,20,20,0.65);
+	/*backdrop-filter: brightness(40%);*/
 	transition-duration: 0.3s;
 }
 
