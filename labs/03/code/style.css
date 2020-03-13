@@ -16,10 +16,11 @@ a {
 
 .bodyin {
 	position: fixed;
-	height: 90vh;
+	height: 95vh;
 	width: 100vw;
 	top: 5vh;
-	overflow: auto;
+	
+	overflow-x: hidden;
 }
 
 ::selection {
@@ -70,10 +71,10 @@ footer {
 	width: 100vw;
 	background: #576e7a;
 	color: #dce3e6;
-	top: 95vh;
-	position: fixed;
+	margin-top: 95vh;
 	display: flex;
 	flex-direction: row;
+	overflow-x: hidden;
 }
 
 footer > a > div {

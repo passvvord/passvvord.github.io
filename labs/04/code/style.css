@@ -8,7 +8,7 @@ body {
 
 @font-face {
 	font-family: blogger_m; 
-	src: url(Blogger_Sans-Medium.ttf);
+	src: url(../../../for_menu/Blogger/Blogger_Sans-Medium.ttf);
 }
 
 .names, .animations, .links{
@@ -80,10 +80,10 @@ body {
 
 .trans3d , .circle1 , .keyfra , .allanim {
 	position: absolute;
-	top: calc(10vw - 50px);
-	left: calc(10vw - 50px);
-	height: 100px;
-	width: 100px;
+	top: 5vw;
+	left: 5vw;
+	height: 10vw;
+	width: 10vw;
 }
 
 .trans3d {
