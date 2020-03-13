@@ -4,7 +4,6 @@ body {
 	height: 100vh;
 	margin: 0;
 	background: #dce3e6;
-	color: #576e7a;
 	font-family: blogger;
 }
 
@@ -14,9 +13,14 @@ a {
 }
 
 header {
-	margin-left: 1vh;
+	padding-left: 1vh;
+	padding-bottom: 2vh;
 	font-size: 8vh;
-	color: #adbdc3;
+	font-family: blogger_b;
+	color: #c5d1d6;
+	/*adbdc3
+	*/
+	box-shadow: inset 0px -50px 50px -50px #57707a;
 }
 
 ::selection {
@@ -25,8 +29,8 @@ header {
 }
 
 @font-face {
-	font-family: blogger_m; 
-	src: url(Blogger/Blogger_Sans-Medium.ttf);
+	font-family: blogger_b; 
+	src: url(Blogger/Blogger_Sans-Bold.ttf);
 }
 
 @font-face {
@@ -39,6 +43,10 @@ header {
 	flex-wrap: wrap;
 	flex-direction: row;
 	justify-content: space-evenly;
+}
+
+.labs {
+	padding-top: 1vh;
 }
 
 .labs > div {
@@ -90,6 +98,10 @@ header {
 	color: #000;
 }
 
+.labs > div > .download > a:hover > div:after {
+	content: " ↓";
+}
+
 .bg01 {	background: url(01.png);}
 .bg02 {	background: url(02.png);}
 .bg03 {	background: url(03.png);}
@@ -103,5 +115,6 @@ header {
 
 
 .bg06, .bg07, .bg08, .bg09, .bg10 {
-	filter: blur(5px);
+	/*filter: blur(5px);*/
+	visibility: hidden;
 }
