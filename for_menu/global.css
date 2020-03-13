@@ -1,0 +1,53 @@
+@font-face {
+	font-family: blogger_b; 
+	src: url(Blogger/Blogger_Sans-Bold.ttf);
+}
+
+@font-face {
+	font-family: blogger_bi; 
+	src: url(Blogger/Blogger_Sans-Bold_Italic.ttf);
+}
+
+@font-face {
+	font-family: blogger_m; 
+	src: url(Blogger/Blogger_Sans-Medium.ttf);
+}
+
+@font-face {
+	font-family: blogger_mi; 
+	src: url(Blogger/Blogger_Sans-Medium_Italic.ttf);
+}
+
+@font-face {
+	font-family: blogger; 
+	src: url(Blogger/Blogger_Sans.ttf);
+}
+
+@font-face {
+	font-family: blogger_i; 
+	src: url(Blogger/Blogger_Sans-Italic.ttf);
+}
+
+@font-face {
+	font-family: blogger_l; 
+	src: url(Blogger/Blogger_Sans-Light.ttf);
+}
+
+@font-face {
+	font-family: blogger_li; 
+	src: url(Blogger/Blogger_Sans-Light_Italic.ttf);
+}
+
+:root {
+	--index_header_color: #c5d1d6;
+}
+
+body {
+	height: 100vh;
+	width: 100vw;
+	margin: 0;
+}
+
+a {
+	text-decoration: none;
+}

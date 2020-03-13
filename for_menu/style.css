@@ -1,41 +1,39 @@
+@import url(global.css);
+
+:root {
+	--unit: 1vh;
+	--lab_box_s: calc(var(--unit) * 20);
+	--lab_box_font_s: calc(var(--unit) * 5);
+	--lab_box_hover_h: calc(var(--unit) * 15);
+	--lab_box_button_h: calc(var(--unit) * 5);
+	--lab_box_button_w: calc(var(--unit) * 10);
+	--lab_box_button_font_s: calc(var(--unit) * 3);
+
+	--header_font_s: 8vh;
+}
+
 body {
-	width: 100vw;
 	min-width: 40vh;
-	height: 100vh;
-	margin: 0;
 	background: #dce3e6;
 	font-family: blogger;
 }
 
 a {
-	text-decoration: none;
 	color: #fff;
 }
 
 header {
 	padding-left: 1vh;
 	padding-bottom: 2vh;
-	font-size: 8vh;
+	font-size: var(--header_font_s);
 	font-family: blogger_b;
-	color: #c5d1d6;
-	/*adbdc3
-	*/
-	box-shadow: inset 0px -1.9vh 2vh -2vh #57707a;
+	color: var(--index_header_color);
+	box-shadow: inset 0px -2vh 2vh -2vh #57707a;
 }
 
 ::selection {
 	color: #000;
 	background: #fff;
-}
-
-@font-face {
-	font-family: blogger_b; 
-	src: url(Blogger/Blogger_Sans-Bold.ttf);
-}
-
-@font-face {
-	font-family: blogger; 
-	src: url(Blogger/Blogger_Sans.ttf);
 }
 
 .labs, .labs > div > .download  {
@@ -50,27 +48,27 @@ header {
 }
 
 .labs > div {
-	width: 20vh;
-	height: 20vh;
-	border-radius: 1vh;
-	margin: 1vh;
+	width: var(--lab_box_s);
+	height: var(--lab_box_s);
+	border-radius: var(--unit);
+	margin: var(--unit);
 	background-size: 100%;
 	color: #ffffff;
 	overflow: hidden;
 }
 
 .labs > div > a > .lab_num {
-	width: 20vh;
-	height: 20vh;
+	width: var(--lab_box_s);
+	height: var(--lab_box_s);
 	text-align: center;
-	line-height: 20vh;
-	font-size: 5vh;
+	line-height: var(--lab_box_s);
+	font-size: var(--lab_box_font_s);
 }
 
 .labs > div:hover > a > .lab_num {
-	height: 15vh;
-	line-height: 15vh;
-	border-bottom: 0.1vh solid #fff;
+	height: var(--lab_box_hover_h);
+	line-height: var(--lab_box_hover_h);
+	border-bottom: calc(var(--unit) / 10) solid #fff;
 }
 
 .labs > div > a > .lab_num , .labs > div > .download {
@@ -80,16 +78,16 @@ header {
 }
 
 .labs > div > .download > a {
-	width: 10vh;
-	height: 5vh;
+	width: var(--lab_box_button_w);
+	height: var(--lab_box_button_h);
 }
 
 .labs > div > .download > a > div {
-	width: 10vh;
-	height: 5vh;
+	width: var(--lab_box_button_w);
+	height: var(--lab_box_button_h);
 	text-align: center;
-	line-height: 4.5vh;
-	font-size: 3vh;
+	line-height: var(--lab_box_button_h);
+	font-size: var(--lab_box_button_font_s);
 	
 }
 
