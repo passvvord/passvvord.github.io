@@ -15,10 +15,9 @@ a {
 				}
 
 .bodyin {
-	position: fixed;
 	height: 95vh;
 	width: 100vw;
-	top: 5vh;
+	margin-top: 5vh;
 	
 	overflow-x: hidden;
 }
