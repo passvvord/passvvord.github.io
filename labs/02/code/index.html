@@ -2,13 +2,18 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<!link rel="stylesheet" type="text/css" href="style.css">
-		<title>page</title>
+		<title>lab_02</title>
 		<style type="text/css">
 			body {
 				margin: 0px;
-				background: #323232;
-				color: #ffea00;
+				background: #dce3e6;
+				color: #576e7a;
+				font-family: blogger;
+			}
+			
+			@font-face {
+				font-family: blogger; 
+				src: url(../../../for_menu/Blogger/Blogger_Sans.ttf);
 			}
 
 			.bodyin {
@@ -17,21 +22,10 @@
 
 			img {width: calc(10vh + 10vw);}
 
-			.bgenter {
-				animation: bgenter 1s 2;
-				position: fixed;
-				background: #323232;
-			}
-
-			@keyframes bgenter {
-				0%   {height: 100vh; width: 100vw;}
-				100% {height: 100vh; width: 100vw;}
-			}
-
 			.circ1 {
-				animation: linear circ1 1s 2;
+				animation: linear circ1 1s infinite;
 				position: fixed;
-				background: #ffea00;
+				background: #576e7a;
 				border-radius: 50%;
 			}
 
@@ -41,16 +35,16 @@
 			}
 
 			.circ2 {
-				animation: ease-in circ1 1s 2;
+				animation: ease-in circ1 1s infinite;
 				position: fixed;
-				background: #323232;
+				background: #dce3e6;
 				border-radius: 50%;
 			}
 
 			.circ3 {
-				animation: linear circ2 1s 2;
+				animation: linear circ2 1s infinite;
 				position: fixed;
-				background: #ffea00;
+				background: #576e7a;
 				border-radius: 50%;
 			}
 
@@ -63,7 +57,6 @@
 		</style>
 	</head>
 	<body>
-		<div class="bgenter"></div>
 		<div class="circ1"></div>
 		<div class="circ2"></div>
 		<div class="circ3"></div>
@@ -94,8 +87,8 @@
     
 	    	</pre>
 	    	<var>var var</var><br><br>
-	    	<time>time time</time><br>
-	    	<img src="https://www.colorabout.com/images/dynamic/tints_ffea00-ffee33-fff266-fff799-fffbcc.svg" alt="error_no_img">
+	    	<time>time time</time><br><br>
+	    	<img src="svg.png" alt="error_no_img">
 			<footer><h4>Заголовокh4</h4></footer>
 		</div>
 	</body>
