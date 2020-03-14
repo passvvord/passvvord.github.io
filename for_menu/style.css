@@ -10,16 +10,22 @@
 	--lab_box_button_font_s: calc(var(--unit) * 3);
 
 	--header_font_s: 8vh;
+
+	--lab_box_content_c: #000;
+	/*--lab_box_content_c: #FF7042;*/
+	--lab_box_bg_c: #dce3e6;
+	/*--lab_box_bg_c: #1a1a1a;*/
+	--bg_c: #dce3e6;
 }
 
 body {
 	min-width: 45vh;
-	background: #dce3e6;
+	background: var(--bg_c);
 	font-family: blogger;
 }
 
 a {
-	color: #fff;
+	color: var(--lab_box_content_c);
 }
 
 header {
@@ -29,6 +35,11 @@ header {
 	font-family: blogger_b;
 	color: #c5d1d6;
 	box-shadow: inset 0px -2vh 2vh -2vh #57707a;
+}
+
+.litle_header {
+	margin: var(--unit);
+	font-size: 3vh;
 }
 
 ::selection {
@@ -41,20 +52,19 @@ header {
 	flex-wrap: wrap;
 	flex-direction: row;
 	justify-content: space-evenly;
+	
 }
 
-.labs {
-	padding-top: 1vh;
-}
 
 .labs > div {
 	width: var(--lab_box_s);
 	height: var(--lab_box_s);
 	border-radius: var(--unit);
 	margin: var(--unit);
-	background-size: 100%;
-	color: #ffffff;
+	
+	color: var(--lab_box_content_c);
 	overflow: hidden;
+	border: calc(var(--unit) / 10) solid var(--lab_box_content_c);
 }
 
 .labs > div > a > .lab_num {
@@ -63,23 +73,27 @@ header {
 	text-align: center;
 	line-height: var(--lab_box_s);
 	font-size: var(--lab_box_font_s);
+	background: var(--lab_box_bg_c);
 }
 
 .labs > div:hover > a > .lab_num {
-	height: var(--lab_box_hover_h);
-	line-height: var(--lab_box_hover_h);
-	border-bottom: calc(var(--unit) / 10) solid #fff;
+	/*height: var(--lab_box_hover_h);
+	line-height: var(--lab_box_hover_h);*/
+	/*border-bottom: calc(var(--unit) / 10) solid var(--lab_box_content_c);*/
+	margin-top: calc( -1 * var(--lab_box_s));
 }
 
 .labs > div > a > .lab_num , .labs > div > .download {
-	background: rgba(20,20,20,0.65);
+	/*background: rgba(20,20,20,0.65);*/
 	/*backdrop-filter: brightness(40%);*/
-	transition-duration: 0.3s;
+	transition-duration: 0.5s;
 }
 
 .labs > div > .download > a {
-	width: var(--lab_box_button_w);
-	height: var(--lab_box_button_h);
+	/*margin-top: var(--lab_box_hover_h);*/
+	/*width: var(--lab_box_button_w);
+	height: var(--lab_box_button_h);*/
+	margin-top: calc(-1 * var(--lab_box_button_h));
 }
 
 .labs > div > .download > a > div {
@@ -88,31 +102,39 @@ header {
 	text-align: center;
 	line-height: var(--lab_box_button_h);
 	font-size: var(--lab_box_button_font_s);
-	
-}
-
-.labs > div > .download > a:hover > div {
-	background: #fff;
-	color: #000;
+	border-top: calc(var(--unit) / 10) solid var(--lab_box_content_c);
+	background: var(--lab_box_bg_c);
 }
 
 .labs > div > .download > a:hover > div:after {
 	content: " ↓";
 }
 
-.bg01 {	background: url(01.png);}
-.bg02 {	background: url(02.png);}
-.bg03 {	background: url(03.png);}
-.bg04 {	background: url(04.png);}
-.bg05 {	background: url(05.png);}
-.bg06 {	background: url(06.png);}
-.bg07 {	background: url(07.png);}
-.bg08 {	background: url(08.png);}
-.bg09 {	background: url(09.png);}
-.bg10 {	background: url(10.png);}
+div > a > .img_box {
+	height: var(--lab_box_s);
+	width: var(--lab_box_s);
+	/*background-size: 100%;*/
+}
+
+.bg01 > a > .img_box {	background: url(01.png); background-size: 100%;}
+.bg02 > a > .img_box {	background: url(02.png); background-size: 100%;}
+.bg03 > a > .img_box {	background: url(03.png); background-size: 100%;}
+.bg04 > a > .img_box {	background: url(04.png); background-size: 100%;}
+.bg05 > a > .img_box {	background: url(05.png); background-size: 100%;}
+.bg06 > a > .img_box {	background: url(06.png); background-size: 100%;}
+.bg07 > a > .img_box {	background: url(07.png); background-size: 100%;}
+.bg08 > a > .img_box {	background: url(08.png); background-size: 100%;}
+.bg09 > a > .img_box {	background: url(09.png); background-size: 100%;}
+.bg10 > a > .img_box {	background: url(10.png); background-size: 100%;}
+.bg11 > a > .img_box {	background: url(11.png); background-size: 100%;}
 
 
-.bg06, .bg07, .bg08, .bg09, .bg10 {
-	/*filter: blur(5px);*/
+.labs > .bg06, .labs > .bg07, .labs > .bg08, .labs > .bg09, .labs > .bg10 {
+	/*filter: brightness(0.2);*/
+	/*filter: blur(0.5vh) brightness(0.2);*/
+	width: 0;
+	height: 0;
+	margin: 0;
 	visibility: hidden;
 }
+

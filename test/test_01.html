@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style type="text/css">
+    body {
+        display: flex;
+        flex-direction: row;
+        margin: 0;
+        height: 100vh;
+        align-items: center;
+        background: #000;
+    }
+
+    div {
+        width: 0.25vw;
+        transition-duration: 8s;
+    }
+
+    </style>
+</head>
+
+<body id="body0" onclick="myfunc()">
+    <script type="text/javascript">
+
+    function randint(min, max) {
+        return Math.round(Math.random() * (max - min)) + min;
+    }
+
+    function delta_rand(val,  min_val, max_val, delta) 
+    {
+        val += randint(delta * -1, delta);
+
+        if (val > max_val)
+            val += -delta;
+        if (val < min_val)
+            val += delta;
+
+        return val;
+    }
+
+    let h = 500;
+    let r = 0;
+    let g = 0;
+    let b = 0;
+
+    let r_change = true;
+    let g_change = false;
+    let b_change = false;
+
+    for (let i = 0; i < 400; i++) {
+        let text = '';
+        text += '<div id="' + i + '"></div>';
+        document.getElementById("body0").innerHTML += text;
+    }
+
+
+    let id = 0;
+    let goback = false;
+
+    function myfunc() {
+
+        //console.log(id);
+
+        
+
+        if (r_change){
+        	r = delta_rand(r,0,255,10);
+        	r_change = false;
+        	g_change = true;
+        }
+
+        if (g_change)
+        {
+        	g = delta_rand(g,0,255,10);
+        	g_change = false;
+        	b_change = true;
+        }
+
+        if (b_change)
+        {
+        	b = delta_rand(b,0,255,10);
+        	b_change = false;
+        	r_change = true;
+        }
+
+
+        h = Math.round((r + g + b) / 768 * 100);
+
+        //h = (r_change + b_change + g_change)*10;
+
+        document.getElementById(id).style.height = h + 'vh';
+        document.getElementById(id).style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+        //sleep(5);
+
+        if (goback)
+            id--;
+        else
+            id++;
+
+        if (id >= 399) {
+            goback = true;
+        }
+
+        if (id <= 0)
+            goback = false;
+    }
+
+    setInterval(myfunc, 10)
+
+    </script>
+</body>
+
+</html>
