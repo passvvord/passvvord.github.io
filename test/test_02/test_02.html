@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>mouse_test</title>
+    <style type="text/css">
+    html {
+        background: #393939;
+        cursor: url(box.cur) , pointer;
+    }
+
+    .mover {
+        width: 6px;
+        height: 6px;
+        border: 2px solid #dc3522;
+        position: fixed;
+        left: calc(var(--mouse-x) + 11px);
+        top: calc(var(--mouse-y) + 11px);
+        transform: rotate(45deg);
+    }
+
+	.block {
+		margin: 60vh 40vw 60vh 40vw;
+		height: 20vh;
+		width: 20vw;
+		background: #202020;
+	}
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="mover"></div>
+
+	<div class="block"></div>
+
+
+
+
+    <script type="text/javascript">
+    let root = document.documentElement;
+
+    root.addEventListener("mousemove", e => {
+        root.style.setProperty('--mouse-x', e.clientX + "px");
+        root.style.setProperty('--mouse-y', e.clientY + "px");
+    });
+
+
+    </script>
+</body>
+
+</html>
