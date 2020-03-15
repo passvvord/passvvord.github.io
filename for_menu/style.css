@@ -143,7 +143,6 @@ div > a > .img_box {
 .flex_div > .bg06, .flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10 {
 	/*filter: brightness(0.2);*/
 	/*filter: blur(0.5vh) brightness(0.2);*/
-	width: 0;
 	height: 0;
 	margin: 0;
 	visibility: hidden;
