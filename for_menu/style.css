@@ -144,7 +144,6 @@ div > a > .img_box {
 	/*filter: brightness(0.2);*/
 	/*filter: blur(0.5vh) brightness(0.2);*/
 	height: 0;
-	margin: 0;
 	visibility: hidden;
 }
 

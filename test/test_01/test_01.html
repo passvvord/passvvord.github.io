@@ -41,7 +41,7 @@
         return val;
     }
 
-    let h = 500;
+    let h = 0;
     let r = 0;
     let g = 0;
     let b = 0;
@@ -87,7 +87,9 @@
         }
 
 
-        h = Math.round((r + g + b) / 768 * 100);
+         h = Math.round((r + g + b) / 768 * 100);
+        // h = delta_rand(h,10,70,2);
+        // h=randint(20,60);
 
         //h = (r_change + b_change + g_change)*10;
 
@@ -108,7 +110,7 @@
             goback = false;
     }
 
-    setInterval(myfunc, 10)
+    setInterval(myfunc, 1)
 
     </script>
 </body>
