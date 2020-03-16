@@ -156,8 +156,7 @@ div > a > .img_box {
 .bg05 > a > .lab_num:after,
 .bg11 > a > .lab_num:after,
 .bg12 > a > .lab_num:after,
-.bg13 > a > .lab_num:after 
-{
+.bg13 > a > .lab_num:after {
 	content: " NEW ";
 	margin-top: 1vh;
 	width: 5vh;
