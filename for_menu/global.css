@@ -1,41 +1,101 @@
 @font-face {
 	font-family: blogger_b; 
-	src: url(Blogger/Blogger_Sans-Bold.ttf);
+	src: url(font/Blogger/Blogger_Sans-Bold.ttf);
 }
 
 @font-face {
 	font-family: blogger_bi; 
-	src: url(Blogger/Blogger_Sans-Bold_Italic.ttf);
+	src: url(font/Blogger/Blogger_Sans-Bold_Italic.ttf);
 }
 
 @font-face {
 	font-family: blogger_m; 
-	src: url(Blogger/Blogger_Sans-Medium.ttf);
+	src: url(font/Blogger/Blogger_Sans-Medium.ttf);
 }
 
 @font-face {
 	font-family: blogger_mi; 
-	src: url(Blogger/Blogger_Sans-Medium_Italic.ttf);
+	src: url(font/Blogger/Blogger_Sans-Medium_Italic.ttf);
 }
 
 @font-face {
 	font-family: blogger; 
-	src: url(Blogger/Blogger_Sans.ttf);
+	src: url(font/Blogger/Blogger_Sans.ttf);
 }
 
 @font-face {
 	font-family: blogger_i; 
-	src: url(Blogger/Blogger_Sans-Italic.ttf);
+	src: url(font/Blogger/Blogger_Sans-Italic.ttf);
 }
 
 @font-face {
 	font-family: blogger_l; 
-	src: url(Blogger/Blogger_Sans-Light.ttf);
+	src: url(font/Blogger/Blogger_Sans-Light.ttf);
 }
 
 @font-face {
 	font-family: blogger_li; 
-	src: url(Blogger/Blogger_Sans-Light_Italic.ttf);
+	src: url(font/Blogger/Blogger_Sans-Light_Italic.ttf);
+}
+
+@font-face {
+	font-family: roboto_t; 
+	src: url(font/Robto/Roboto-Thin.ttf);
+}
+
+@font-face {
+	font-family: roboto_ti; 
+	src: url(font/Robto/Roboto-ThinItalic.ttf);
+}
+
+@font-face {
+	font-family: roboto_l; 
+	src: url(font/Robto/Roboto-Light.ttf);
+}
+
+@font-face {
+	font-family: roboto_li; 
+	src: url(font/Robto/Roboto-LightItalic.ttf);
+}
+
+@font-face {
+	font-family: roboto; 
+	src: url(font/Robto/Roboto-Regular.ttf);
+}
+
+@font-face {
+	font-family: roboto_i; 
+	src: url(font/Robto/Roboto-Italic.ttf);
+}
+
+@font-face {
+	font-family: roboto_m; 
+	src: url(font/Robto/Roboto-Medium.ttf);
+}
+
+@font-face {
+	font-family: roboto_mi; 
+	src: url(font/Robto/Roboto-MediumItalic.ttf);
+}
+
+@font-face {
+	font-family: roboto_b; 
+	src: url(font/Robto/Roboto-Bold.ttf);
+}
+
+@font-face {
+	font-family: roboto_bi; 
+	src: url(font/Robto/Roboto-BoldItalic.ttf);
+}
+
+@font-face {
+	font-family: poly; 
+	src: url(font/POLYARegular-Regular.ttf);
+}
+
+@font-face {
+	font-family: sf; 
+	src: url(font/SciFly-Sans.ttf);
 }
 
 :root {

@@ -51,7 +51,9 @@ header {
 	background: #fff;
 }
 
-.flex_div, .flex_div > div > .buttons  {
+.flex_div, 
+.flex_div > div > .buttons,
+.flex_div > div > a > .lab_num  {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
@@ -72,10 +74,14 @@ header {
 }
 
 .flex_div > div > a > .lab_num {
-	width: var(--lab_box_s);
-	height: var(--lab_box_s);
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	width: calc(var(--lab_box_s) - var(--unit)*2);
+	height: calc(var(--lab_box_s) - var(--unit)*2);
+	padding: var(--unit);
 	text-align: center;
-	line-height: var(--lab_box_s);
+	/*line-height: var(--lab_box_s);*/
 	font-size: var(--lab_box_font_s);
 	background: var(--lab_box_bg_c);
 }
@@ -118,7 +124,7 @@ header {
 div > a > .img_box {
 	height: var(--lab_box_hover_h);
 	width: var(--lab_box_s);
-	filter: opacity(50%);
+	filter: opacity(70%);
 	/*background-size: 100%;*/
 }
 
@@ -147,3 +153,17 @@ div > a > .img_box {
 	visibility: hidden;
 }
 
+.bg05 > a > .lab_num:after,
+.bg11 > a > .lab_num:after,
+.bg12 > a > .lab_num:after,
+.bg13 > a > .lab_num:after 
+{
+	content: " NEW ";
+	margin-top: 1vh;
+	width: 5vh;
+	color: #fff;
+	background: #f00;
+	border-radius: 1vh;
+	font-size: 2vh;
+	font-family: roboto;
+}
