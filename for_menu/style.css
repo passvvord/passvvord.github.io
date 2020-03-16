@@ -128,6 +128,20 @@ div > a > .img_box {
 	/*background-size: 100%;*/
 }
 
+.bg05 > a > .lab_num:after,
+.bg11 > a > .lab_num:after,
+.bg12 > a > .lab_num:after,
+.bg13 > a > .lab_num:after {
+	content: " NEW ";
+	margin-top: 1vh;
+	width: 5vh;
+	color: #fff;
+	background: #f00;
+	border-radius: 1vh;
+	font-size: 2vh;
+	font-family: roboto;
+}
+
 .bg11 > a > .img_box, .bg12 > a > .img_box {
 	height: var(--lab_box_s);
 }
@@ -153,16 +167,3 @@ div > a > .img_box {
 	visibility: hidden;
 }
 
-.bg05 > a > .lab_num:after,
-.bg11 > a > .lab_num:after,
-.bg12 > a > .lab_num:after,
-.bg13 > a > .lab_num:after {
-	content: " NEW ";
-	margin-top: 1vh;
-	width: 5vh;
-	color: #fff;
-	background: #f00;
-	border-radius: 1vh;
-	font-size: 2vh;
-	font-family: roboto;
-}
