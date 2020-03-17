@@ -1,92 +1,128 @@
-body {
-	overflow: hidden;
-	margin: 0;
-background: #000;
+
+:root {
+	--bg-c: #000;
+	--circ1-c: #ff0;
+	--circ2-c: #0ff;
+	--circ3-c: #f0f;
+	--fix-circ-c: #fff;
 	
+	--circ-blur: 3;
+	--circ-blur-vh: calc( var(--circ-blur) * 1vh );
+	--circ-contrast: 100;
+
+	--circ-block-scale: 1;
+	
+	--circ-s: 10;
+	--circ-s-vh: calc( var(--circ-s) * 1vh );
+	--anim-d: 2s;
+	
+	--sin_120: 0.866025;
+	--cos_120: -0.5;
+	--sin_240: -0.866025;
+	--cos_240: -0.5;
 }
 
-body > div {
-	filter: blur(3vh) contrast(100);
+body {
+	margin: 0;
+	background: var(--bg-c);
+	overflow: hidden;
+}
+
+.moving-circ {
+	filter: blur(var(--circ-blur-vh)) contrast(var(--circ-contrast));
 	height: 100vh;
 	width: 100vw;
-	background: #000;
+	background: var(--bg-c);
+	transform: scale(var(--circ-block-scale));
+	animation: linear long_rotate calc(var(--anim-d) / 120) infinite;
 }
 
-.circ1, .box, .circ2, .circ3 {
+.circ1, .circ2, .circ3, .fixed-circ  {
 	position: fixed;
-	width: 10vh;
-	height: 10vh;
-	margin: 45vh calc(50vw - 5vh);
-	border-radius: 5vh;
+	border-radius: 50%;
+}
+
+.circ1, .circ2, .circ3  {
+	width: var(--circ-s-vh);
+	height: var(--circ-s-vh);
+	margin: calc(50vh - var(--circ-s-vh) / 2) calc(50vw - var(--circ-s-vh) / 2);
 }
 
 .circ1 {
-	background: #ff0;
-	animation: linear circ_go 6s infinite;
+	background: var(--circ1-c);
+	animation: linear circ1_go var(--anim-d) infinite;
 }
 
 .circ2 {
-	background: #0ff;
-	animation: linear circ_go1 6s infinite;
+	background: var(--circ2-c);
+	animation: linear circ2_go var(--anim-d) infinite;
 }
 
 .circ3 {
-	background: #f0f;
-	animation: linear circ_go2 6s infinite;
+	background: var(--circ3-c);
+	animation: linear circ3_go var(--anim-d) infinite;
 }
 
-.box {
-	background: #fff;
-	margin: 47vh calc(50vw - 3vh);
-	height:6vh;
-	width:6vh;
-	/*animation: linear box_change 6s infinite;*/
+.fixed-circ {
+	background: var(--fix-circ-c);
+	margin: calc(50vh - var(--circ-blur-vh)) calc(50vw - var(--circ-blur-vh));
+	height: calc(var(--circ-blur-vh) * 2);
+	width: calc(var(--circ-blur-vh) * 2);
+	animation: linear fix_circ_scale var(--anim-d) infinite;
 }
 
-@keyframes circ_go {
-	0%   {transform: translateY(-20vh); animation-timing-function: ease-in;}
-	12.5%  {transform: translateY(-10vh);}
-	25%  {transform: translateY(0vh);}
-	37.5%  {transform: translateY(10vh); animation-timing-function: ease-out;}
-	50%  {transform: translateY(20vh); animation-timing-function: ease-in;}
-	62.5%  {transform: translateY(10vh);}
-	75%  {transform: translateY(0vh);}
-	87.5%  {transform: translateY(-10vh); animation-timing-function: ease-out;}	
-	100% {transform: translateY(-20vh);}
+
+
+@keyframes circ1_go {
+	0%    {transform: translateY( calc( var(--circ-s-vh) * -2)); animation-timing-function: ease-in; }
+	12.5% {transform: translateY( calc( var(--circ-s-vh) * -1)); }
+	25%   {transform: translateY( calc( var(--circ-s-vh) *  0)); }
+	37.5% {transform: translateY( calc( var(--circ-s-vh) *  1)); animation-timing-function: ease-out;}
+	50%   {transform: translateY( calc( var(--circ-s-vh) *  2)); animation-timing-function: ease-in; }
+	62.5% {transform: translateY( calc( var(--circ-s-vh) *  1)); }
+	75%   {transform: translateY( calc( var(--circ-s-vh) *  0)); }
+	87.5% {transform: translateY( calc( var(--circ-s-vh) * -1)); animation-timing-function: ease-out;}	
+	100%  {transform: translateY( calc( var(--circ-s-vh) * -2)); }
 }
 
-@keyframes circ_go1 {
-	0%   {transform: translate(17.32vh,10vh); animation-timing-function: ease-in;}
-	12.5%  {transform: translate(8.66vh,5vh);}
-	25%  {transform: translate(0vh,0vh);}
-	37.5%  {transform: translate(-8.66vh,-5vh); animation-timing-function: ease-out;}
-	50%  {transform: translate(-17.32vh,-10vh);animation-timing-function: ease-in;}
-	62.5%  {transform: translate(-8.66vh,-5vh);}
-	75%  {transform: translate(0vh,0vh);}
-	87.5%  {transform: translate(8.66vh,5vh); animation-timing-function: ease-out;}	
-	100% {transform: translate(17.32vh,10vh);}
+@keyframes circ2_go {
+	0%    {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -2),calc(var(--circ-s-vh) * var(--cos_120) * -2)); animation-timing-function: ease-in; }
+	12.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -1),calc(var(--circ-s-vh) * var(--cos_120) * -1)); }
+	25%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  0),calc(var(--circ-s-vh) * var(--cos_120) *  0)); }
+	37.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  1),calc(var(--circ-s-vh) * var(--cos_120) *  1)); animation-timing-function: ease-out;}
+	50%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  2),calc(var(--circ-s-vh) * var(--cos_120) *  2)); animation-timing-function: ease-in; }
+	62.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  1),calc(var(--circ-s-vh) * var(--cos_120) *  1)); }
+	75%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  0),calc(var(--circ-s-vh) * var(--cos_120) *  0)); }
+	87.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -1),calc(var(--circ-s-vh) * var(--cos_120) * -1)); animation-timing-function: ease-out;}	
+	100%  {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -2),calc(var(--circ-s-vh) * var(--cos_120) * -2)); }
 }
 
-@keyframes circ_go2 {
-	0%   {transform: translate(-17.32vh,10vh); animation-timing-function: ease-in;}
-	12.5%  {transform: translate(-8.66vh,5vh);}
-	25%  {transform: translate(0vh,0vh);}
-	37.5%  {transform: translate(8.66vh,-5vh); animation-timing-function: ease-out;}
-	50%  {transform: translate(17.32vh,-10vh);animation-timing-function: ease-in;}
-	62.5%  {transform: translate(8.66vh,-5vh);}
-	75%  {transform: translate(0vh,0vh);}
-	87.5%  {transform: translate(-8.66vh,5vh); animation-timing-function: ease-out;}	
-	100% {transform: translate(-17.32vh,10vh);}
+@keyframes circ3_go {
+	0%    {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -2),calc(var(--circ-s-vh) * var(--cos_240) * -2)); animation-timing-function: ease-in; }
+	12.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -1),calc(var(--circ-s-vh) * var(--cos_240) * -1));}
+	25%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  0),calc(var(--circ-s-vh) * var(--cos_240) *  0));}
+	37.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  1),calc(var(--circ-s-vh) * var(--cos_240) *  1)); animation-timing-function: ease-out;}
+	50%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  2),calc(var(--circ-s-vh) * var(--cos_240) *  2)); animation-timing-function: ease-in; }
+	62.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  1),calc(var(--circ-s-vh) * var(--cos_240) *  1));}
+	75%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  0),calc(var(--circ-s-vh) * var(--cos_240) *  0));}
+	87.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -1),calc(var(--circ-s-vh) * var(--cos_240) * -1)); animation-timing-function: ease-out;}	
+	100%  {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -2),calc(var(--circ-s-vh) * var(--cos_240) * -2));}
 }
 
-@keyframes box_change {
-	0%   {transform: scale(1);}
-	12.5%  {transform: scale(1); animation-timing-function: ease-out;}
-	25%  {transform: scale(1.73); animation-timing-function: ease-in;}
-	37.5%  {transform: scale(1);}
-	50%  {transform: scale(1);}
-	62.5%  {transform: scale(1); animation-timing-function: ease-out;}
-	75%  {transform: scale(1.73); animation-timing-function: ease-in;}
-	87.5%  {transform: scale(1);}
-	100% {transform: scale(1);}
+@keyframes fix_circ_scale {
+	0%    {transform: scale(1); animation-timing-function: ease-in; }
+	12.5% {transform: scale(1);}
+	25%   {transform: scale( calc( var(--circ-s) / (var(--circ-blur) * 2) ) );}
+	37.5% {transform: scale(1); animation-timing-function: ease-out;}
+	50%   {transform: scale(1); animation-timing-function: ease-in; }
+	62.5% {transform: scale(1);}
+	75%   {transform: scale( calc( var(--circ-s) / (var(--circ-blur) * 2) ) );}
+	87.5% {transform: scale(1); animation-timing-function: ease-out;}	
+	100%  {transform: scale(1);}
+}
+
+@keyframes long_rotate {
+	0%   {transform: rotateZ(0deg)   scale(var(--circ-block-scale));    animation-timing-function: ease-in;}
+	50%  {transform: rotateZ(360deg) scale(var(--circ-block-scale));  animation-timing-function: ease-out;}
+	100% {transform: rotateZ(720deg) scale(var(--circ-block-scale)); }
 }
