@@ -1,0 +1,92 @@
+body {
+	overflow: hidden;
+	margin: 0;
+background: #000;
+	
+}
+
+body > div {
+	filter: blur(3vh) contrast(30);
+	height: 100vh;
+	width: 100vw;
+	background: #000;
+}
+
+.circ1, .box, .circ2, .circ3 {
+	position: fixed;
+	width: 10vh;
+	height: 10vh;
+	margin: 45vh calc(50vw - 5vh);
+	border-radius: 5vh;
+}
+
+.circ1 {
+	background: #ff0;
+	animation: linear circ_go 6s infinite;
+}
+
+.circ2 {
+	background: #0ff;
+	animation: linear circ_go1 6s infinite;
+}
+
+.circ3 {
+	background: #f0f;
+	animation: linear circ_go2 6s infinite;
+}
+
+.box {
+	background: #fff;
+	margin: 47vh calc(50vw - 3vh);
+	height:6vh;
+	width:6vh;
+	/*animation: linear box_change 6s infinite;*/
+}
+
+@keyframes circ_go {
+	0%   {transform: translateY(-20vh); animation-timing-function: ease-in;}
+	12.5%  {transform: translateY(-10vh);}
+	25%  {transform: translateY(0vh);}
+	37.5%  {transform: translateY(10vh); animation-timing-function: ease-out;}
+	50%  {transform: translateY(20vh); animation-timing-function: ease-in;}
+	62.5%  {transform: translateY(10vh);}
+	75%  {transform: translateY(0vh);}
+	87.5%  {transform: translateY(-10vh); animation-timing-function: ease-out;}	
+	100% {transform: translateY(-20vh);}
+}
+
+@keyframes circ_go1 {
+	0%   {transform: translate(17.32vh,10vh); animation-timing-function: ease-in;}
+	12.5%  {transform: translate(8.66vh,5vh);}
+	25%  {transform: translate(0vh,0vh);}
+	37.5%  {transform: translate(-8.66vh,-5vh); animation-timing-function: ease-out;}
+	50%  {transform: translate(-17.32vh,-10vh);animation-timing-function: ease-in;}
+	62.5%  {transform: translate(-8.66vh,-5vh);}
+	75%  {transform: translate(0vh,0vh);}
+	87.5%  {transform: translate(8.66vh,5vh); animation-timing-function: ease-out;}	
+	100% {transform: translate(17.32vh,10vh);}
+}
+
+@keyframes circ_go2 {
+	0%   {transform: translate(-17.32vh,10vh); animation-timing-function: ease-in;}
+	12.5%  {transform: translate(-8.66vh,5vh);}
+	25%  {transform: translate(0vh,0vh);}
+	37.5%  {transform: translate(8.66vh,-5vh); animation-timing-function: ease-out;}
+	50%  {transform: translate(17.32vh,-10vh);animation-timing-function: ease-in;}
+	62.5%  {transform: translate(8.66vh,-5vh);}
+	75%  {transform: translate(0vh,0vh);}
+	87.5%  {transform: translate(-8.66vh,5vh); animation-timing-function: ease-out;}	
+	100% {transform: translate(-17.32vh,10vh);}
+}
+
+@keyframes box_change {
+	0%   {transform: scale(1);}
+	12.5%  {transform: scale(1); animation-timing-function: ease-out;}
+	25%  {transform: scale(1.73); animation-timing-function: ease-in;}
+	37.5%  {transform: scale(1);}
+	50%  {transform: scale(1);}
+	62.5%  {transform: scale(1); animation-timing-function: ease-out;}
+	75%  {transform: scale(1.73); animation-timing-function: ease-in;}
+	87.5%  {transform: scale(1);}
+	100% {transform: scale(1);}
+}
