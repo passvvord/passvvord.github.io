@@ -14,7 +14,8 @@
 	
 	--circ-s: 10;
 	--circ-s-vh: calc( var(--circ-s) * 1vh );
-	--anim-d: 2s;
+	--anim-d: 6s;
+	--block-rotate-d: calc(1s / 90);
 	
 	--sin_120: 0.866025;
 	--cos_120: -0.5;
@@ -34,7 +35,7 @@ body {
 	width: 100vw;
 	background: var(--bg-c);
 	transform: scale(var(--circ-block-scale));
-	animation: linear long_rotate calc(var(--anim-d) / 120) infinite;
+	animation: linear long_rotate var(--block-rotate-d) infinite;
 }
 
 .circ1, .circ2, .circ3, .fixed-circ  {
