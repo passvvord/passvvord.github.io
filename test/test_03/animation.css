@@ -15,7 +15,8 @@
 	--circ-s: 10;
 	--circ-s-vh: calc( var(--circ-s) * 1vh );
 	--anim-d: 6s;
-	--block-rotate-d: calc(1s / 90);
+	/*--block-rotate-d: 0s;*/
+	/*--block-rotate-d: calc(1s / 90);*/
 	
 	--sin_120: 0.866025;
 	--cos_120: -0.5;
@@ -31,11 +32,12 @@ body {
 
 .moving-circ {
 	filter: blur(var(--circ-blur-vh)) contrast(var(--circ-contrast));
+	position: fixed;
 	height: 100vh;
 	width: 100vw;
 	background: var(--bg-c);
 	transform: scale(var(--circ-block-scale));
-	animation: linear long_rotate var(--block-rotate-d) infinite;
+	/*animation: linear long_rotate var(--block-rotate-d) infinite;*/
 }
 
 .circ1, .circ2, .circ3, .fixed-circ  {
