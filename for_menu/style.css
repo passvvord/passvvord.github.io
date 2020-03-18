@@ -131,7 +131,8 @@ div > a > .img_box {
 /*.bg05 > a > .lab_num:after,
 .bg11 > a > .lab_num:after,
 .bg12 > a > .lab_num:after,*/
-.bg13 > a > .lab_num:after {
+.bg13 > a > .lab_num:after,
+.bg14 > a > .lab_num:after {
 	content: " NEW ";
 	margin-top: 1vh;
 	width: 5vh;
@@ -142,25 +143,33 @@ div > a > .img_box {
 	font-family: roboto;
 }
 
+
+
 .bg11 > a > .img_box,
 .bg12 > a > .img_box,
-.bg13 > a > .img_box {
+.bg13 > a > .img_box,
+.bg14 > a > .img_box {
 	height: var(--lab_box_s);
 }
 
-.bg01 > a > .img_box {	background: url(01.png); background-size: 100%;}
-.bg02 > a > .img_box {	background: url(02.png); background-size: 100%;}
-.bg03 > a > .img_box {	background: url(03.png); background-size: 100%;}
-.bg04 > a > .img_box {	background: url(04.png); background-size: 100%;}
-.bg05 > a > .img_box {	background: url(05.png); background-size: 100%;}
-.bg06 > a > .img_box {	background: url(06.png); background-size: 100%;}
-.bg07 > a > .img_box {	background: url(07.png); background-size: 100%;}
-.bg08 > a > .img_box {	background: url(08.png); background-size: 100%;}
-.bg09 > a > .img_box {	background: url(09.png); background-size: 100%;}
-.bg10 > a > .img_box {	background: url(10.png); background-size: 100%;}
-.bg11 > a > .img_box {	background: url(11.png); background-size: 100%;}
-.bg12 > a > .img_box {	background: url(12.png); background-size: 100%;}
-.bg13 > a > .img_box {	background: url(13.png); background-size: 100%;}
+body > .flex_div > div > a > .img_box {
+	background-size: 100%;
+}
+
+.bg01 > a > .img_box {	background: url(01.png); }
+.bg02 > a > .img_box {	background: url(02.png); }
+.bg03 > a > .img_box {	background: url(03.png); }
+.bg04 > a > .img_box {	background: url(04.png); }
+.bg05 > a > .img_box {	background: url(05.png); }
+.bg06 > a > .img_box {	background: url(06.png); }
+.bg07 > a > .img_box {	background: url(07.png); }
+.bg08 > a > .img_box {	background: url(08.png); }
+.bg09 > a > .img_box {	background: url(09.png); }
+.bg10 > a > .img_box {	background: url(10.png); }
+.bg11 > a > .img_box {	background: url(11.png); }
+.bg12 > a > .img_box {	background: url(12.png); }
+.bg13 > a > .img_box {	background: url(13.png); }
+.bg14 > a > .img_box {	background: url(10.png); }
 
 
 .flex_div > .bg06, .flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10 {
