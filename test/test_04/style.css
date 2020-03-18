@@ -1,8 +1,11 @@
-.the_button {
+#the_button {
 	height: 10vh;
 	width: 10vh;
 	background: #f00;
-	color: #fff;
+	color: #000;
 	border-radius: 2vh;
 	margin: 2vh;
+	text-align: center;
+	line-height: 10vh;
+	font-size: 3vh;
 }
