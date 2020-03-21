@@ -13,20 +13,37 @@ class PhotoGallery extends HTMLElement {
         let html_str = '';
 
         html_str+= '<style type="text/css">'+
-        '.img-block {'+
-    	'display: flex;'+
-    	'flex-direction: row;'+
-    	'flex-wrap: wrap;'+
-    	'}'+
-		' .img-block > div {height: 20vh;'+
-		' width: fit-content;'+
-		' margin: 1vh;'+
-		' } '+
-		' img {'+
-		' height: 100%;'+
-		' border-radius: 1vh;'+
-		'} '+
-		'</style>';
+        ' .img-block { '+
+        ' display: flex; '+
+        ' flex-direction: row; '+
+        ' flex-wrap: wrap; '+
+        ' } '+
+
+        ' .img-block>div { '+
+        ' height: 20vh; '+
+        ' width: fit-content; '+
+        ' margin: 1vh; '+
+        ' } '+
+
+        ' img { '+
+        ' height: 100%; '+
+        ' border-radius: 1vh; '+
+        ' } '+
+
+        ' @media (max-width: 100vh) { '+
+        ' .img-block>div { '+
+        ' height: auto; '+
+        ' width: 98vw; '+
+        ' margin: 1vw; '+
+        ' } '+
+
+        ' img { '+
+        ' height: auto; '+
+        ' width: 100%; '+
+        ' border-radius: 1vh; '+
+        ' } '+
+        ' } '+
+		' </style>';
 
         html_str += '<div class="img-block">'
 
