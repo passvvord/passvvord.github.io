@@ -6,8 +6,6 @@ const database = firebase.database();
 const path = '/github/github_io/test_04_data/';
 let now_path = '';
 
-let local_counter = 0;
-
 
 check_user.addEventListener('click', (e) => {
 	e.preventDefault();
@@ -17,20 +15,50 @@ check_user.addEventListener('click', (e) => {
 		if (password != '')
 		{
 
-			now_path = path + username + '/' + password;
-			console.log(now_path)
+
+			//console.log(database.ref('/github/github_io/test_04_data/').val().child(username).exists())
+			database.ref(path).orderByKey().on('value', snapshot => {
+				
+				if (snapshot.val()[username]['password'])
+					console.log('it is real')
+				else
+					console.log('oh fuck here we go again')
 
 
 
+				console.log(snapshot.val()[username]['password']);
+
+				let temp = '';
+				console.log(temp);
+				temp = snapshot.val()[username]['password'];
+				console.log(temp);
 
 
-
-
-
-
-			database.ref(now_path).set({
-				click_counter: 0
+				if (temp == password)
+				{
+					console.log('password is true')
+				}
+				else if (temp != password)
+				{
+					console.log('password is incorrect')
+				}
+				else 
+				{
+					console.log('there is no user like this')
+				}
 			});
+
+
+
+			// now_path = path + username;
+			// console.log(now_path)
+
+
+
+			// database.ref(now_path).set({
+			// 	password: password,
+			// 	click_counter: 0
+			// });
 		}
 		else
 		{
@@ -45,15 +73,18 @@ check_user.addEventListener('click', (e) => {
 });
 
 
-the_button.addEventListener('click', (e) => {
-	e.preventDefault();
+// the_button.addEventListener('click', (e) => {
+// 	e.preventDefault();
 
-	//click-count = ... + 1
-	local_counter += 1;
+// 	//click-count = ... + 1
+// 	counter =  1;
 
-	const new_data = {click_counter: local_counter};
+// 	const new_data = {click_counter: local_counter};
 
-	database.ref(now_path).update(new_data);
+// 	database.ref(now_path).update(new_data);
 
+// });
 
+database.ref('/').orderByKey().on('value', snapshot => {
+	console.log(snapshot.val());
 });

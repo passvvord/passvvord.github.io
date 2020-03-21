@@ -131,6 +131,7 @@ div > a > .img_box {
 /*.bg05 > a > .lab_num:after,
 .bg11 > a > .lab_num:after,
 .bg12 > a > .lab_num:after,*/
+.bg06 > a > .lab_num:after,
 .bg13 > a > .lab_num:after,
 .bg14 > a > .lab_num:after {
 	content: " NEW ";
@@ -172,7 +173,7 @@ body > .flex_div > div > a > .img_box {
 .bg14 > a > .img_box {	background: url(10.png); }
 
 
-.flex_div > .bg06, .flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10 {
+.flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10 {
 	/*filter: brightness(0.2);*/
 	/*filter: blur(0.5vh) brightness(0.2);*/
 	height: 0;
