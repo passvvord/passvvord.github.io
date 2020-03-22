@@ -1,23 +1,28 @@
 @import url(../../../for_menu/global.css);
 
-body { 
-	overflow-x: hidden;
-	background: #323232;
+body {
+    overflow-x: hidden;
+    background: #323232;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+
 }
 
 header {
-	height: 5vh;
-	width: 100vw;
-	font-size: 5vh;
-	text-align: center;
-	line-height: 5vh;
-	font-family: poly;
-	background: #ff3232;
-	color: #fff;
+    height: 5vh;
+    width: 100vw;
+    font-size: 5vh;
+    text-align: center;
+    line-height: 5vh;
+    font-family: poly;
+    background: #ff3232;
+    color: #fff;
 }
 
 @media (max-width: 100vh) {
-	img {
-	width: 100vw;
-}
+    img {
+        width: 100vw;
+    }
 }
