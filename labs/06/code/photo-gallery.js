@@ -3,45 +3,46 @@ class PhotoGallery extends HTMLElement {
         super();
         var shadow = this.attachShadow({mode: 'open'});
 
-        // ################## adding photos ##################
-
         let img_res = [];
         if (this.hasAttribute('list')) {
             img_res = this.getAttribute('list').split(';');
-        } else {console.log("there is no attribute img_list");}
+        }
 
         let html_str = '';
 
         html_str+= '<style type="text/css">'+
-
         ' .img-block { '+
         ' display: flex; '+
         ' flex-direction: row; '+
         ' flex-wrap: wrap; '+
+        ' padding: 0.5vh;'+
         ' } '+
-
         ' .img-block>div { '+
         ' height: 20vh; '+
-        ' width: fit-content; '+
-        ' margin: 1vh; '+
+        ' width: 20vh; '+
+        ' overflow: hidden; '+
+        ' margin: 0.5vh; '+
+        ' display: flex;'+
+        ' align-items: center;'+
+        ' justify-content: center;'+
+        ' border-radius: 1vh; '+
         ' } '+
-
         ' img { '+
         ' height: 100%; '+
         ' border-radius: 1vh; '+
         ' } '+
-
         ' @media (max-width: 100vh) { '+
         ' .img-block>div { '+
         ' height: auto; '+
         ' width: 98vw; '+
         ' margin: 1vw; '+
+        // ' display: flex;'+
+        // ' align-items: center;'+
+        // ' justify-content: center;'+
         ' } '+
-
         ' img { '+
         ' height: auto; '+
         ' width: 100%; '+
-        ' border-radius: 1vh; '+
         ' } '+
         ' } '+
         ' @keyframes div_full_scren {'+
@@ -55,7 +56,6 @@ class PhotoGallery extends HTMLElement {
         ' width: var(--div-width);'+
         ' background: rgba(0, 0, 0, 0);'+
         ' }'+
-
         ' 100% {'+
         ' position: fixed;'+
         ' margin: 0px;'+
@@ -67,24 +67,16 @@ class PhotoGallery extends HTMLElement {
         ' background: rgba(0, 0, 0, 0.5);'+
         ' }'+
         ' }'+
-
         ' @keyframes img_full_scren {'+
         ' 0% {'+
-        ' margin-top: 0px;'+
-        ' margin-left: 0px;'+
         ' height: var(--img-height);'+
         ' width: var(--img-width);'+
         ' }'+
-
         ' 100% {'+
-        ' margin-top: calc(50vh - var(--img-after-height)/2);'+
-        ' margin-left: calc(50vw - var(--img-after-width)/2);'+
         ' height: var(--img-after-height);'+
         ' width: var(--img-after-width);'+
         ' }'+
-
         ' }'+
-
         ' @keyframes div_full_scren_r {'+
         ' 100% {'+
         ' position: fixed;'+
@@ -96,7 +88,6 @@ class PhotoGallery extends HTMLElement {
         ' width: var(--div-width);'+
         ' background: rgba(0, 0, 0, 0);'+
         ' }'+
-
         ' 0% {'+
         ' position: fixed;'+
         ' margin: 0px;'+
@@ -108,22 +99,15 @@ class PhotoGallery extends HTMLElement {
         ' background: rgba(0, 0, 0, 0.5);'+
         ' }'+
         ' }'+
-
         ' @keyframes img_full_scren_r {'+
         ' 100% {'+
-        ' margin-top: 0px;'+
-        ' margin-left: 0px;'+
         ' height: var(--img-height);'+
         ' width: var(--img-width);'+
         ' }'+
-
         ' 0% {'+
-        ' margin-top: calc(50vh - var(--img-after-height)/2);'+
-        ' margin-left: calc(50vw - var(--img-after-width)/2);'+
         ' height: var(--img-after-height);'+
         ' width: var(--img-after-width);'+
         ' }'+
-
         ' }'+
 		' </style>';
 
@@ -132,16 +116,12 @@ class PhotoGallery extends HTMLElement {
         for (let i in img_res) {
         	html_str += '<div onclick="fullscreen(this)"><img '+
         	'src = "' + img_res[i] + '" '+
-        	'id = "' + i + '" '+
         	'onerror = " this.src = ' + "'img_error.svg' " + '" '+
         	'></div> ';
         }
 
         html_str += '</div>'
-        
-
-
-        
+                
         shadow.innerHTML = html_str;
     }
 }
@@ -165,7 +145,7 @@ let html = document.documentElement;
             div.style.setProperty('--div-left', Math.round(div_pos.left) + 'px');
             div.style.setProperty('--div-height', Math.round(div_pos.height) + 'px');
             div.style.setProperty('--div-width', Math.round(div_pos.width) + 'px');
-            div.style.animation = 'div_full_scren 1s 0s normal 1 forwards running';
+            div.style.animation = 'div_full_scren 1s normal 1 forwards';
 
             img.style.setProperty('--img-height', Math.round(img_pos.height) + 'px');
             img.style.setProperty('--img-width', Math.round(img_pos.width) + 'px');
@@ -181,14 +161,16 @@ let html = document.documentElement;
             }
 
             img.style.animation = 'img_full_scren 1s 0s normal 1 forwards running';
+            div.style.borderRadius = '0px';
             img.style.borderRadius = '0px';
 
             full_screen = true;
         } else {
 
             html.style.overflow = 'visible';
-            div.style.animation = 'div_full_scren_r 1s 0s normal 1 none running';
-            img.style.animation = 'img_full_scren_r 1s 0s normal 1 none running';
+            div.style.animation = 'div_full_scren_r 1s normal 1 none';
+            img.style.animation = 'img_full_scren_r 1s normal 1 none';
+            div.style.borderRadius = '1vh';
             img.style.borderRadius = '1vh';
             full_screen = false;
         }

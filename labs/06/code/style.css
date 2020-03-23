@@ -20,9 +20,3 @@ header {
     background: #ff3232;
     color: #fff;
 }
-
-@media (max-width: 100vh) {
-    img {
-        width: 100vw;
-    }
-}

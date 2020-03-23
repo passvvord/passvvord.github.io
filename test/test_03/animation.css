@@ -1,9 +1,9 @@
 
 :root {
 	--bg-c: #000;
-	--circ1-c: #ff0;
-	--circ2-c: #0ff;
-	--circ3-c: #f0f;
+	--circ1-c: #f00;
+	--circ2-c: #0f0;
+	--circ3-c: #00f;
 	--fix-circ-c: #fff;
 	
 	--circ-blur: 3;
@@ -18,6 +18,8 @@
 	/*--block-rotate-d: 0s;*/
 	/*--block-rotate-d: calc(1s / 90);*/
 	
+	--sin_0: 0;
+	--cos_0: 1;
 	--sin_120: 0.866025;
 	--cos_120: -0.5;
 	--sin_240: -0.866025;
@@ -52,18 +54,24 @@ body {
 }
 
 .circ1 {
+	--sin_angle: var(--sin_0);
+	--cos_angle: var(--cos_0);
 	background: var(--circ1-c);
-	animation: linear circ1_go var(--anim-d) infinite;
+	animation: linear circ_go var(--anim-d) infinite;
 }
 
 .circ2 {
+	--sin_angle: var(--sin_120);
+	--cos_angle: var(--cos_120);
 	background: var(--circ2-c);
-	animation: linear circ2_go var(--anim-d) infinite;
+	animation: linear circ_go var(--anim-d) infinite;
 }
 
 .circ3 {
+	--sin_angle: var(--sin_240);
+	--cos_angle: var(--cos_240);
 	background: var(--circ3-c);
-	animation: linear circ3_go var(--anim-d) infinite;
+	animation: linear circ_go var(--anim-d) infinite;
 }
 
 .fixed-circ {
@@ -74,42 +82,20 @@ body {
 	animation: linear fix_circ_scale var(--anim-d) infinite;
 }
 
-
-
-@keyframes circ1_go {
-	0%    {transform: translateY( calc( var(--circ-s-vh) * -2)); animation-timing-function: ease-in; }
-	12.5% {transform: translateY( calc( var(--circ-s-vh) * -1)); }
-	25%   {transform: translateY( calc( var(--circ-s-vh) *  0)); }
-	37.5% {transform: translateY( calc( var(--circ-s-vh) *  1)); animation-timing-function: ease-out;}
-	50%   {transform: translateY( calc( var(--circ-s-vh) *  2)); animation-timing-function: ease-in; }
-	62.5% {transform: translateY( calc( var(--circ-s-vh) *  1)); }
-	75%   {transform: translateY( calc( var(--circ-s-vh) *  0)); }
-	87.5% {transform: translateY( calc( var(--circ-s-vh) * -1)); animation-timing-function: ease-out;}	
-	100%  {transform: translateY( calc( var(--circ-s-vh) * -2)); }
-}
-
-@keyframes circ2_go {
-	0%    {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -2),calc(var(--circ-s-vh) * var(--cos_120) * -2)); animation-timing-function: ease-in; }
-	12.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -1),calc(var(--circ-s-vh) * var(--cos_120) * -1)); }
-	25%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  0),calc(var(--circ-s-vh) * var(--cos_120) *  0)); }
-	37.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  1),calc(var(--circ-s-vh) * var(--cos_120) *  1)); animation-timing-function: ease-out;}
-	50%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  2),calc(var(--circ-s-vh) * var(--cos_120) *  2)); animation-timing-function: ease-in; }
-	62.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  1),calc(var(--circ-s-vh) * var(--cos_120) *  1)); }
-	75%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) *  0),calc(var(--circ-s-vh) * var(--cos_120) *  0)); }
-	87.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -1),calc(var(--circ-s-vh) * var(--cos_120) * -1)); animation-timing-function: ease-out;}	
-	100%  {transform: translate( calc( var(--circ-s-vh) * var(--sin_120) * -2),calc(var(--circ-s-vh) * var(--cos_120) * -2)); }
-}
-
-@keyframes circ3_go {
-	0%    {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -2),calc(var(--circ-s-vh) * var(--cos_240) * -2)); animation-timing-function: ease-in; }
-	12.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -1),calc(var(--circ-s-vh) * var(--cos_240) * -1));}
-	25%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  0),calc(var(--circ-s-vh) * var(--cos_240) *  0));}
-	37.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  1),calc(var(--circ-s-vh) * var(--cos_240) *  1)); animation-timing-function: ease-out;}
-	50%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  2),calc(var(--circ-s-vh) * var(--cos_240) *  2)); animation-timing-function: ease-in; }
-	62.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  1),calc(var(--circ-s-vh) * var(--cos_240) *  1));}
-	75%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) *  0),calc(var(--circ-s-vh) * var(--cos_240) *  0));}
-	87.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -1),calc(var(--circ-s-vh) * var(--cos_240) * -1)); animation-timing-function: ease-out;}	
-	100%  {transform: translate( calc( var(--circ-s-vh) * var(--sin_240) * -2),calc(var(--circ-s-vh) * var(--cos_240) * -2));}
+@keyframes circ_go {
+	0%    {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) * -2),  calc(var(--circ-s-vh) * var(--cos_angle) * -2));  
+		animation-timing-function: ease-in; }
+	12.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) * -1),  calc(var(--circ-s-vh) * var(--cos_angle) * -1));  }
+	25%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) *  0),  calc(var(--circ-s-vh) * var(--cos_angle) *  0));  }
+	37.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) *  1),  calc(var(--circ-s-vh) * var(--cos_angle) *  1));  
+		animation-timing-function: ease-out;}
+	50%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) *  2),  calc(var(--circ-s-vh) * var(--cos_angle) *  2));  
+		animation-timing-function: ease-in; }
+	62.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) *  1),  calc(var(--circ-s-vh) * var(--cos_angle) *  1));  }
+	75%   {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) *  0),  calc(var(--circ-s-vh) * var(--cos_angle) *  0));  }
+	87.5% {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) * -1),  calc(var(--circ-s-vh) * var(--cos_angle) * -1));  
+		animation-timing-function: ease-out;}	
+	100%  {transform: translate( calc( var(--circ-s-vh) * var(--sin_angle) * -2),  calc(var(--circ-s-vh) * var(--cos_angle) * -2));  }
 }
 
 @keyframes fix_circ_scale {
@@ -124,8 +110,8 @@ body {
 	100%  {transform: scale(1);}
 }
 
-@keyframes long_rotate {
+/*@keyframes long_rotate {
 	0%   {transform: rotateZ(0deg)   scale(var(--circ-block-scale));    animation-timing-function: ease-in;}
 	50%  {transform: rotateZ(360deg) scale(var(--circ-block-scale));  animation-timing-function: ease-out;}
 	100% {transform: rotateZ(720deg) scale(var(--circ-block-scale)); }
-}
+}*/

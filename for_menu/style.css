@@ -173,7 +173,7 @@ body > .flex_div > div > a > .img_box {
 .bg14 > a > .img_box {	background: url(10.png); }
 
 
-.flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10 {
+.flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10, .flex_div > .bg14 {
 	/*filter: brightness(0.2);*/
 	/*filter: blur(0.5vh) brightness(0.2);*/
 	height: 0;
