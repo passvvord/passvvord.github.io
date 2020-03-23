@@ -6,16 +6,14 @@
 	--lab_box_font_s: calc(var(--unit) * 5);
 	--lab_box_hover_h: calc(var(--unit) * 15);
 	--lab_box_button_h: calc(var(--unit) * 5);
-	--lab_box_button_w: calc(var(--unit) * 10);
+	--lab_box_button_w: calc(var(--unit) * 20);
 	--lab_box_button_font_s: calc(var(--unit) * 3);
 
 	--header_font_s: 8vh;
 
-	--lab_box_content_c: #1e1e20;
-	/*--lab_box_content_c: #FF7042;*/
-	--lab_box_bg_c: #485554;
-	/*--lab_box_bg_c: #1a1a1a;*/
-	--bg_c: #d9cb9e;
+	--lab_box_content_c: #FF7042;
+	--lab_box_bg_c: #1a1a1a;
+	--bg_c: #303030;
 }
 
 body {
@@ -33,17 +31,16 @@ header {
 	padding-bottom: 2vh;
 	font-size: var(--header_font_s);
 	font-family: blogger_b;
-	color: #d1bf89;
-	/*box-shadow: inset 0px -2vh 2vh -2vh #57707a;*/
+	color: #252525;
 }
 
 .litle_header {
 	padding: var(--unit);
-	/*border-bottom: calc(var(--unit) / 10) solid var(--lab_box_content_c);*/
 	color: #dc3522;
-	background: #d1bf89;
+	background: #ff7046;
 	font-size: 3vh;
 	font-family: blogger_b;
+	box-shadow: 0 0 4vh -1vh #ff7046;
 }
 
 ::selection {
@@ -81,30 +78,21 @@ header {
 	height: calc(var(--lab_box_s) - var(--unit)*2);
 	padding: var(--unit);
 	text-align: center;
-	/*line-height: var(--lab_box_s);*/
 	font-size: var(--lab_box_font_s);
 	background: var(--lab_box_bg_c);
+    box-shadow: inset 0 0 10vh -1vh #000;
 }
 
 .flex_div > div:hover > a > .lab_num {
-	/*height: var(--lab_box_hover_h);
-	line-height: var(--lab_box_hover_h);*/
-	/*border-bottom: calc(var(--unit) / 10) solid var(--lab_box_content_c);*/
 	margin-top: calc( -1 * var(--lab_box_s));
 }
 
 .flex_div > div > a > .lab_num , .flex_div > div > .buttons {
-	/*background: rgba(20,20,20,0.65);*/
-	/*backdrop-filter: brightness(40%);*/
 	transition-duration: 0.5s;
 }
 
 .flex_div > div > .buttons > a {
-	/*margin-top: var(--lab_box_hover_h);*/
-	/*width: var(--lab_box_button_w);
-	height: var(--lab_box_button_h);*/
-	/*margin-top: calc(-1 * var(--lab_box_button_h));*/
-	color: #d9cb9e;
+	color: var(--lab_box_content_c);
 }
 
 .flex_div > div > .buttons > a > div {
@@ -113,7 +101,6 @@ header {
 	text-align: center;
 	line-height: var(--lab_box_button_h);
 	font-size: var(--lab_box_button_font_s);
-	/*border-top: calc(var(--unit) / 10) solid var(--lab_box_content_c);*/
 	background: var(--lab_box_bg_c);
 }
 
@@ -125,7 +112,6 @@ div > a > .img_box {
 	height: var(--lab_box_hover_h);
 	width: var(--lab_box_s);
 	filter: opacity(70%);
-	/*background-size: 100%;*/
 }
 
 /*.bg05 > a > .lab_num:after,
@@ -144,8 +130,6 @@ div > a > .img_box {
 	font-family: roboto;
 }
 
-
-
 .bg11 > a > .img_box,
 .bg12 > a > .img_box,
 .bg13 > a > .img_box,
@@ -155,6 +139,7 @@ div > a > .img_box {
 
 body > .flex_div > div > a > .img_box {
 	background-size: 100%;
+	box-shadow: inset 0 0 10vh 0vh #000;
 }
 
 .bg01 > a > .img_box {	background: url(01.png); }
@@ -174,9 +159,6 @@ body > .flex_div > div > a > .img_box {
 
 
 .flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10, .flex_div > .bg14 {
-	/*filter: brightness(0.2);*/
-	/*filter: blur(0.5vh) brightness(0.2);*/
 	height: 0;
 	visibility: hidden;
 }
-

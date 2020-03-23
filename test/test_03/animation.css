@@ -14,7 +14,7 @@
 	
 	--circ-s: 10;
 	--circ-s-vh: calc( var(--circ-s) * 1vh );
-	--anim-d: 6s;
+	--anim-d: 10s;
 	/*--block-rotate-d: 0s;*/
 	/*--block-rotate-d: calc(1s / 90);*/
 	

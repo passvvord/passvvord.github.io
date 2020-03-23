@@ -1,14 +1,15 @@
+@import url(../../../for_menu/global.css);
+
+.to_labs {
+	color: #576ea7;
+}
+
 body {
 	margin: 0px;
 	background: url(bg.png);
 	background-size: 100vw;
 	font-family: blogger_m;
 	overflow-x: hidden;
-}
-
-@font-face {
-	font-family: blogger_m; 
-	src: url(../../../for_menu/Blogger/Blogger_Sans-Medium.ttf);
 }
 
 .names, .animations, .links{

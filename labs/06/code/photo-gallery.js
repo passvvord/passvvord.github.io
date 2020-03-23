@@ -16,6 +16,7 @@ class PhotoGallery extends HTMLElement {
         ' flex-direction: row; '+
         ' flex-wrap: wrap; '+
         ' padding: 0.5vh;'+
+        ' justify-content: center;'+
         ' } '+
         ' .img-block>div { '+
         ' height: 20vh; '+
@@ -34,11 +35,9 @@ class PhotoGallery extends HTMLElement {
         ' @media (max-width: 100vh) { '+
         ' .img-block>div { '+
         ' height: auto; '+
-        ' width: 98vw; '+
+        ' width: calc(98vw - 2vh); '+
+
         ' margin: 1vw; '+
-        // ' display: flex;'+
-        // ' align-items: center;'+
-        // ' justify-content: center;'+
         ' } '+
         ' img { '+
         ' height: auto; '+
