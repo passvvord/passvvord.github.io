@@ -36,7 +36,7 @@ header {
 
 .litle_header {
 	padding: var(--unit);
-	color: #dc3522;
+	color: #d73100;
 	background: #ff7046;
 	font-size: 3vh;
 	font-family: blogger_b;
@@ -54,7 +54,7 @@ header {
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
-	justify-content: space-evenly;
+	/*justify-content: space-evenly;*/
 	
 }
 
@@ -133,7 +133,16 @@ div > a > .img_box {
 .bg11 > a > .img_box,
 .bg12 > a > .img_box,
 .bg13 > a > .img_box,
-.bg14 > a > .img_box {
+.bg14 > a > .img_box,
+.bg15 > a > .img_box,
+.bg16 > a > .img_box,
+.bg17 > a > .img_box,
+.bg18 > a > .img_box,
+.bg19 > a > .img_box,
+.bg20 > a > .img_box,
+.bg21 > a > .img_box,
+.bg22 > a > .img_box
+ {
 	height: var(--lab_box_s);
 }
 
@@ -155,7 +164,15 @@ body > .flex_div > div > a > .img_box {
 .bg11 > a > .img_box {	background: url(11.png); }
 .bg12 > a > .img_box {	background: url(12.png); }
 .bg13 > a > .img_box {	background: url(13.png); }
-.bg14 > a > .img_box {	background: url(10.png); }
+.bg14 > a > .img_box {	background: url(14.png); }
+.bg15 > a > .img_box {	background: url(15.png); }
+.bg16 > a > .img_box {	background: url(16.png); }
+.bg17 > a > .img_box {	background: url(17.png); }
+.bg18 > a > .img_box {	background: url(18.png); }
+.bg19 > a > .img_box {	background: url(19.png); }
+.bg20 > a > .img_box {	background: url(20.png); }
+.bg21 > a > .img_box {	background: url(21.png); }
+.bg22 > a > .img_box {	background: url(22.png); }
 
 
 .flex_div > .bg07, .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10, .flex_div > .bg14 {

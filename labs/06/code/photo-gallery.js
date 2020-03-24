@@ -30,6 +30,7 @@ class PhotoGallery extends HTMLElement {
         ' } '+
         ' img { '+
         ' height: 100%; '+
+        ' width: auto; '+
         ' border-radius: 1vh; '+
         ' } '+
         ' @media (max-width: 100vh) { '+
@@ -148,13 +149,19 @@ let html = document.documentElement;
 
             img.style.setProperty('--img-height', Math.round(img_pos.height) + 'px');
             img.style.setProperty('--img-width', Math.round(img_pos.width) + 'px');
+            console.log('html_pos = ',html_pos);
+            console.log('div_pos = ',div_pos);
+            console.log('img_pos = ',img_pos);
+
 
             if ((img_pos.height * html_pos.width) / img_pos.width < html_pos.height) {
+                console.log('zoom type 01 max image width');
                 img.style.setProperty('--img-after-height', Math.round((img_pos.height * html_pos.width) / img_pos.width) + 'px');
                 img.style.setProperty('--img-after-width', Math.round(html_pos.width) + 'px');
             }
 
             if ((img_pos.width * html_pos.height) / img_pos.height <= html_pos.width) {
+                console.log('zoom type 02 max image height');
                 img.style.setProperty('--img-after-height', Math.round(html_pos.height) + 'px');
                 img.style.setProperty('--img-after-width', Math.round((img_pos.width * html_pos.height) / img_pos.height) + 'px');
             }
