@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>preloader</title>
+    <style type="text/css">
+        @import url(../../for_menu/global.css);
+
+    	.preloader {
+    		position: fixed;
+    		width: 100vw;
+    		height: 100vh;
+            background: #323232;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+
+        }
+
+        .l-text {
+            height: 5vh;
+            font-size: 3vh;
+            font-family: sf;
+            color: #ff3232;
+            text-shadow: 0 0 5vh #ff3232,0 0 5vh #ff3232;
+        }
+
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            width:40vw;
+            height: 1vh;
+            background: #252525;
+            border-radius: 0.5vh;
+            animation: l-box-anim 10s infinite;
+        }
+
+        .loading-line {
+            width:0vw;
+            height:1vh;
+            background: #ff3232;
+            box-shadow: 0 0 5vh 0 #ff3232;
+            border-radius: 0.5vh;
+            animation: l-line-anim 10s infinite;
+        }
+
+        @keyframes l-box-anim {
+            0%   {height: 1vh;  width: 40vw;}
+            20%  {height: 1vh;  width: 40vw;}
+            40%  {height: 1vh;  width: 90vw;}
+            60%  {height: 1vh;  width: 90vw;}
+            80%  {height: 85vh; width: 90vw;}
+            100% {height: 85vh; width: 90vw;}
+        }
+
+        @keyframes l-line-anim {
+            0%   {height: 1vh;  width: 0vw;}
+            20%  {height: 1vh;  width: 38vw;}
+            50%  {height: 1vh;  width: 88vw;}
+            60%  {height: 1vh;  width: 88vw;}
+            90%  {height: 85vh;  width: 88vw;}
+            100% {height: 85vh; width: 90vw;}
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="preloader">
+        <div class="l-text">Loading...</div>
+        <div class="loading-box">
+            <div class="loading-line"></div>
+        </div>
+    </div>
+</body>
+
+</html>
