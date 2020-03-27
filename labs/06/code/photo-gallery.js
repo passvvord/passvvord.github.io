@@ -96,7 +96,7 @@ class PhotoGallery extends HTMLElement {
         ' left: 0px;'+
         ' height: 100vh;'+
         ' width: 100vw;'+
-        ' background: rgba(0, 0, 0, 0.5);'+
+        ' background: rgba(0, 0, 0, 0.75);'+
         ' }'+
         ' }'+
         ' @keyframes img_full_scren_r {'+
