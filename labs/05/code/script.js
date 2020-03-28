@@ -193,7 +193,7 @@ function nearest_vowel(str)
 		}
 	}
 	console.log(str,arr,'======')
-	if (arr[Math.round(arr.length/2)] != str.length)
+	if (arr[Math.floor(arr.length/2)] != str.length && arr.length != 0)
 		return arr;
 	else
 		return 'no vowel';
@@ -266,7 +266,17 @@ function print_carpet()
 		c_light_bg = true;
 	}
 	
-	carpet_text+='<div>'+carpet_str+'</div>';
+	carpet_text+='<div>';
+
+	for (let i of carpet_str.split('/')) {
+		for (let j of i.split('')) {
+			carpet_text += ' ' + j;
+		}
+		carpet_text += ' <br> ';
+	}
+
+
+	carpet_text+= '</div>';
 	carpet_text+='<div>'+cheack_carpet(carpet_str.split('/'))+'</div>';
 	carpet_text+='</div>';
 	document.getElementById("carpet_output").innerHTML += carpet_text;

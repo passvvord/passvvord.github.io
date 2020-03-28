@@ -27,15 +27,13 @@ class PhotoGallery extends HTMLElement {
          display: flex;
          align-items: center;
          justify-content: center;
-         border-radius: 1vh; 
+         border-radius: 1vh;
          } 
-         .img-block>div {
-         transfo   
-         }
          img { 
          height: 100%; 
          width: auto; 
-         border-radius: 1vh; 
+         border-radius: 1vh;
+         transition-duration: 1s; 
          } 
          @media (max-width: 100vh) { 
          .img-block>div { 
@@ -119,11 +117,11 @@ class PhotoGallery extends HTMLElement {
 
         for (let i in img_res) {
             html_str += `
-            <div onclick="fullscreen(this)">
-                <img src = "` + img_res[i] + `" 
-                onerror="this.src = "img_error.svg" 
-                onload="calc_size(this)" >
-            </div>`;
+            <div onclick="fullscreen(this)"><img 
+            src = "` + img_res[i] + `" 
+            onerror="this.src = 'img_error.svg'"
+            onload="calc_size(this)"
+            ></div>`;
         }
 
         html_str += '</div>'
@@ -146,7 +144,6 @@ function fullscreen(div) {
         html.style.overflow = 'hidden';
         let html_pos = html.getBoundingClientRect();
 
-
         div.style.setProperty('--div-top', Math.round(div_pos.top) + 'px');
         div.style.setProperty('--div-left', Math.round(div_pos.left) + 'px');
         div.style.setProperty('--div-height', Math.round(div_pos.height) + 'px');
@@ -161,13 +158,13 @@ function fullscreen(div) {
 
 
         if ((img_pos.height * html_pos.width) / img_pos.width < html_pos.height) {
-            console.log('zoom type 01 max image width');
+            console.log('zoom type 01 image width = html width');
             img.style.setProperty('--img-after-height', Math.round((img_pos.height * html_pos.width) / img_pos.width) + 'px');
             img.style.setProperty('--img-after-width', Math.round(html_pos.width) + 'px');
         }
 
         if ((img_pos.width * html_pos.height) / img_pos.height <= html_pos.width) {
-            console.log('zoom type 02 max image height');
+            console.log('zoom type 02 image height = html height');
             img.style.setProperty('--img-after-height', Math.round(html_pos.height) + 'px');
             img.style.setProperty('--img-after-width', Math.round((img_pos.width * html_pos.height) / img_pos.height) + 'px');
         }
@@ -190,4 +187,18 @@ function fullscreen(div) {
         }, 1000)
 
     }
+}
+
+function calc_size(img)
+{
+    let img_pos = img.getBoundingClientRect();
+    if (img_pos.height <= img_pos.width) {
+        img.style.height = '100%';
+        img.style.width = 'auto';
+    }
+    if (img_pos.height > img_pos.width) {
+        img.style.height = 'auto';
+        img.style.width = '100%';
+    }
+
 }
