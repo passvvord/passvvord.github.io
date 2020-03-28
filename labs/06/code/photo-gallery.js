@@ -1,3 +1,6 @@
+let all_img_count = 0;
+let now_loaded_img = 0;
+
 class PhotoGallery extends HTMLElement {
     constructor() {
         super();
@@ -6,6 +9,7 @@ class PhotoGallery extends HTMLElement {
         let img_res = [];
         if (this.hasAttribute('list')) {
             img_res = this.getAttribute('list').split(';');
+            all_img_count = img_res.length;
         }
 
         let html_str = '';
@@ -133,64 +137,78 @@ class PhotoGallery extends HTMLElement {
 customElements.define('photo-gallery', PhotoGallery);
 
 let full_screen = false;
+let disable_func = false;
 
 function fullscreen(div) {
-    let div_pos = div.getBoundingClientRect();
-    let img = div.firstChild;
-    let img_pos = img.getBoundingClientRect();
-    let html = document.documentElement;
-
-    if (!full_screen) {
-        html.style.overflow = 'hidden';
-        let html_pos = html.getBoundingClientRect();
-
-        div.style.setProperty('--div-top', Math.round(div_pos.top) + 'px');
-        div.style.setProperty('--div-left', Math.round(div_pos.left) + 'px');
-        div.style.setProperty('--div-height', Math.round(div_pos.height) + 'px');
-        div.style.setProperty('--div-width', Math.round(div_pos.width) + 'px');
-        div.style.animation = 'div_full_scren 1s normal 1 forwards';
-
-        img.style.setProperty('--img-height', Math.round(img_pos.height) + 'px');
-        img.style.setProperty('--img-width', Math.round(img_pos.width) + 'px');
-        console.log('html_pos = ', html_pos);
-        console.log('div_pos = ', div_pos);
-        console.log('img_pos = ', img_pos);
+    if (!disable_func) {
+        let div_pos = div.getBoundingClientRect();
+        let img = div.firstChild;
+        let img_pos = img.getBoundingClientRect();
+        let html = document.documentElement;
 
 
-        if ((img_pos.height * html_pos.width) / img_pos.width < html_pos.height) {
-            console.log('zoom type 01 image width = html width');
-            img.style.setProperty('--img-after-height', Math.round((img_pos.height * html_pos.width) / img_pos.width) + 'px');
-            img.style.setProperty('--img-after-width', Math.round(html_pos.width) + 'px');
+        if (!full_screen) {
+            disable_func = true;
+            html.style.overflow = 'hidden';
+            let html_pos = html.getBoundingClientRect();
+
+            div.style.setProperty('--div-top', Math.round(div_pos.top) + 'px');
+            div.style.setProperty('--div-left', Math.round(div_pos.left) + 'px');
+            div.style.setProperty('--div-height', Math.round(div_pos.height) + 'px');
+            div.style.setProperty('--div-width', Math.round(div_pos.width) + 'px');
+            div.style.animation = 'div_full_scren 1s normal 1 forwards';
+
+            img.style.setProperty('--img-height', Math.round(img_pos.height) + 'px');
+            img.style.setProperty('--img-width', Math.round(img_pos.width) + 'px');
+            console.log('html_pos = ', html_pos);
+            console.log('div_pos = ', div_pos);
+            console.log('img_pos = ', img_pos);
+
+
+            if ((img_pos.height * html_pos.width) / img_pos.width < html_pos.height) {
+                console.log('zoom type 01 image width = html width');
+                img.style.setProperty('--img-after-height', Math.round((img_pos.height * html_pos.width) / img_pos.width) + 'px');
+                img.style.setProperty('--img-after-width', Math.round(html_pos.width) + 'px');
+            }
+
+            if ((img_pos.width * html_pos.height) / img_pos.height <= html_pos.width) {
+                console.log('zoom type 02 image height = html height');
+                img.style.setProperty('--img-after-height', Math.round(html_pos.height) + 'px');
+                img.style.setProperty('--img-after-width', Math.round((img_pos.width * html_pos.height) / img_pos.height) + 'px');
+            }
+
+            img.style.animation = 'img_full_scren 1s 0s normal 1 forwards';
+            div.style.borderRadius = '0px';
+            img.style.borderRadius = '0px';
+
+            setTimeout(function() {
+                full_screen = true;
+                disable_func = false;
+            }, 1000)
+
+        } else {
+            disable_func = true;
+            html.style.overflow = 'visible';
+            div.style.animation = 'div_full_scren_r 1s normal 1';
+            img.style.animation = 'img_full_scren_r 1s normal 1';
+            div.style.borderRadius = '1vh';
+            img.style.borderRadius = '1vh';
+
+            setTimeout(function() {
+                full_screen = false;
+                disable_func = false;
+            }, 1000)
+
         }
-
-        if ((img_pos.width * html_pos.height) / img_pos.height <= html_pos.width) {
-            console.log('zoom type 02 image height = html height');
-            img.style.setProperty('--img-after-height', Math.round(html_pos.height) + 'px');
-            img.style.setProperty('--img-after-width', Math.round((img_pos.width * html_pos.height) / img_pos.height) + 'px');
-        }
-
-        img.style.animation = 'img_full_scren 1s 0s normal 1 forwards';
-        div.style.borderRadius = '0px';
-        img.style.borderRadius = '0px';
-
-        full_screen = true;
-    } else {
-
-        html.style.overflow = 'visible';
-        div.style.animation = 'div_full_scren_r 1s normal 1';
-        img.style.animation = 'img_full_scren_r 1s normal 1';
-        div.style.borderRadius = '1vh';
-        img.style.borderRadius = '1vh';
-
-        setTimeout(function() {
-            full_screen = false;
-        }, 1000)
-
     }
 }
 
 function calc_size(img)
 {
+    now_loaded_img += 1;
+    document.getElementById('preloader').style.setProperty('--loading-num',now_loaded_img/all_img_count);
+    document.getElementById('l-text').innerHTML = 'Loading ' + Math.round(100 * now_loaded_img / all_img_count) + '%';
+
     let img_pos = img.getBoundingClientRect();
     if (img_pos.height <= img_pos.width) {
         img.style.height = '100%';

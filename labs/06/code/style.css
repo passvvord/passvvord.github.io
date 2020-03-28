@@ -20,7 +20,8 @@ header {
 }
 
 .preloader {
-    --loading: 0vw;
+	--loading-num: 0; /*0 ... 1*/
+    --loading: calc(40vw * var(--loading-num));
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -60,10 +61,12 @@ header {
     background: #ff3232;
     box-shadow: 0 0 5vh 0 #ff3232;
     border-radius: 0.5vh;
-    animation: l-line-anim 10s 1 forwards;
+	transition-duration: 1s;
+    /*
+    animation: l-line-anim 10s 1 forwards;*/
 }
 
-    @keyframes l-line-anim {
+/*    @keyframes l-line-anim {
         0%   {height: 1vh; width: 0vw;}
         100% {height: 1vh; width: 38vw;}
-    }
+    }*/
