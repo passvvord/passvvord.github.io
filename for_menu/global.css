@@ -98,6 +98,102 @@
 	src: url(font/SciFly-Sans.ttf);
 }
 
+@font-face {
+	font-family: lato; 
+	src: url(font/lato/Lato-Regular.ttf);
+}
+
+/*@font-face {
+	font-family: lato; 
+	src: url(font/lato/);
+}*/
+
+@font-face {
+	font-family: lato_bk; 
+	src: url(font/lato/Lato-Black.ttf);
+}
+
+@font-face {
+	font-family: lato_bki; 
+	src: url(font/lato/Lato-BlackItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_b; 
+	src: url(font/lato/Lato-Bold.ttf);
+}
+
+@font-face {
+	font-family: lato_bi; 
+	src: url(font/lato/Lato-BoldItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_hl; 
+	src: url(font/lato/Lato-Hairline.ttf);
+}
+
+@font-face {
+	font-family: lato_hli; 
+	src: url(font/lato/Lato-HairlineItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_hv; 
+	src: url(font/lato/Lato-Heavy.ttf);
+}
+
+@font-face {
+	font-family: lato_hvi; 
+	src: url(font/lato/Lato-HeavyItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_i; 
+	src: url(font/lato/Lato-Italic.ttf);
+}
+
+@font-face {
+	font-family: lato_l; 
+	src: url(font/lato/Lato-Light.ttf);
+}
+
+@font-face {
+	font-family: lato_li; 
+	src: url(font/lato/Lato-LightItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_m; 
+	src: url(font/lato/Lato-Medium.ttf);
+}
+
+@font-face {
+	font-family: lato_mi; 
+	src: url(font/lato/Lato-MediumItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_sb; 
+	src: url(font/lato/Lato-Semibold.ttf);
+}
+
+@font-face {
+	font-family: lato_sbi; 
+	src: url(font/lato/Lato-SemiboldItalic.ttf);
+}
+
+@font-face {
+	font-family: lato_t; 
+	src: url(font/lato/Lato-Thin.ttf);
+}
+
+@font-face {
+	font-family: lato_ti; 
+	src: url(font/lato/Lato-ThinItalic.ttf);
+}
+
+
 :root {
 
 }
