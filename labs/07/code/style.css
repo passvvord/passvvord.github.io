@@ -1,9 +1,36 @@
 @import url(../../../for_menu/global.css);
 
-.img2 {
-	position: fixed;
-	height: 100vh;
+.header, .bg1, .CTA, .bg2, .bg3, .footer {
+	background-size: 100%;
 	width: 100vw;
-	top: 0;
-	left: 0;
+}
+
+.header {
+	height: 47.29vw;
+	background-image: url(imgs/header_bg.png);
+}
+
+.bg1 {
+	height: 50.34vw;
+	background-image: url(imgs/01_bg.png);
+}
+
+.CTA {
+	height: 17.65vw;
+	background-image: url(imgs/CTA_bg.png);
+}
+
+.bg2 {
+	height: 89.33vw;
+	background: #fff;
+}
+
+.bg3 {
+	height: 43.66vw;
+	background-image: url(imgs/03_bg.png);
+}
+
+.footer {
+	height: 29.37vw;
+	background: #000;
 }
