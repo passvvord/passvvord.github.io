@@ -33,9 +33,9 @@
 
 .comments {
 	display: flex;
-	flex-direction: row;
-	flex-wrap: wrap;
+	flex-direction: column;
 	justify-content: center;
+	align-items: center;
 	padding: 1vh 1vw;
 }
 
@@ -44,6 +44,7 @@
 	overflow: hidden;
     border-radius: calc((1vh+1vw));
     width: 90%;
+    max-width: 80vh;
     min-height: 10vh;
     background: #e7e7e7;
     font-family: roboto;
@@ -52,7 +53,7 @@
 .img-div {
 	width: 10vh;
     float: left;
-    padding: 2% 2%;
+    padding: 1% 1%;
     margin-right: 5%;
     background: #d9d9d9;
     border-bottom-right-radius: 50%;
