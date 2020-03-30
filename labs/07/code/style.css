@@ -1,6 +1,7 @@
 @import url(../../../for_menu/global.css);
 
 .header, .bg1, .CTA, .bg2, .bg3, .footer {
+	--color-1: #EA0D60;
 	background-size: 100%;
 	width: 100vw;
 }
@@ -29,6 +30,64 @@
 	height: 43.66vw;
 	background-image: url(imgs/03_bg.png);
 }
+
+.comments {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	padding: 1vh 1vw;
+}
+
+.comment-div {
+	margin: 1vh 1vw;
+	overflow: hidden;
+    border-radius: calc((1vh+1vw));
+    width: 90%;
+    min-height: 10vh;
+    background: #e7e7e7;
+    font-family: roboto;
+}
+
+.img-div {
+	width: 10vh;
+    float: left;
+    padding: 2% 2%;
+    margin-right: 5%;
+    background: #d9d9d9;
+    border-bottom-right-radius: 50%;
+}
+
+.img-div > img {
+	width: 100%;
+}
+
+.text-block {
+	padding: 1vh 2vw;
+}
+
+.name {
+	font-size: 3vh;
+    text-transform: capitalize;
+    font-family: roboto_b;
+    color: #e98317;
+    text-align: left;
+}
+
+.text {
+	margin-left: 3%;
+    margin-right: 3%;
+    text-align: left;
+    font-size: 1.5vh;
+}
+
+.likes {
+	text-align: right;
+    color: #f00;
+    font-size: 1.5vh;
+    font-family: roboto_b;
+}
+
 
 .footer {
 	height: 29.37vw;
