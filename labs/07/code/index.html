@@ -7,13 +7,25 @@
 	<script type="text/javascript" src="script.js" defer></script>
 </head>
 <body class="body-classic">
-<!-- 	<div class="header"></div>	
+	<div class="header"></div>	
 	<div class="bg1"></div>
 	<div class="CTA"></div>
 	<div class="bg2"></div>
-	<div class="bg3"></div> -->
+	<div class="bg3"></div>
 	<div class="comments" id="comments"></div>
-	<!-- <div class="footer"></div> -->
+	<div class="add-coment" id="add-coment">
+		<div class="form">
+			<div class="img-chose"></div>
+			<div class="input-box">
+				<div class="inp-name">Ім'я</div>
+				<input type="text" onchange="us_name = this.value">
+				<div class="inp-name">Текст коментаря</div>
+				<textarea onchange="text = this.value"></textarea>
+			</div>
+			<div class="sumbit" onclick="add_coment()">add</div>
+		</div>
+	</div>
+	<div class="footer"></div>
 
 
 
