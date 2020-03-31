@@ -31,6 +31,11 @@
 	background-image: url(imgs/03_bg.png);
 }
 
+.comment-out-div {
+	overflow: scroll;
+	max-height: 80vh;
+}
+
 .comments {
 	display: flex;
 	flex-direction: column;

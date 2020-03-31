@@ -24,19 +24,16 @@ function print_coment_in(id,avatar,name,text,like,path_name) {
 }
 
 function add_coment() {
-	var today = new Date();
-	var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-	var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-
-
+	let today = new Date();
+	let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+	let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+	
 	database.ref(path+name_create).set({
-		avatar: avatar,
+		avatar: avatars[Math.floor(Math.random() * avatars.length)],
 		name: us_name,
 		comment: text,
 		likes: count_likes,
-		date: date,
-		time: time,
+		date_time: date+' '+time,
 		display_w: document.documentElement.clientWidth,
 		display_h: document.documentElement.clientHeight
 	});
@@ -45,7 +42,6 @@ function add_coment() {
 function like_up(path_name) {
 	let now_likes = 0;
 database.ref(path + path_name).once("value", function(snapshot) {
-	console.log('now_likes = ',snapshot.val().likes);
 	now_likes = parseInt(snapshot.val().likes) + 1;
 	});
 database.ref(path + path_name).update({likes: now_likes});
