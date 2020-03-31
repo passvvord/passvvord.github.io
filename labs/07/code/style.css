@@ -81,14 +81,17 @@
     margin-right: 3%;
     text-align: left;
     font-size: 1.5vh;
-    min-height: 4vh;
+    min-height: 3vh;
 }
 
 .likes {
 	text-align: right;
     color: #f00;
     font-size: 1.5vh;
+    width: 50%;
+    margin-left: 50%;
     font-family: roboto_b;
+    cursor: pointer;
 }
 
 
