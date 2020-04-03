@@ -51,22 +51,15 @@ function add_coment() {
 	}
 }
 
-let textarea_focus = false;
-
 function add_text(textarea) {
-	textarea_focus = true;
-	while (textarea_focus) {
-		setTimeout( function() {
-			console.log('text in textarea is changed');
-			let sumbit_top = document.getElementById('sumbit');
-			if (textarea.value == '') {
-				text = '';
-				sumbit_top.style.marginTop = 'calc(var(--vh) * -5)';
-			} else {
-				text = textarea.value;
-				sumbit_top.style.marginTop = '0px';
-			}
-		}, 500);
+	console.log('text in textarea is changed',textarea.value);
+	let sumbit_top = document.getElementById('sumbit');
+	if (textarea.value == '') {
+		text = '';
+		sumbit_top.style.marginTop = 'calc(var(--vh) * -5)';
+	} else {
+		text = textarea.value;
+		sumbit_top.style.marginTop = '0px';
 	}
 }
 
