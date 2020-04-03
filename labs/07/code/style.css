@@ -74,12 +74,19 @@
 }
 
 .name {
+	display: flex;
+    align-items: baseline;
 	font-size: 3vh;
 	min-height: 4vh;
     text-transform: capitalize;
     font-family: lato_hv;
     color: #ea0d60;
     text-align: left;
+}
+
+.name > div {
+	color: #aaa;
+    font-size: 2vh;
 }
 
 .text {
@@ -161,7 +168,7 @@
 }
 
 input, textarea {
-    font-size: 1.5vh;
+    font-size: 2vh;
     font-family: lato;
     width: calc(100% - 2vh);
 	padding: 1vh;
