@@ -173,7 +173,7 @@
 input, textarea {
     font-size: calc(var(--vh) * 1.5);
     font-family: lato;
-    width: calc(100% - calc(var(--vh) * 2));
+    width: 100%;
 	padding: var(--vh);
     border: none;
     background: #e7e7e7;
@@ -183,6 +183,7 @@ input, textarea {
 textarea {
 	height: calc(var(--vh) * 10);
 	resize: none;
+	z-index: 1;
 }
 
 input:focus, textarea:focus {
@@ -196,7 +197,9 @@ input:focus, textarea:focus {
     /*box-shadow: inset 0 0 0 0.4vh #ea0d60;*/
     height: calc(var(--vh) * 5);
     width: 100%;
-    margin: calc(var(--vh) * 0.5) 0;
+    /*margin: calc(var(--vh) * 0.5) 0;*/
+    margin-top: calc(var(--vh) * -5);
+    z-index: 0;
     font-size: calc(var(--vh) * 3);
     font-family: lato_hv;
     background: #ea0d60;
@@ -206,7 +209,7 @@ input:focus, textarea:focus {
     display: flex;
     align-items: center;
     justify-content: center;
-
+	transition-duration: 0.5s;
 }
 
 
