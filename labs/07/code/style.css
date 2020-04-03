@@ -1,8 +1,8 @@
 @import url(../../../for_menu/global.css);
 
 :root {
-	--vh: 0px;
-	--vw: 0px;
+	--vh: 1vh;
+	--vw: 1vw;
 }
 
 /*calc(var(--vh))*/
@@ -171,7 +171,7 @@
 }
 
 input, textarea {
-    font-size: calc(var(--vh) * 2);
+    font-size: calc(var(--vh) * 1.5);
     font-family: lato;
     width: calc(100% - calc(var(--vh) * 2));
 	padding: var(--vh);
