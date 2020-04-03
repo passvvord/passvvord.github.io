@@ -96,3 +96,6 @@ database.ref(path).orderByKey().on('value', snapshot => {
 });
 
 print_avatars_in('img-chose')
+
+document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
+document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
