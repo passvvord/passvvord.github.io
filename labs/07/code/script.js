@@ -47,11 +47,13 @@ function add_coment() {
 		});
 
 		document.getElementById('textarea').value = '';
+		add_text();
 		text = '';
 	}
 }
 
-function add_text(textarea) {
+function add_text() {
+	let textarea = document.getElementById('textarea');
 	console.log('text in textarea is changed',textarea.value);
 	let sumbit_top = document.getElementById('sumbit');
 	if (textarea.value == '') {
