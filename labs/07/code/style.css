@@ -148,7 +148,7 @@
 }
 
 .form {
-	width: 90%;
+	width: 100%;
     max-width: 100vh;
     display: flex;
     justify-content: center;
@@ -164,7 +164,23 @@
 input, textarea {
     font-size: 1.5vh;
     font-family: lato;
-    width: 99%;
+    width: calc(100% - 2vh);
+	padding: 1vh;
+    border: none;
+    background: #e7e7e7;
+    border-bottom: 0.3vh solid #ea0d60;
+}
+
+textarea {
+	height: 10vh;
+	resize: none;
+}
+
+input:focus, textarea:focus {
+    border: none;
+    border-bottom: 0.3vh solid #ea0d60;
+    box-shadow: none;
+    outline:none;
 }
 
 .sumbit {
@@ -187,8 +203,3 @@ input, textarea {
 	color: #fff;
 }
 
-textarea {
-	height: 10vh;
-	max-width: 99%;
-	max-height: 30vh;
-}

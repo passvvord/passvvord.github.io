@@ -24,22 +24,31 @@ function print_coment_in(id,avatar,name,text,like,path_name) {
 }
 
 function add_coment() {
-	let today = new Date();
-	let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-	let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-	
-	database.ref(path+name_create).set({
-		avatar: avatar,
-		name: us_name,
-		comment: text,
-		likes: count_likes,
-		date_time: date+' '+time,
-		display_w: document.documentElement.clientWidth,
-		display_h: document.documentElement.clientHeight
-	});
 
-	document.getElementById('textarea').value = '';
-	text = '';
+	if (text == '') {
+		alert('Ви не можете відправити коментар без тексту');
+	} else if (us_name == "") {
+		alert(`Введіть і'мя у відповідне поле`);
+	} else if (avatar == "avatars/DEFAULT.svg") {
+		alert('Оберіть аватар');
+	} else {
+		let today = new Date();
+		let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+		let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+		
+		database.ref(path+name_create).set({
+			avatar: avatar,
+			name: us_name,
+			comment: text,
+			likes: count_likes,
+			date_time: date+' '+time,
+			display_w: document.documentElement.clientWidth,
+			display_h: document.documentElement.clientHeight
+		});
+
+		document.getElementById('textarea').value = '';
+		text = '';
+	}
 }
 
 function like_up(path_name) {
