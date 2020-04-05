@@ -13,12 +13,12 @@ function print_coment_in(id,avatar,name,text,like,path_name) {
 	let element_str = "";
 	
 	element_str += `<div class="comment-div">`
-	+ `<div class="img-div"><img src="`+avatar+`"></div>`
-	+ `<div class="text-block">`
-	+ `<div class="name">`+name+`</div>`
-	+ `<div class="text">`+text+`</div>`
-	+ `<div class="likes" onclick="like_up(`+ path_name +`)">❤ `+like+`</div>`
-	+ `</div>`
+		+ `<div class="img-div"><img src="`+avatar+`"></div>`
+		+ `<div class="text-block">`
+			+ `<div class="name">`+name+`</div>`
+			+ `<div class="text">`+text+`</div>`
+			+ `<div class="likes" onclick="like_up(`+ path_name +`)">❤ `+like+`</div>`
+		+ `</div>`
 	+ `</div>`;
 	element.innerHTML += element_str;
 }
@@ -109,7 +109,9 @@ database.ref(path).orderByKey().on('value', snapshot => {
 	}	
 });
 
-print_avatars_in('img-chose')
-
 document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
 document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
+
+print_avatars_in('img-chose');
+
+

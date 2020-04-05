@@ -227,6 +227,12 @@ a {
 	text-decoration: none;
 }
 
+plaintext {
+	font-family: inherit;
+    margin: 0;
+    white-space: normal;
+}
+
 /*<a href="../../../index.html" class="to_labs"><</a>*/
 .to_labs {
 	position: absolute;
