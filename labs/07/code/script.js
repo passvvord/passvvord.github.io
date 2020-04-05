@@ -23,8 +23,18 @@ function print_coment_in(id,avatar,name,text,like,path_name) {
 	element.innerHTML += element_str;
 }
 
-function add_coment() {
+function dell_html_tag_quotes(str) {
+	for (let i in str) {
+		if (str[i] == '<') {
+			str = str.replace('<','{');
+		} else if (str[i] == '>') {
+			str = str.replace('>','}');
+		}
+	}
+	return str;
+}
 
+function add_coment() {
 	if (text == '') {
 		alert('Ви не можете відправити коментар без тексту');
 	} else if (us_name == "") {
@@ -38,8 +48,8 @@ function add_coment() {
 		
 		database.ref(path+name_create).set({
 			avatar: avatar,
-			name: us_name,
-			comment: text,
+			name: dell_html_tag_quotes(us_name),
+			comment: dell_html_tag_quotes(text),
 			likes: count_likes,
 			date_time: date+' '+time,
 			display_w: document.documentElement.clientWidth,
@@ -54,7 +64,6 @@ function add_coment() {
 
 function add_text() {
 	let textarea = document.getElementById('textarea');
-	console.log('text in textarea is changed',textarea.value);
 	let sumbit_top = document.getElementById('sumbit');
 	if (textarea.value == '') {
 		text = '';
