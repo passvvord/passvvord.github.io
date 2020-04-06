@@ -3,8 +3,8 @@
 :root {
 	--vh: 1vh;
 	--vw: 1vw;
-	--img-v: visible;
-	/*--img-v: hidden;*/
+/*	--img-v: visible;*/
+	--img-v: hidden;
 }
 /*calc(var(--vh) * )*/
 
