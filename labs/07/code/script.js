@@ -123,4 +123,3 @@ document.documentElement.style.setProperty('--vh', document.documentElement.clie
 
 print_avatars_in('img-chose');
 
-
