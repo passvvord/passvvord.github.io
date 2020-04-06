@@ -21,11 +21,16 @@ body {
 	font-family: lato;
 }
 
+a {
+	color: #fff;
+}
+
 .header, .bg1, .CTA, .bg2, .bg3, .footer {
 	--color-1: #EA0D60;
 	background-size: 100%;
 	background-position: center;
 	width: 100vw;
+	overflow: hidden;
 }
 
 .header {
@@ -295,12 +300,6 @@ body {
     cursor: pointer;
 }
 
-
-.footer {
-	height: 29.37vw;
-	background: #000;
-}
-
 .img-chose {
     display: flex;
     overflow-x: scroll;
@@ -393,4 +392,28 @@ input:focus, textarea:focus {
 	transition-duration: 0.5s;
 }
 
+.footer {
+	height: 29.37vw;
+	background: #000;
+	display: flex;
+	justify-content: center;
+	align-items: baseline;
+	color: #fff;
+	padding-top: 7vw;
+	box-sizing: border-box;
+}
 
+.fot-block {
+	padding: 1vw 4.5vw;
+}
+
+.f-b-zagolovok {
+	font-size: 1.5vw;
+}
+
+.f-b-text {
+	margin-top: 1vw;
+	font-size: 0.9vw;
+    line-height: 1.9vw;
+    font-family: lato_l;
+}
