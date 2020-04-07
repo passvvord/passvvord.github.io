@@ -70,9 +70,6 @@
 	    
 	</script>
 	<script type="text/javascript">
-		const database = firebase.database();
-		const path = '/github/github_io/test_06_data/0';
-
 
 		database.ref(path).orderByKey().on('value', snapshot => {
 	    	let from_database = document.getElementById('from_database').style;
