@@ -4,9 +4,6 @@
 	--vh: 1vh;
 	--vw: 1vw;
 	--now-sc: 1;
-
-/*	--img-v: visible;*/
-	--img-v: hidden;
 }
 /*calc(var(--vh) * )*/
 /*calc(var(--now-sc) * )*/
@@ -432,8 +429,21 @@ input:focus, textarea:focus {
 	box-sizing: border-box;
 }
 
+@media (max-width: 100vh) {
+	.footer {
+		flex-direction: column;
+		align-items: center;
+	}
+}
+
 .fot-block {
 	padding: calc(var(--now-sc) * 1vw) calc(var(--now-sc) * 4.5vw);
+}
+
+@media (max-width: 100vh) {
+	.fot-block {
+		text-align: center;
+	}
 }
 
 .f-b-zagolovok {
