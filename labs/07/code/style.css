@@ -41,10 +41,10 @@ a {
 	color: #fff;
 }
 
-.oud, .menu-button {
+.oud, .menu-button, .menu-link {
 	font-size: calc(var(--now-sc) * 2.5vw);
-	width: 50%;
-	height: fit-content;
+	width: 25%;
+	height: calc(var(--now-sc) * 6vw);
 	padding: calc(var(--now-sc) * 1.5vw) calc(var(--now-sc) * 2.5vw);
 	margin-bottom: calc(var(--now-sc) * -5vw);
 	box-sizing: border-box;
@@ -56,6 +56,16 @@ a {
 	background: -webkit-linear-gradient(#fff 40%, #8E9396 60%);
    -webkit-background-clip: text;
    -webkit-text-fill-color: transparent;
+}
+
+.menu-link {
+	font-family: lato_t;
+	min-width: fit-content;
+	transition-duration: 0.5s;
+}
+
+.menu-link:hover {
+	color: var(--color-1);
 }
 
 .menu-button {
