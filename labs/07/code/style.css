@@ -3,18 +3,18 @@
 :root {
 	--vh: 1vh;
 	--vw: 1vw;
+	--now-sc: 1;
+
 /*	--img-v: visible;*/
 	--img-v: hidden;
 }
 /*calc(var(--vh) * )*/
+/*calc(var(--now-sc) * )*/
 
-.imgg {
-	position: absolute;
-	opacity: 0.3;
-	width: 100vw;
-	top: 0px;
-	left: 0px;
-	visibility: var(--img-v);
+@media (max-width: 100vh) {
+	:root {
+		--now-sc: 3;
+	}
 }
 
 body {
@@ -34,8 +34,9 @@ a {
 }
 
 .header {
-	height: 47.29vw;
+	height: calc(var(--now-sc) * 47.29vw);
 	background-image: url(imgs/header_bg.png);
+	background-size: cover;
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -44,11 +45,11 @@ a {
 }
 
 .oud, .menu-button {
-	font-size: 2.5vw;
+	font-size: calc(var(--now-sc) * 2.5vw);
 	width: 50%;
 	height: fit-content;
-	padding: 1.5vw 2.5vw;
-	margin-bottom: -5vw;
+	padding: calc(var(--now-sc) * 1.5vw) calc(var(--now-sc) * 2.5vw);
+	margin-bottom: calc(var(--now-sc) * -5vw);
 	box-sizing: border-box;
 }
 
@@ -78,8 +79,8 @@ a {
 }
 
 .h-text-1, .h-text-2 {
-	font-size: 5.2vw;
-	line-height: 4.2vw;
+	font-size: calc(var(--now-sc) * 5.2vw);
+	line-height: calc(var(--now-sc) * 4.2vw);
 }
 
 .h-text-1 {
@@ -92,35 +93,37 @@ a {
 
 .button {
 	font-family: lato_hv;
-	font-size: 0.5vw;
-	height: 2.5vw;
-	width: 8vw;
-	border-radius: 1.25vw;
+	font-size: calc(var(--now-sc) * 0.5vw);
+	height: calc(var(--now-sc) * 2.5vw);
+	width: calc(var(--now-sc) * 8vw);
+	border-radius: calc(var(--now-sc) * 1.25vw);
 	background: var(--color-1);
-	line-height: 2.5vw;
-    letter-spacing: 0.1vw;
-    margin-top: 3.5vw;
+	line-height: calc(var(--now-sc) * 2.5vw);
+    letter-spacing: calc(var(--now-sc) * 0.1vw);
+    margin-top: calc(var(--now-sc) * 3.5vw);
 }
 
 .bg1 {
-	height: 50.34vw;
+	height: calc(var(--now-sc) * 50.34vw);
 	background-image: url(imgs/01_bg.png);
+	background-repeat: no-repeat;
+	background-position: bottom; 
 	display: flex;
 	justify-content: center;
 }
 
 .z-t-block {
-	width: 30vw;
-	margin-top: 3vw;
+	width: calc(var(--now-sc) * 30vw);
+	margin-top: calc(var(--now-sc) * 3vw);
 	height: fit-content;
 }
 
 .num, .zagolovok {
-	font-size: 3.5vw;
+	font-size: calc(var(--now-sc) * 3.5vw);
 }
 
 .num {
-	text-shadow: -1.5vw 2.8vw 0 #e7e7e7;
+	text-shadow: calc(var(--now-sc) * -1.5vw) calc(var(--now-sc) * 2.8vw) 0 #e7e7e7;
 	color: transparent;
 }
 
@@ -133,16 +136,19 @@ a {
 }
 
 .block-text {
-	margin-top: 1vw;
-	font-size: 1.1vw;
-    line-height: 1.9vw;
+	margin-top: calc(var(--now-sc) * 1vw);
+	font-size: calc(var(--now-sc) * 1.1vw);
+    line-height: calc(var(--now-sc) * 1.9vw);
     font-family: lato;
 }
 
 
 .CTA {
-	height: 17.65vw;
+	height: calc(var(--now-sc) * 17.65vw);
 	background-image: url(imgs/CTA_bg.png);
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: bottom; 
 	color: #fff;
 	display: flex;
 	justify-content: center;
@@ -150,16 +156,16 @@ a {
 }
 
 .CTA > div > .h-text-1, .CTA > div > .h-text-2 {
-	font-size: 3vw;
-	line-height: 2.5vw;
+	font-size: calc(var(--now-sc) * 3vw);
+	line-height: calc(var(--now-sc) * 2.5vw);
 }
 
 .CTA > div > .button {
-	margin-top: 1.5vw;
+	margin-top: calc(var(--now-sc) * 1.5vw);
 }
 
 .bg2 {
-	height: 89.33vw;
+	height: calc(var(--now-sc) * 89.33vw);
 	background: #fff;
 	display: flex;
 	flex-wrap: wrap;
@@ -167,8 +173,8 @@ a {
 }
 
 .bg2 > .car_img {
-	width: 60vw;
-	padding: 0 20vw;
+	width: 60%;
+	padding: 0 20%;
 
 }
 
@@ -177,8 +183,11 @@ a {
 }
 
 .bg3 {
-	height: 43.66vw;
+	height: calc(var(--now-sc) * 43.66vw);
 	background-image: url(imgs/03_bg.png);
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: bottom; 
 	display: flex;
 	flex-wrap: wrap;
 	justify-content: center;
@@ -186,11 +195,11 @@ a {
 }
 
 .bg3 > .z-t-block {
-	margin-top: 2vw;
+	margin-top: calc(var(--now-sc) * 2vw);
 }
 
 .bg3 > div > .num {
-	text-shadow: -1.5vw 2.8vw 0 #333333;
+	text-shadow: calc(var(--now-sc) * -1.5vw) calc(var(--now-sc) * 2.8vw) 0 #333333;
 }
 
 .bg3 > div > .zagolovok {
@@ -198,26 +207,26 @@ a {
 }
 
 .bg3 > div > div > .h-text-1, .bg3 > div > div > .h-text-2 {
-	font-size: 2vw;
-	line-height: 1.7vw;
+	font-size: calc(var(--now-sc) * 2vw);
+	line-height: calc(var(--now-sc) * 1.7vw);
 }
 
 .bg3 > div > div >.button {
-	margin-top: 1.5vw;
+	margin-top: calc(var(--now-sc) * 1.5vw);
 }
 
 .bg3 > div > div > .h-text-1 {
-	margin-top: 4.5vw;
+	margin-top: calc(var(--now-sc) * 4.5vw);
 }
 
 .price {
-	margin-top: 1.5vw;
-	font-size: 7vw;
+	margin-top: calc(var(--now-sc) * 1.5vw);
+	font-size: calc(var(--now-sc) * 7vw);
 	font-family: lato_hl;
 	color: var(--color-1);
 	width: 100%;
 	text-align: center;
-	--blur-r: 0.5vw;
+	--blur-r: calc(var(--now-sc) * 0.5vw);
 	text-shadow: 0 0 var(--blur-r) var(--color-1)
 	,0 0 var(--blur-r) var(--color-1)
 	,0 0 var(--blur-r) var(--color-1)
@@ -393,27 +402,27 @@ input:focus, textarea:focus {
 }
 
 .footer {
-	height: 29.37vw;
+	height: calc(var(--now-sc) * 29.37vw);
 	background: #000;
 	display: flex;
 	justify-content: center;
 	align-items: baseline;
 	color: #fff;
-	padding-top: 7vw;
+	padding-top: calc(var(--now-sc) * 7vw);
 	box-sizing: border-box;
 }
 
 .fot-block {
-	padding: 1vw 4.5vw;
+	padding: calc(var(--now-sc) * 1vw) calc(var(--now-sc) * 4.5vw);
 }
 
 .f-b-zagolovok {
-	font-size: 1.5vw;
+	font-size: calc(var(--now-sc) * 1.5vw);
 }
 
 .f-b-text {
-	margin-top: 1vw;
-	font-size: 0.9vw;
-    line-height: 1.9vw;
+	margin-top: calc(var(--now-sc) * 1vw);
+	font-size: calc(var(--now-sc) * 0.9vw);
+    line-height: calc(var(--now-sc) * 1.9vw);
     font-family: lato_l;
 }
