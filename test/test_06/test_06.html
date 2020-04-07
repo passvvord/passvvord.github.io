@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>databse test</title>
+	<style type="text/css">
+		#from_js {
+			width: 10vh;
+			height: 10vh;
+			transform: translate(-50%,-50%);
+			position: fixed;
+			border: 0.2vh solid #000;
+			border-radius: 50%;
+		}
+
+		#from_database {
+			width: 5vh;
+			height: 5vh;			
+			position: fixed;
+			transform: translate(-50%,-50%);
+			background: #FFCA28;
+			opacity: 0.5;
+			border-radius: 50%;
+		}
+	</style>
+</head>
+<body>
+	<div id="from_js"></div>
+	<div id="from_database"></div>
+
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-database.js"></script>
+
+	<!-- TODO: Add SDKs for Firebase products that you want to use
+	     https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-analytics.js"></script>
+
+	<script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
+	    authDomain: "aai-database-01.firebaseapp.com",
+	    databaseURL: "https://aai-database-01.firebaseio.com",
+	    projectId: "aai-database-01",
+	    storageBucket: "aai-database-01.appspot.com",
+	    messagingSenderId: "81794330347",
+	    appId: "1:81794330347:web:36a965d9973f836c2458ae",
+	    measurementId: "G-EMTZ00K0W9"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	  firebase.analytics();
+	</script>
+
+	<script type="text/javascript">
+		const database = firebase.database();
+		const path = '/github/github_io/test_06_data/0';
+	    
+	    document.addEventListener("mousemove", e => {
+	    	let from_js = document.getElementById('from_js').style;
+	        from_js.left = e.clientX + "px";
+	        from_js.top = e.clientY + "px";
+
+        	database.ref(path).set({
+	        	mouse_x: e.clientX,
+	        	mouse_y: e.clientY
+			});	        
+	    });
+
+	    database.ref(path).orderByKey().on('value', snapshot => {
+	    	let from_database = document.getElementById('from_database').style;
+	        
+	        from_database.left = snapshot.child('mouse_x').val() + "px";
+	        from_database.top = snapshot.child('mouse_y').val() + "px";
+		});
+	</script>
+</body>
+</html>
