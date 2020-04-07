@@ -46,6 +46,7 @@
 		</div>
 		<div class="car_img"><img src="imgs/02_car_front.png"></div>
 		<div class="car_img"><img src="imgs/02_car_back.png"></div>
+		<div class="bg2-last-text">CHECK OUD H7 <a href="#comments"><font color="#ea0d60"> FULL SPECIFICATIONS</font></a></div>
 	</div>
 	<div class="bg3">
 		<div class="z-t-block">
@@ -70,10 +71,10 @@
 
 	<div class="add-comment" id="add-comment">
 		<div class="form">
-			<textarea id="textarea" placeholder="Текст коментаря" onkeyup="add_text();" ></textarea>
+			<textarea id="textarea" placeholder="Текст коментаря" onkeyup="add_text(); save_val(this.id,this.value)" ></textarea>
 			<div class="sumbit" id="sumbit" onclick="add_coment()">Надіслати</div>
 			<img src="avatars/DEFAULT.svg" id="chosed_ava">
-			<input type="text" placeholder="Ім'я" onkeyup ="us_name = this.value" maxlength="40">
+			<input type="text" id="us_name" placeholder="Ім'я" onkeyup ="us_name = this.value; save_val(this.id,this.value)" maxlength="40">
 			<div class="img-chose" id="img-chose"></div>
 		</div>
 	</div>

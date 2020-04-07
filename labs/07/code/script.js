@@ -59,6 +59,7 @@ function add_coment() {
 		document.getElementById('textarea').value = '';
 		add_text();
 		text = '';
+		save_val('textarea',text)
 	}
 }
 
@@ -84,6 +85,7 @@ database.ref(path + path_name).update({likes: now_likes});
 
 function set_this_ava(img) {
 	avatar = img;
+	save_val('chosed_ava',avatar);
 	document.getElementById('chosed_ava').src = avatar;
 }
 
@@ -118,8 +120,24 @@ database.ref(path).orderByKey().on('value', snapshot => {
 	}	
 });
 
+function save_val(id,val) {
+    localStorage.setItem(id, val);
+}
+
+function get_val(id,val_if_no_val) {
+    if (!localStorage.getItem(id)) {
+        return val_if_no_val;
+    }
+    return localStorage.getItem(id);
+}
+
 document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
 document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
 
 print_avatars_in('img-chose');
 
+document.getElementById('textarea').value = text = get_val('textarea','');
+document.getElementById('us_name').value = us_name =  get_val('us_name','');
+set_this_ava(get_val('chosed_ava','avatars/DEFAULT.svg'));
+
+add_text();

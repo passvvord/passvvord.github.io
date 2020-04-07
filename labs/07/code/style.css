@@ -165,7 +165,7 @@ a {
 }
 
 .bg2 {
-	height: calc(var(--now-sc) * 89.33vw);
+	/*height: calc(var(--now-sc) * 89.33vw);*/
 	background: #fff;
 	display: flex;
 	flex-wrap: wrap;
@@ -174,12 +174,31 @@ a {
 
 .bg2 > .car_img {
 	width: 60%;
-	padding: 0 20%;
+	padding: calc(var(--now-sc) * 4.5vw) 20% 0 20%;
 
+}
+
+@media (max-width: 100vh) {
+	.bg2 > .car_img {
+		width: 100%;
+		padding: calc(var(--now-sc) * 4.5vw) 0 0 0;
+	}
 }
 
 .bg2 > .car_img > img {
 	width:  100%;
+}
+
+.bg2-last-text {
+	width: 100%;
+	font-size: calc(var(--now-sc) * 1vw);
+	text-align: center;
+	box-sizing: border-box;
+	padding: calc(var(--now-sc) * 4.5vw) 0;
+}
+
+.bg2-last-text > a {
+	text-decoration: underline;
 }
 
 .bg3 {
@@ -402,13 +421,14 @@ input:focus, textarea:focus {
 }
 
 .footer {
-	height: calc(var(--now-sc) * 29.37vw);
+/*	height: calc(var(--now-sc) * 29.37vw);*/
 	background: #000;
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: center;
 	align-items: baseline;
 	color: #fff;
-	padding-top: calc(var(--now-sc) * 7vw);
+	padding: calc(var(--now-sc) * 7vw) 0;
 	box-sizing: border-box;
 }
 
