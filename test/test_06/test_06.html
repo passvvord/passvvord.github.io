@@ -54,29 +54,41 @@
 
 	<script type="text/javascript">
 		const database = firebase.database();
-		const path = '/github/github_io/test_06_data/0';
-	    
-	    document.addEventListener("mousemove", e => {
-	    	let from_js = document.getElementById('from_js').style;
-	        from_js.left = e.clientX + "px";
-	        from_js.top = e.clientY + "px";
+		const path0 = '/github/github_io/test_06_data/0';
+		const path1 = '/github/github_io/test_06_data/1';
 
-        	database.ref(path).set({
-	        	mouse_x: e.clientX,
-	        	mouse_y: e.clientY
+		const from_js = document.getElementById('from_js').style;
+		const from_database = document.getElementById('from_database').style;
+	    
+		const display_w = document.documentElement.clientWidth;
+		const display_h = document.documentElement.clientHeight;
+
+
+
+	    document.addEventListener("mousemove", e => {
+	    	let Xvw = Math.round(e.clientX/display_w * 10000)/100;
+	    	let Yvh = Math.round(e.clientY/display_h * 10000)/100;
+	    	
+	        from_js.left = Xvw + "vw";
+	        from_js.top = Yvh + "vh";
+
+        	database.ref(path0).set({
+	        	mouse_x: Xvw,
+	        	mouse_y: Yvh
 			});	        
 	    });
 
-	    
-	</script>
-	<script type="text/javascript">
+		// database.ref(path).orderByKey().on('value', snapshot => {
+	 //        from_database.left = snapshot.child('mouse_x').val() + "vw";
+	 //        from_database.top = snapshot.child('mouse_y').val() + "vh";
+		// });
+		// setInterval(function() {
+			database.ref(path0).on('value', snapshot => {
+		        from_database.left = snapshot.child('mouse_x').val() + "vw";
+		        from_database.top = snapshot.child('mouse_y').val() + "vh";
+			});
+		// },1);
 
-		database.ref(path).orderByKey().on('value', snapshot => {
-	    	let from_database = document.getElementById('from_database').style;
-	        
-	        from_database.left = snapshot.child('mouse_x').val() + "px";
-	        from_database.top = snapshot.child('mouse_y').val() + "px";
-		});
 	</script>
 </body>
 </html>
