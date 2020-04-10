@@ -64,10 +64,15 @@
 		const from_js = document.getElementById('from_js').style;
 		const from_database = document.getElementById('from_database').style;
 	    
-		const display_w = document.documentElement.clientWidth;
-		const display_h = document.documentElement.clientHeight;
+		let display_w = document.documentElement.clientWidth;
+		let display_h = document.documentElement.clientHeight;
 
-
+		setInterval(function() {
+			if (display_w != document.documentElement.clientWidth || display_h != document.documentElement.clientHeight) {
+				display_w = document.documentElement.clientWidth;
+				display_h = document.documentElement.clientHeight;
+			}		
+		},1000);
 
 	    document.addEventListener("mousemove", e => {
 	    	let Xvw = Math.round(e.clientX/display_w * 10000)/100;
@@ -82,16 +87,11 @@
 			});	        
 	    });
 
-		// database.ref(path).orderByKey().on('value', snapshot => {
-	 //        from_database.left = snapshot.child('mouse_x').val() + "vw";
-	 //        from_database.top = snapshot.child('mouse_y').val() + "vh";
-		// });
-		// setInterval(function() {
-			database.ref(path0).on('value', snapshot => {
-		        from_database.left = snapshot.child('mouse_x').val() + "vw";
-		        from_database.top = snapshot.child('mouse_y').val() + "vh";
-			});
-		// },1);
+		database.ref(path0).on('value', snapshot => {
+	        from_database.left = snapshot.child('mouse_x').val() + "vw";
+	        from_database.top = snapshot.child('mouse_y').val() + "vh";
+		});
+
 
 	</script>
 </body>
