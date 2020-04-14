@@ -135,6 +135,8 @@ div > a > .img_box {
 .bg23 > a > .lab_num:after,
 .bg07 > a > .lab_num:after,
 .bg13 > a > .lab_num:after,
+.bg25 > a > .lab_num:after,
+.bg27 > a > .lab_num:after,
 .bg14 > a > .lab_num:after {
 	content: " NEW ";
 	margin-top: 1vh;
@@ -158,7 +160,11 @@ div > a > .img_box {
 .bg20 > a > .img_box,
 .bg21 > a > .img_box,
 .bg22 > a > .img_box,
-.bg23 > a > .img_box
+.bg23 > a > .img_box,
+.bg25 > a > .img_box,
+.bg24 > a > .img_box,
+.bg26 > a > .img_box,
+.bg27 > a > .img_box
  {
 	height: var(--lab_box_s);
 }
@@ -190,6 +196,11 @@ body > .all-content > .flex_div > div > a > .img_box {
 .bg20 > a > .img_box {	background: url(imgs/20.png); }
 .bg21 > a > .img_box {	background: url(imgs/21.png); }
 .bg22 > a > .img_box {	background: url(imgs/22.png); }
+.bg23 > a > .img_box {	background: url(imgs/23.png); }
+.bg24 > a > .img_box {	background: url(imgs/24.png); }
+.bg25 > a > .img_box {	background: url(imgs/25.png); }
+.bg26 > a > .img_box {	background: url(imgs/26.png); }
+.bg27 > a > .img_box {	background: url(imgs/27.png); }
 
 
 .flex_div > .bg08, .flex_div > .bg09, .flex_div > .bg10, .flex_div > .bg14 {
