@@ -54,33 +54,33 @@ class RunSprite extends HTMLElement {
 
 customElements.define('run-sprite', RunSprite);
 
-function change_img(element,new_url,new_delay) {
-	// clearInterval(sprite_anim);
+// function change_img(element,new_url,new_delay) {
+// 	// clearInterval(sprite_anim);
 
-	let img = new Image();
+// 	let img = new Image();
 
-	img.onload = function() {
-		element.shadowRoot.firstChild.style.backgroundImage = 'url('+new_url+')';
-		frames_count = Math.round(this.width/this.height);
+// 	img.onload = function() {
+// 		element.shadowRoot.firstChild.style.backgroundImage = 'url('+new_url+')';
+// 		frames_count = Math.round(this.width/this.height);
 	
-		if (frames_count > 1) {
-			let bg_pos = 0;
+// 		if (frames_count > 1) {
+// 			let bg_pos = 0;
 		
-			let sprite_anim = setInterval( ()=> {
-				if (bg_pos > -1*one_farme_size*frames_count) {
-					bg_pos+=-1*one_farme_size;
-				} else {
-					bg_pos = 0;
-				}
+// 			let sprite_anim = setInterval( ()=> {
+// 				if (bg_pos > -1*one_farme_size*frames_count) {
+// 					bg_pos+=-1*one_farme_size;
+// 				} else {
+// 					bg_pos = 0;
+// 				}
 		
-				element.shadowRoot.firstChild.style.backgroundPosition = bg_pos + 'px 0px';			
-			},new_delay)
-		}
-	}
+// 				element.shadowRoot.firstChild.style.backgroundPosition = bg_pos + 'px 0px';			
+// 			},new_delay)
+// 		}
+// 	}
 
-	img.onerror = function() {
-		element.shadowRoot.firstChild.style.backgroundImage = 'url(Error.gif)';
-	}
+// 	img.onerror = function() {
+// 		element.shadowRoot.firstChild.style.backgroundImage = 'url(Error.gif)';
+// 	}
 
-	img.src = new_url;
-}
+// 	img.src = new_url;
+// }
