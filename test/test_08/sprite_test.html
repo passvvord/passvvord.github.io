@@ -56,7 +56,7 @@
 
     	let str = '';
 
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < 100; i++) {
 			str+='<img src="res/rabit.gif">';
 		}
 
@@ -64,10 +64,10 @@
 
 		str = '';
 
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < 100; i++) {
 			// let m = randint(0,sprites.length - 1);
 			m=1;
-			str += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+'"></run-sprite>';
+			str += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+`"></run-sprite>`;
 		}
 
 		document.getElementById('sprites_div').innerHTML = str;
