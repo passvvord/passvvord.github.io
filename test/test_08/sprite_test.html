@@ -59,10 +59,10 @@
     	let str = '';
     	let str1 = '';
 
-		for (let i = 0; i < 1000; i++) {
+		for (let i = 0; i < 250; i++) {
 			//let m = randint(0,2);
 			let m = 1;
-			str += '<img src="'+gifs_folder+gifs[m]+'">';
+			str += '<img src="'+gifs_folder+gifs[m]+`" onclick="this.src = gifs_folder + gifs[randint(0,2)]">`;
 			str1 += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+`"></run-sprite>`;
 		}
 
