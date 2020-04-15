@@ -47,33 +47,30 @@
 
 	<script type="text/javascript">
 		const sprites_folder = 'sprites/';
-		const sprites = ['duck_kra.png','rabbit_jump.png','hero_go_to_bottom.png','hero_go_to_top.png'];
-		const sprites_dalay = [500,100,100,100]; 
+		const sprites = ['new_rabbit_run.png','new_rabbit_stay_run.png','rabbit_jump.png','hero_go_to_bottom.png','hero_go_to_top.png','duck_kra.png'];
+		const sprites_dalay = [100,100,100,100,100,500];
+		const gifs_folder = 'res/';
+		const gifs = ['new_rabbit_run.gif','new_rabbit_stay_run.gif','rabbit_jump.gif'];
 
 		function randint(min, max) {
   	      return Math.round(Math.random() * (max - min)) + min;
     	}
 
     	let str = '';
+    	let str1 = '';
 
-		for (let i = 0; i < 100; i++) {
-			str+='<img src="res/rabit.gif">';
+		for (let i = 0; i < 1000; i++) {
+			//let m = randint(0,2);
+			let m = 1;
+			str += '<img src="'+gifs_folder+gifs[m]+'">';
+			str1 += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+`"></run-sprite>`;
 		}
 
 		document.getElementById('gifs_div').innerHTML = str;
+		document.getElementById('sprites_div').innerHTML = str1;
 
 		str = '';
-
-		for (let i = 0; i < 100; i++) {
-			// let m = randint(0,sprites.length - 1);
-			m=1;
-			str += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+`"></run-sprite>`;
-		}
-
-		document.getElementById('sprites_div').innerHTML = str;
-
-		str = '';
-
+		str1 = '';
 
 	</script>
 </body>
