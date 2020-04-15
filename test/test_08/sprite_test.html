@@ -40,7 +40,7 @@
 	<script src="run-sprite.js" defer></script>
 </head>
 <body>
-	<div class="header">gif</div>
+	<div class="header">gif (можна натиснути)</div>
 	<div class="header">sprite (js)</div>
 	<div id="gifs_div"></div>
 	<div id="sprites_div"></div>
@@ -59,10 +59,11 @@
     	let str = '';
     	let str1 = '';
 
-		for (let i = 0; i < 250; i++) {
-			//let m = randint(0,2);
+		for (let i = 0; i < 1000; i++) {
+			//let m = randint(0,1);
 			let m = 1;
-			str += '<img src="'+gifs_folder+gifs[m]+`" onclick="this.src = gifs_folder + gifs[randint(0,2)]">`;
+			// onclick="this.src = gifs_folder + gifs[randint(0,2)]"
+			str += '<img src="'+gifs_folder+gifs[m]+`">`;
 			str1 += '<run-sprite img="'+sprites_folder+sprites[m]+'" frame_delay="'+sprites_dalay[m]+`"></run-sprite>`;
 		}
 
