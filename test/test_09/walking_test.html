@@ -1,10 +1,217 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 	<meta charset="UTF-8">
 	<title>walking test</title>
+	<script src="../test_08/run-sprite.js" type="text/javascript" defer></script>
+	<style type="text/css">
+		body {
+			margin: 0;
+			image-rendering: pixelated;
+			overflow: hidden;
+/*			background: #000;*/
+		}
+		#map {
+			position: fixed;
+			top: 50vh;
+			left: 50vw;
+		}
+		
+		#hero {
+			height: 5vh;
+			position: fixed;
+			top: 50vh;
+			left: 50vw;
+/*			transform: translate(-50%,-50%);*/
+		}
+
+
+	</style>
 </head>
 <body>
-	
+	<div id="map"></div>
+
+	<run-sprite id="hero" img="sprires/hero_go_to_bottom.png" frame_delay="0" new="true"></run-sprite>
+
+
+	<script type="text/javascript">
+		const hero_tb = {
+			'height': 15,
+			'width': 15,
+			'hitbox': true,
+			'hitbox_top': 3,
+			'hitbox_left': 4,
+			'hitbox_height': 10,
+			'hitbox_width': 7
+		}
+		const hero_lr = {
+			'height': 15,
+			'width': 15,
+			'hitbox': true,
+			'hitbox_top': 3,
+			'hitbox_left': 6,
+			'hitbox_height': 10,
+			'hitbox_width': 3
+		}
+		const floor = {
+			'src': 'res/floor.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+
+		const road_tb = {
+			'src': 'res/road_tb.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+		const road_lr = {
+			'src': 'res/road_lr.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+		const road_bl = {
+			'src': 'res/road_bl.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+		const road_br = {
+			'src': 'res/road_br.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+		const road_tl = {
+			'src': 'res/road_tl.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+		const road_tr = {
+			'src': 'res/road_tr.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 0,
+			'hitbox': false
+		}
+
+		const tree = {
+			'src': 'sprires/tree_with_kar.png',
+			'height': 15,
+			'width': 15,
+			'frame_delay': 250,
+			'hitbox': true,
+			'hitbox_top': 3,
+			'hitbox_left': 1,
+			'hitbox_height': 10,
+			'hitbox_width': 13
+		}
+		const map = [
+			[floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor,tree,floor,floor,floor,floor,road_br, road_lr, road_lr, road_lr, road_lr, road_lr, road_lr, road_lr,road_bl,floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, road_tb,floor,floor, floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, road_tb,floor,floor, floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, road_tb,floor,floor, floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, road_tb,floor,floor, floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, road_tb,floor,tree , floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, road_tb,floor,floor, floor, floor, floor, floor, floor, road_tb, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, road_tr, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, tree , floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor],
+			[floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor]
+		];
+
+		let pixel_size = Math.round(document.documentElement.clientHeight/300*10000)/10000;
+
+		let y_pos = 0;
+		let x_pos = 0;
+
+		for (let i in map) {
+			x_pos = 0;
+			for (j in map[i]) {
+				document.getElementById("map").innerHTML += '<run-sprite img="'+map[i][j].src+'" frame_delay="'+map[i][j].frame_delay+'" style="position: absolute; height:'+15*pixel_size+'px; top:'+y_pos+'px; left: '+x_pos+'px;" new="true"></run-sprite>';
+				x_pos+=15*pixel_size;
+			}
+			y_pos+=15*pixel_size;
+		}
+
+		let moving_map;
+
+		function move_map(map,x_move,y_move,delay) {
+			console.log(x_move,y_move);
+			if (delay != 0) {
+				let x_now = map.getBoundingClientRect().x;
+				let y_now = map.getBoundingClientRect().y
+				clearInterval(moving_map);
+				moving_map = setInterval( () => {
+					x_now += x_move;
+					y_now += y_move;
+					map.style.top = y_now+'px';
+					map.style.left = x_now+'px';
+				},delay)
+			} else {
+				clearInterval(moving_map);
+			}
+		}
+
+		let key_on = false;
+
+		window.addEventListener("keydown", function(event) {
+			if (key_on == false) {
+				key_on = true;
+				console.log(event.key);
+				switch (event.key) {
+					case "ArrowDown":
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',100);
+						move_map(document.getElementById('map'),0,-2*pixel_size,100);
+						break;
+					
+					case "ArrowUp":
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',100);
+						move_map(document.getElementById('map'),0,2*pixel_size,100);
+						break;
+					
+					case "ArrowLeft":
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',100);
+						move_map(document.getElementById('map'),2*pixel_size,0,100);
+						break;
+					
+					case "ArrowRight":
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',100);
+						move_map(document.getElementById('map'),-2*pixel_size,0,100);
+						break;
+
+					default: 
+						return;
+				}
+			}
+		});
+
+		window.addEventListener("keyup", function(event) {
+			key_on = false;
+			set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',0);
+			move_map(document.getElementById('map'),0,0,0);
+		});
+
+
+	</script>
 </body>
 </html>
