@@ -172,31 +172,31 @@
 			}
 		}
 
-		let key_on = false;
+		let key_on = 'none';
 
 		window.addEventListener("keydown", function(event) {
-			if (key_on == false) {
-				key_on = true;
+			if (key_on !== event.key) {
+				key_on = event.key;
 				console.log(event.key);
 				switch (event.key) {
 					case "ArrowDown":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',100);
-						move_map(document.getElementById('map'),0,-2*pixel_size,100);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',30);
+						move_map(document.getElementById('map'),0,-1*pixel_size,30);
 						break;
 					
 					case "ArrowUp":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',100);
-						move_map(document.getElementById('map'),0,2*pixel_size,100);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',30);
+						move_map(document.getElementById('map'),0,1*pixel_size,30);
 						break;
 					
 					case "ArrowLeft":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',100);
-						move_map(document.getElementById('map'),2*pixel_size,0,100);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',30);
+						move_map(document.getElementById('map'),1*pixel_size,0,30);
 						break;
 					
 					case "ArrowRight":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',100);
-						move_map(document.getElementById('map'),-2*pixel_size,0,100);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',30);
+						move_map(document.getElementById('map'),-1*pixel_size,0,30);
 						break;
 
 					default: 
@@ -206,7 +206,7 @@
 		});
 
 		window.addEventListener("keyup", function(event) {
-			key_on = false;
+			key_on = 'none';
 			set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',0);
 			move_map(document.getElementById('map'),0,0,0);
 		});

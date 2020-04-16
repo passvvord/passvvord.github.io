@@ -82,10 +82,10 @@ function set_sprite(element, new_url, new_delay) {
 
 			if (var_name != old_var_name) {
 				aviable_sprites[old_var_name].this_sprites_count -= 1;
-				if (aviable_sprites[old_var_name].this_sprites_count == 0) {
-					clearInterval(window[aviable_sprites[old_var_name].setInterval_id]);
-					delete aviable_sprites[old_var_name];
-				}
+				// if (aviable_sprites[old_var_name].this_sprites_count == 0) {
+				// 	clearInterval(window[aviable_sprites[old_var_name].setInterval_id]);
+				// 	delete aviable_sprites[old_var_name];
+				// }
 			}
 
 			element.style.height = aviable_sprites[var_name].size + 'px';
