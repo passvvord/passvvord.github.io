@@ -180,22 +180,22 @@
 				console.log(event.key);
 				switch (event.key) {
 					case "ArrowDown":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',40);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',30);
 						move_map(document.getElementById('map'),0,-1*pixel_size,30);
 						break;
 					
 					case "ArrowUp":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',40);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',30);
 						move_map(document.getElementById('map'),0,1*pixel_size,30);
 						break;
 					
 					case "ArrowLeft":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',40);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',30);
 						move_map(document.getElementById('map'),1*pixel_size,0,30);
 						break;
 					
 					case "ArrowRight":
-						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',40);
+						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',30);
 						move_map(document.getElementById('map'),-1*pixel_size,0,30);
 						break;
 

@@ -21,6 +21,12 @@
 			background: #FFCA28;
 			border-radius: 50%;
 		}
+
+		#canvas {
+			position: fixed;
+			left: 0;
+			top: 0;
+		}
 	</style>
 </head>
 <body>
@@ -28,6 +34,7 @@
 	- жовте положення миші отримане з бази даних, куди воно було надіслане js-ом одразу після розрахунку(*2)<br>
 	*1 перераховане з пікселів у відносні одиниці vh і vw<br>
 	*2 Вам буде необхідно 2 комп'ютери бо 2 відкритих вікна для нормального тесту бо в одному вікні не буде жодної затримки з-за особливостей роботи даної бази даних
+	<canvas id="canvas"><font color="#f00">canvas error</font></canvas>
 	<div id="from_js"></div>
 	<div id="from_database"></div>
 
@@ -67,12 +74,17 @@
 		let display_w = document.documentElement.clientWidth;
 		let display_h = document.documentElement.clientHeight;
 
+		const canvas = document.getElementById('canvas');
+		let ctx = canvas.getContext('2d');
+		canvas.height = display_h;
+		canvas.width = display_w;
+
 		setInterval(function() {
 			if (display_w != document.documentElement.clientWidth || display_h != document.documentElement.clientHeight) {
 				display_w = document.documentElement.clientWidth;
 				display_h = document.documentElement.clientHeight;
 			}		
-		},1000);
+		},2000);
 
 	    document.addEventListener("mousemove", e => {
 	    	let Xvw = Math.round(e.clientX/display_w * 10000)/100;
@@ -87,10 +99,24 @@
 			});	        
 	    });
 
+	    database.ref(path0).once('value', snapshot => {
+	    	ctx.beginPath();
+	        ctx.moveTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
+		});
+
 		database.ref(path0).on('value', snapshot => {
 	        from_database.left = snapshot.child('mouse_x').val() + "vw";
 	        from_database.top = snapshot.child('mouse_y').val() + "vh";
+
+	        ctx.lineTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
+	        ctx.stroke();
 		});
+
+		window.onclick = function() {
+			ctx.closePath();
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.beginPath();
+		}
 
 
 	</script>
