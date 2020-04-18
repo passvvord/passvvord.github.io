@@ -4,6 +4,8 @@
 	<meta charset="UTF-8">
 	<title>firebase databse test</title>
 	<style type="text/css">
+		@import url(../../for_menu/global.css);
+
 		#from_js {
 			width: 10vh;
 			height: 10vh;
@@ -24,8 +26,21 @@
 
 		#canvas {
 			position: fixed;
+			image-rendering: pixelated;
+/*			background: #fff;*/
+/*			filter: blur(1px) contrast(250);*/
 			left: 0;
 			top: 0;
+		}
+
+		.center-text {
+			transform: translate(-50%,-50%);
+			position: fixed;
+			left: 50vw;
+			top: 50vh;
+			font-size: 5vh;
+			color: #fff;  
+			font-family: blogger_b;
 		}
 	</style>
 </head>
@@ -35,6 +50,7 @@
 	*1 перераховане з пікселів у відносні одиниці vh і vw<br>
 	*2 Вам буде необхідно 2 комп'ютери бо 2 відкритих вікна для нормального тесту бо в одному вікні не буде жодної затримки з-за особливостей роботи даної бази даних
 	<canvas id="canvas"><font color="#f00">canvas error</font></canvas>
+	<div class="center-text">'◡' ти знайшов мене</div>
 	<div id="from_js"></div>
 	<div id="from_database"></div>
 
@@ -43,20 +59,20 @@
 	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-database.js"></script>
 
 	<!-- TODO: Add SDKs for Firebase products that you want to use
-	     https://firebase.google.com/docs/web/setup#available-libraries -->
+		 https://firebase.google.com/docs/web/setup#available-libraries -->
 	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-analytics.js"></script>
 
 	<script>
 	  // Your web app's Firebase configuration
 	  var firebaseConfig = {
-	    apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
-	    authDomain: "aai-database-01.firebaseapp.com",
-	    databaseURL: "https://aai-database-01.firebaseio.com",
-	    projectId: "aai-database-01",
-	    storageBucket: "aai-database-01.appspot.com",
-	    messagingSenderId: "81794330347",
-	    appId: "1:81794330347:web:36a965d9973f836c2458ae",
-	    measurementId: "G-EMTZ00K0W9"
+		apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
+		authDomain: "aai-database-01.firebaseapp.com",
+		databaseURL: "https://aai-database-01.firebaseio.com",
+		projectId: "aai-database-01",
+		storageBucket: "aai-database-01.appspot.com",
+		messagingSenderId: "81794330347",
+		appId: "1:81794330347:web:36a965d9973f836c2458ae",
+		measurementId: "G-EMTZ00K0W9"
 	  };
 	  // Initialize Firebase
 	  firebase.initializeApp(firebaseConfig);
@@ -70,7 +86,7 @@
 
 		const from_js = document.getElementById('from_js').style;
 		const from_database = document.getElementById('from_database').style;
-	    
+		
 		let display_w = document.documentElement.clientWidth;
 		let display_h = document.documentElement.clientHeight;
 
@@ -86,30 +102,30 @@
 			}		
 		},2000);
 
-	    document.addEventListener("mousemove", e => {
-	    	let Xvw = Math.round(e.clientX/display_w * 10000)/100;
-	    	let Yvh = Math.round(e.clientY/display_h * 10000)/100;
-	    	
-	        from_js.left = Xvw + "vw";
-	        from_js.top = Yvh + "vh";
+		document.addEventListener("mousemove", e => {
+			let Xvw = Math.round(e.clientX/display_w * 10000)/100;
+			let Yvh = Math.round(e.clientY/display_h * 10000)/100;
+			
+			from_js.left = Xvw + "vw";
+			from_js.top = Yvh + "vh";
 
-        	database.ref(path0).set({
-	        	mouse_x: Xvw,
-	        	mouse_y: Yvh
-			});	        
-	    });
+			database.ref(path0).set({
+				mouse_x: Xvw,
+				mouse_y: Yvh
+			});			
+		});
 
-	    database.ref(path0).once('value', snapshot => {
-	    	ctx.beginPath();
-	        ctx.moveTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
+		database.ref(path0).once('value', snapshot => {
+			ctx.beginPath();
+			ctx.moveTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
 		});
 
 		database.ref(path0).on('value', snapshot => {
-	        from_database.left = snapshot.child('mouse_x').val() + "vw";
-	        from_database.top = snapshot.child('mouse_y').val() + "vh";
+			from_database.left = snapshot.child('mouse_x').val() + "vw";
+			from_database.top = snapshot.child('mouse_y').val() + "vh";
 
-	        ctx.lineTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
-	        ctx.stroke();
+			ctx.lineTo(snapshot.child('mouse_x').val()/100*display_w,snapshot.child('mouse_y').val()/100*display_h);
+			ctx.stroke();
 		});
 
 		window.onclick = function() {
