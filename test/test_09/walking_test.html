@@ -18,7 +18,7 @@
 		}
 		
 		#hero {
-			height: 5vh;
+			height: 45px;
 			position: fixed;
 			top: 50vh;
 			left: 50vw;
@@ -139,7 +139,7 @@
 			[floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor, floor]
 		];
 
-		let pixel_size = Math.round(document.documentElement.clientHeight/300*10000)/10000;
+		let pixel_size = 3;
 
 		let y_pos = 0;
 		let x_pos = 0;
@@ -147,7 +147,7 @@
 		for (let i in map) {
 			x_pos = 0;
 			for (j in map[i]) {
-				document.getElementById("map").innerHTML += '<run-sprite img="'+map[i][j].src+'" frame_delay="'+map[i][j].frame_delay+'" style="position: absolute; height:'+15*pixel_size+'px; top:'+y_pos+'px; left: '+x_pos+'px;" new="true"></run-sprite>';
+				document.getElementById("map").innerHTML += '<run-sprite img="'+map[i][j].src+'" frame_delay="'+map[i][j].frame_delay+'" style="position: absolute; height:'+15*pixel_size+'px; width:'+15*pixel_size+'px; top:'+y_pos+'px; left: '+x_pos+'px;" new="true"></run-sprite>';
 				x_pos+=15*pixel_size;
 			}
 			y_pos+=15*pixel_size;
@@ -181,22 +181,26 @@
 				switch (event.key) {
 					case "ArrowDown":
 						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_bottom.png',30);
-						move_map(document.getElementById('map'),0,-1*pixel_size,30);
+						//move_map(document.getElementById('map'),0,-1*pixel_size,30);
+						move_map(document.getElementById('map'),0,-1,10);
 						break;
 					
 					case "ArrowUp":
 						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_top.png',30);
-						move_map(document.getElementById('map'),0,1*pixel_size,30);
+						//move_map(document.getElementById('map'),0, 1*pixel_size,30);
+						move_map(document.getElementById('map'),0, 1,10);
 						break;
 					
 					case "ArrowLeft":
 						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_left.png',30);
-						move_map(document.getElementById('map'),1*pixel_size,0,30);
+						//move_map(document.getElementById('map'), 1*pixel_size,0,30);
+						move_map(document.getElementById('map'), 1,0,10);
 						break;
 					
 					case "ArrowRight":
 						set_sprite(document.getElementById('hero'),'sprires/hero_go_to_right.png',30);
-						move_map(document.getElementById('map'),-1*pixel_size,0,30);
+						//move_map(document.getElementById('map'),-1*pixel_size,0,30);
+						move_map(document.getElementById('map'),-1,0,10);
 						break;
 
 					default: 
