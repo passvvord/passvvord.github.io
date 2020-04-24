@@ -1,4 +1,4 @@
-let audio = new Audio("erro_cut.mp3");
+let audio = new Audio("erro.mp3");
 
 function randint(min, max) {
 	return Math.round(Math.random() * (max - min)) + min;
@@ -52,9 +52,21 @@ let go = {
 	}
 }
 
+function get_go_value(go) {
+	let go_result = {};
+	for (i in go) {
+		go_result[i] = {};
+		if (go[i].res.set_1 != undefined) {
+			for (i of go[i].res.set_1) {}
+		}
+	}
+}
+
 let buttons = [];
 
 function button_style(el,checked) {
+	audio.pause();
+	audio.currentTime = 0;
 	audio.play();
 	if (checked) {
 		el.style.background = '#7ce092';
