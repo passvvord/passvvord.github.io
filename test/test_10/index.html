@@ -8,11 +8,14 @@
 	<style type="text/css">
 	body {
 		margin: 0;
+	}
+
+	#buttons {
 		display: flex;
 		flex-wrap: wrap;
 	}
 
-	body>div {
+	body > #buttons > div {
 		padding: 0.5vh;
 		font-size: 2vh;
 		height: 3vh;
@@ -22,16 +25,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-
-		-webkit-touch-callout: none;
-		-webkit-user-select: none;
-		-khtml-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
 	}
 
-	.unselectable {
+	.unselectable, body > #buttons > div {
 		-webkit-touch-callout: none;
 		-webkit-user-select: none;
 		-khtml-user-select: none;
@@ -43,7 +39,8 @@
 </head>
 
 <body>
-	<!--	 <embed src="https://midi-mp3.org/play/Y2ZiZThiM2EzOThiNWYwYTM5NDZjMWY4ZTllNzQzNjQubXAz/" loop="true" autostart="true" width="2" height="0"> -->
+	<div id="buttons"></div>
+
 </body>
 
 </html>
