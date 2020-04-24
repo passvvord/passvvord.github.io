@@ -6,20 +6,26 @@
 	<title>виберіть те що ви не будете робити</title>
 	<script type="text/javascript" src="script.js" defer></script>
 	<style type="text/css">
+	@import url(../../for_menu/global.css);
+
 	body {
 		margin: 0;
+		font-family: blogger;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	#buttons {
+		max-width: 120vh;
 		display: flex;
 		flex-wrap: wrap;
 	}
 
 	body > #buttons > div {
-		padding: 0.5vh;
 		font-size: 2vh;
-		height: 3vh;
-		width: 3vh;
+		height: 4vh;
+		min-width: 4vh;
 		box-shadow: inset 0 0 0 0.1vh #000;
 		margin: 0.1vh;
 		display: flex;
@@ -35,12 +41,21 @@
 		-ms-user-select: none;
 		user-select: none;
 	}
+
+	#block {
+		position: fixed;
+		visibility: hidden;
+		font-size: 2vh;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	</style>
 </head>
 
 <body>
 	<div id="buttons"></div>
-
+	<div id="block"></div>
 </body>
 
 </html>
