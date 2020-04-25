@@ -18,26 +18,26 @@ function shake_arr(arr) {
 let go = {
 	all: {
 		res: {
-			set_0: ['↔', '↕', '↭', '↹', '⇄', '⇅', '⇆', '⇔', '⇕', '⇳', '⇵', '⇹', '⇼', '⇿','↔', '↕', '↭', '↹', '⇄', '⇅', '⇆', '⇔', '⇕', '⇳', '⇵', '⇹', '⇼', '⇿','↔', '↕', '↭', '↹', '⇄', '⇅', '⇆', '⇔', '⇕', '⇳', '⇵', '⇹', '⇼', '⇿','↔', '↕', '↭', '↹', '⇄', '⇅', '⇆', '⇔', '⇕', '⇳', '⇵', '⇹', '⇼', '⇿'],
+			set_0: ['↔', '↕', '↭', '↹', '⇄', '⇅', '⇆', '⇔', '⇕', '⇳', '⇵', '⇹', '⇼', '⇿'],
 			disable: ['↮', '⇎'],
 			error: ['↩', '↪', '↶', '↺', '↻', '↷', '↫', '↬', '↼', '↽', '⇀', '⇁', '↿', '⇃', '↾', '⇂', '⇋', '⇌', '⇪', '⇬', '⇭', '↪', '↶', '↺', '↻', '↷', '↫', '↬', '↼', '↽', '⇀', '⇁', '↿', '⇃', '↾', '⇂', '⇋', '⇌', '⇪', '⇬', '⇭', '↪', '↶', '↺', '↻', '↷', '↫', '↬', '↼', '↽', '⇀', '⇁', '↿', '⇃', '↾', '⇂', '⇋', '⇌', '⇪', '⇬', '⇭']
 		}
 	},
 	top: {
 		res: {
-			set_1: ['↑', '⇡', '⇧'],
-			set_2: ['↟', '⇈', '⇑', '⇮']
+			set_1: ['↑', '⇡', '⇧','↑', '⇡','⇧','↑', '⇡', '⇧'],
+			set_2: ['↟', '⇈', '⇑', '⇮','↟','⇈', '⇑', '⇮']
 		}
 	},
 	bottom: {
 		res: {
-			set_1: ['↓', '↯', '⇣', '⇩'],
-			set_2: ['↡', '⇊', '⇓']
+			set_1: ['↓', '↯', '⇣', '⇩','↓', '↯', '⇣', '⇩'],
+			set_2: ['↡', '⇊', '⇓','↡', '⇊', '⇓']
 		}
 	},
 	right: {
 		res: {
-			set_1: ['↝', '→', '⇝', '⇢', '⇨', '⇸', '⇾'],
+			set_1: ['↝', '→', '⇝', '⇢', '⇨', '⇸', '⇾','↝', '→', '⇝', '⇢', '⇨', '⇸', '⇾'],
 			set_2: ['↠', '↣', '⇉', '⇒', '⇻'],
 			set_3: ['⇛','⇛','⇶'],
 			disable: ['↛', '⇏', '⇴']
@@ -45,7 +45,7 @@ let go = {
 	},
 	left: {
 		res: {
-			set_1: ['←', '↜', '⇜', '⇦', '⇷', '⇺', '⇽'],
+			set_1: ['←', '↜', '⇜', '⇦', '⇷', '⇺', '⇽','←', '↜', '⇜', '⇦', '⇷', '⇺', '⇽'],
 			set_2: ['↞', '↢', '⇇', '⇐'],
 			set_3: ['⇚','⇚','⇚'],
 			disable: ['↚', '⇍']
@@ -83,20 +83,18 @@ function get_go_value(go) {
 			go_result[i].error = go[i].res_checked.error.reduce((a, b) => a + b, 0) > 0;
 		}		
 	}
-	return go_result
+	return go_result;
 }
 
 function move_block() {
+	fullscreen_alert(document.getElementById('alert_el'),'',true);
 	now_go = get_go_value(go);
 	let m_block = document.getElementById('moving');
 	let t_block = document.getElementById('target');
 	let block = document.getElementById('block');
 
 	let m_pos = m_block.getBoundingClientRect();
-	console.log(m_pos);
 	let t_pos = t_block.getBoundingClientRect();
-	console.log(t_pos);
-
 
 	let x_move = (now_go.right.val - now_go.left.val) * (m_pos.height + m_pos.height/20);
 	let y_move = (now_go.bottom.val - now_go.top.val) * (m_pos.height + m_pos.height/20);
@@ -109,9 +107,12 @@ function move_block() {
 	block.style.width = m_pos.width + 'px';
 	block.style.background = '#f14a52';
 	block.style.visibility = 'visible';
-	block.style.transitionDuration = '3s';
+	setTimeout( () => {
+		block.style.transitionDuration = '3s';
+	}, 100)
 
-	if ( Math.abs( (m_pos.x + x_move) - t_pos.x) < m_pos.height/2 && Math.abs( (m_pos.y + y_move) - t_pos.y) < m_pos.height/2) {
+
+	if ( Math.abs( (m_pos.x + x_move) - t_pos.x) < m_pos.height/2 && Math.abs( (m_pos.y + y_move) - t_pos.y) < m_pos.height/2 && now_go.all.error == false) {
 		setTimeout( () => {
 			block.style.left = t_pos.x +'px';
 			block.style.top = t_pos.y +'px';
@@ -124,7 +125,8 @@ function move_block() {
 			block.style.transitionDuration = '0s';
 			block.style.visibility = 'hidden';
 			next();
-		},30000)
+			fullscreen_alert(document.getElementById('alert_el'),'',false);
+		},35000)
 	} else {
 		setTimeout( () => {
 			block.innerHTML = 'YOU LOSE';
@@ -136,26 +138,29 @@ function move_block() {
 			block.style.transitionDuration = '0s';
 			block.style.visibility = 'hidden';
 			next();
+			fullscreen_alert(document.getElementById('alert_el'),'',false);
 		},5000)
 	}
+}
 
+function fullscreen_alert(bg_el,text,show) {
+	bg_el.innerHTML = ' ' + text;
 
-
-
+	if (show) {
+		bg_el.style.visibility = 'visible';
+	} else {
+		bg_el.style.visibility = 'hidden';
+	}
 }
 
 
 function button_style(el,checked) {
-	audio.pause();
-	audio.currentTime = 0;
-	audio.play();
 	if (checked) {
 		el.style.background = '#f14a52'; //#f14a52  #7ce092
 	} else {
 		el.style.background = 'none'
 	}
 }
-
 
 function next() {
 	let buttons = [];
@@ -167,26 +172,57 @@ function next() {
 			for (k in go[i].res[j]) {
 				go[i].res_checked[j].push(false);
 				let temp_path = `go['`+i+`'].res_checked['`+j+`']['`+k+`']`;
-				buttons.push('<div onclick=" if (allow_click > 0) {'+temp_path+' = !'+temp_path+'; button_style(this,'+temp_path+') }">'+go[i].res[j][k]+'</div>');
+				if (i == 'all' && j == 'error') {
+					buttons.push('<div onclick="next();">'+go[i].res[j][k]+'</div>');
+				} else {
+					buttons.push('<div onclick=" if (allow_click > 0) {'+temp_path+' = !'+temp_path+'; button_style(this,'+temp_path+') }">'+go[i].res[j][k]+'</div>');
+				}
 			}
 		}
 	}
 
 	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) " onclick="move_block();">виконати</div>');
-	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) ">"вам"</div>');
-	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) ">"необхідно"</div>');
-	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) ">"перемістити"</div>');
-	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " id="moving">"блок"</div>');
-	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) ">"до"</div>');
-	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " id="target">"іншого"</div>');
-	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) " onclick="button_style(this, true); ">зсунути (ні)</div>');
+	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="next();">"вам"</div>');
+	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) " onclick="next();">"необхідно"</div>');
+	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) " onclick="next();">"перемістити"</div>');
+
+	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="next();" id="moving">"блок"</div>');
+
+	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) " onclick="next();">"до"</div>');
+
+	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="next();" id="target">"іншого"</div>');
+
+	buttons.push('<div style="width: calc((4vh * 3) + (0.1vh * 4)) " onclick="next();" >зсунути (ні)</div>');
 	buttons.push('<div style="width: calc((4vh * 6) + (0.1vh * 10)) " id="next_click" onclick="button_style(this, true); allow_click = 2;">&#160;виконати&#160;&#160;&#160;| натискання</div>');
-	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) " onclick="button_style(this, true); ">ні</div>');
-	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="button_style(this, true); ">нічого</div>');
-	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) " onclick="button_style(this, true); ">так</div>');
-	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="button_style(this, true); win.play(); ">злитися</div>');
+	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) " onclick="next();" >ні</div>');
+	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="next();" >нічого</div>');
+	buttons.push('<div style="width: calc((4vh * 1) + (0.1vh * 0)) " onclick="next();" >так</div>');
+	buttons.push('<div style="width: calc((4vh * 2) + (0.1vh * 2)) " onclick="next();" >злитися</div>');
+	buttons.push('<div style="width: calc((4vh * 4) + (0.1vh * 8)) " onclick="next();" >натисни мене</div>');
 
 	buttons = shake_arr(buttons);
+
+	buttons.push('<div id="description_text" onclick="next();">тут є різні стрілки з різним переміщенням (0,1,2,3) також є помилкові стрілки</div>');
+	buttons.push('<div id="description_text" onclick="next();">стрілки що призведуть до помилки (доведеться робити все заново): ↩, ↪, ↶, ↺, ↻, ↷, ↫, ↬, ↼, ↽, ⇀, ⇁, ↿, ⇃, ↾, ⇂, ⇋, ⇌, ⇪, ⇬, ⇭</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вверх на один: ↑, ⇡, ⇧</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вверх на два: ↟, ⇈, ⇑, ⇮ </div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вниз на один: ↓, ↯, ⇣, ⇩</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вниз на два: ↡, ⇊, ⇓</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вправо на один: ↝, →, ⇝, ⇢, ⇨, ⇸, ⇾</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вправо на два: ↠, ↣, ⇉, ⇒, ⇻</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вправо на три: ⇛,⇶</div>');
+	buttons.push('<div id="description_text" onclick="next();">вимкнути крок вправо: ↛, ⇏, ⇴</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вліво на один: ←, ↜, ⇜, ⇦, ⇷, ⇺, ⇽</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вліво на два: ↞, ↢, ⇇, ⇐</div>');
+	buttons.push('<div id="description_text" onclick="next();">крок вліво на три: ⇚</div>');
+	buttons.push('<div id="description_text" onclick="next();">вимкнути крок вліво: ↚, ⇍</div>');
+	buttons.push('<div id="description_text" onclick="next();">вимкнути переміщення: ↮, ⇎</div>');
+	buttons.push('<div id="description_text" onclick="next();">переміщення на нуль: ↔, ↕, ↭, ↹, ⇄, ⇅, ⇆, ⇔, ⇕, ⇳, ⇵, ⇹, ⇼, ⇿</div>');
+	buttons.push('<div id="description_text" onclick="next();">для того щоб використовувати дію натискання шукайте відповіну кнопку</div>');
+	buttons.push('<div id="description_text" onclick="next();">для того щоб виконати обране шукайте відповіну кнопку</div>');
+	buttons.push('<div id="description_text" onclick="next();">інші кнопки помилкові не натискайте їх</div>');
+
+	// console.log(buttons)
 
 	let temp_str = '';
 
@@ -194,14 +230,18 @@ function next() {
 		temp_str += i;
 	}
 
-	document.getElementById('buttons').innerHTML = '';
-	document.getElementById('buttons').innerHTML += temp_str;
+	// console.log(temp_str)
+	// document.getElementById('buttons').innerHTML = '';
+	document.getElementById('buttons').innerHTML = temp_str;
 }
 
 let allow_click = 0;
 next();
 
-document.onclick = function() {
+document.getElementById('buttons').onclick = function() {
+	audio.pause();
+	audio.currentTime = 0;
+	audio.play();
 	allow_click -= 1;
 	if (allow_click != 1) {
 		button_style(document.getElementById('next_click'),false);
