@@ -118,7 +118,7 @@ function move_block() {
 			block.style.top = t_pos.y +'px';
 		}, 1000)
 		block.innerHTML = 'YOU WIN';
-		console.log('You win')
+		console.log('YOU WIN')
 		win.play();
 
 		setTimeout( () => {
@@ -130,6 +130,7 @@ function move_block() {
 	} else {
 		setTimeout( () => {
 			block.innerHTML = 'YOU LOSE';
+			console.log('YOU LOSE')
 			block.style.left = m_pos.x + x_move + 'px';
 			block.style.top = m_pos.y + y_move + 'px';
 		}, 1000)
@@ -202,6 +203,32 @@ function next() {
 
 	buttons = shake_arr(buttons);
 
+	buttons.push('<div id="description_text" onclick="next();">мета: виграти</div>');
+	buttons.push('<div id="description_text" onclick="next();">якщо все ще но зрозуміли що тут робити то читайте далі</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
 	buttons.push('<div id="description_text" onclick="next();">тут є різні стрілки з різним переміщенням (0,1,2,3) також є помилкові стрілки</div>');
 	buttons.push('<div id="description_text" onclick="next();">стрілки що призведуть до помилки (доведеться робити все заново): ↩, ↪, ↶, ↺, ↻, ↷, ↫, ↬, ↼, ↽, ⇀, ⇁, ↿, ⇃, ↾, ⇂, ⇋, ⇌, ⇪, ⇬, ⇭</div>');
 	buttons.push('<div id="description_text" onclick="next();">крок вверх на один: ↑, ⇡, ⇧</div>');
@@ -221,6 +248,43 @@ function next() {
 	buttons.push('<div id="description_text" onclick="next();">для того щоб використовувати дію натискання шукайте відповіну кнопку</div>');
 	buttons.push('<div id="description_text" onclick="next();">для того щоб виконати обране шукайте відповіну кнопку</div>');
 	buttons.push('<div id="description_text" onclick="next();">інші кнопки помилкові не натискайте їх</div>');
+	buttons.push('<div id="description_text" onclick="next();">якщо все ще но зрозуміли що тут робити то читайте далі</div>');
+	buttons.push('<div id="description_text" onclick="next();">підказка 1 : спробуйте скласти речення з слів в подвійних лапках які знаходяться на початку сторінки</div>');
+	buttons.push('<div id="description_text" onclick="next();">якщо все ще но зрозуміли що тут робити то читайте далі</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">ще нижче</div>');
+	buttons.push('<div id="description_text" onclick="next();">вам просто треба виграти і для цього виконуйте наступні дії</div>');
+	buttons.push('<div id="description_text" onclick="next();">1. знайдіть "блок" і "іншого" серед стрілок згори</div>');
+	buttons.push('<div id="description_text" onclick="next();">2. порахуйте на скільки блоків необхідно зсунути "блок" щоб він повністю наклався на "іншого"</div>');
+	buttons.push('<div id="description_text" onclick="next();">маю надію з пунктом 2 ви впорались тоді переходимо до запису дій які виконає "блок"</div>');
+	buttons.push('<div id="description_text" onclick="next();">3. натисніть " виконати | натискання "</div>');
+	buttons.push('<div id="description_text" onclick="next();">4. оберіть стрілку напрям і клькість кроків якої буде вам підходити для часткового або повного виконання виконання даних з пункту 2</div>');
+	buttons.push('<div id="description_text" onclick="next();">5. повторіть пункти 3 і 4 поки не виберете всі необхідні стрілки для такого самого зміщення яке ви розрахували в пункті 2 </div>');
+	buttons.push('<div id="description_text" onclick="next();">примітка списки стрілок і відповідних їм кроків наведені вище</div>');
+	buttons.push('<div id="description_text" onclick="next();">6. натисніть на "виконати"</div>');
+
 
 	// console.log(buttons)
 
