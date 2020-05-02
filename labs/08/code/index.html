@@ -5,8 +5,20 @@
 	<title>lab_08</title>
 	<script src="node_modules/rxjs/bundles/rxjs.umd.min.js"></script>
 	<style type="text/css">
+		@import url(../../../for_menu/global.css);
+
+		body {
+			font-family: blogger;
+			font-size: 2.5vh;
+			background: #dce3e6;
+		}
+
 		table {
 			border-collapse: collapse;
+		}
+
+		tr:hover {
+			background: #eee;
 		}
 
 		td, th {
@@ -19,11 +31,26 @@
 		}
 	</style>
 </head>
-<body>
+<body class="body-classic flex-center">
 	
 
 	<script type="text/javascript">
-		const key = prompt("Введіть ключ, ви повинні його знати");
+		function save_val(id,val) {
+			localStorage.setItem(id, val);
+		}
+
+		function get_val(id,val_if_no_val) {
+			if (!localStorage.getItem(id)) {
+				return val_if_no_val;
+			}
+			return localStorage.getItem(id);
+		}
+
+		let key = get_val('key','none');
+		if (key === 'none') {
+			key = prompt("Введіть ключ, ви повинні його знати");
+		}
+		save_val('key',key);
 
 		const getAll = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=symbol,companyName,latestPrice&token=' + key;
 		const Update = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=latestPrice&token=' + key;
@@ -43,9 +70,9 @@
 			let nextUpdate = dce('span');
 			nextUpdate.id = 'timeToNextUpdate';
 
-			caption.innerHTML += 'Дані по позиціях на біржі <br>(наступне оновлення через: ';
+			caption.innerHTML += 'Дані по позиціях на біржі <br>(минуле оновлення було: ';
 			caption.appendChild(nextUpdate);
-			caption.innerHTML += 'c)';
+			caption.innerHTML += 'c назад)';
 
 			table.appendChild(caption);
 			
@@ -81,12 +108,12 @@
 
 		xtr.open('GET',getAll);
 
-			xtr.onreadystatechange = function() {
-				if (xtr.readyState === 4 && xtr.status === 200) {
-					printTable(document.getElementsByTagName('body')[0] ,JSON.parse(xtr.responseText));
-					time_update = Date.now();
-				}
+		xtr.onreadystatechange = function() {
+			if (xtr.readyState === 4 && xtr.status === 200) {
+				printTable(document.getElementsByTagName('body')[0] ,JSON.parse(xtr.responseText));
+				time_update = Date.now();
 			}
+		}
 
 		xtr.send('');
 
@@ -119,7 +146,7 @@
 		let timeToNextUpdate$ = rxjs.interval(100)
 		.subscribe( () => {
 			if (time_update!=0) {
-				document.getElementById('timeToNextUpdate').textContent = Math.round(200 - (Date.now() - time_update) / 100 ) / 10;
+				document.getElementById('timeToNextUpdate').textContent = Math.round((Date.now() - time_update) / 100 ) / 10;
 			}
 		});
 		
