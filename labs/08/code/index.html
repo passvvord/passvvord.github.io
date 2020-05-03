@@ -29,6 +29,10 @@
 		#latestPrice:before {
 			content: '$ ';
 		}
+
+		#latestUpdate:after {
+			content: 'c';
+		}
 	</style>
 </head>
 <body class="body-classic flex-center">
@@ -52,8 +56,8 @@
 		}
 		save_val('key',key);
 
-		const getAll = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=symbol,companyName,latestPrice&token=' + key;
-		const Update = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=latestPrice&token=' + key;
+		const getAll = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AAPl,AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=symbol,companyName,latestPrice,latestUpdate&token=' + key;
+		const Update = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AAPl,AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=latestPrice,latestUpdate&token=' + key;
 
 		let time_update = 0;
 
@@ -112,7 +116,7 @@
 
 		xtr.onreadystatechange = function() {
 			if (xtr.readyState === 4 && xtr.status === 200) {
-				printTable(document.getElementsByTagName('body')[0] ,JSON.parse(xtr.responseText));
+				printTable(document.getElementsByTagName('body')[0] ,calclatestUpdate(JSON.parse(xtr.responseText)));
 				time_update = Date.now();
 				key_is_normal = true;
 			}
@@ -143,13 +147,21 @@
 			}
 		}
 
+		function calclatestUpdate(data) {
+			let temp = Date.now();
+			for (i in data) {
+				data[i].quote.latestUpdate = Math.round((data[i].quote.latestUpdate - temp)/10)/100;
+			}
+			return data;
+		}
+
 		let interval$ = rxjs.interval(20000)
 		.subscribe( () => {
 			xtr.open('GET',Update);
 
 			xtr.onreadystatechange = function() {
 				if (xtr.readyState === 4 && xtr.status === 200) {
-					updateTable(document.getElementsByTagName('body')[0] ,JSON.parse(xtr.responseText));
+					updateTable(document.getElementsByTagName('body')[0] ,calclatestUpdate(JSON.parse(xtr.responseText)));
 					time_update = Date.now();
 				}
 			}
