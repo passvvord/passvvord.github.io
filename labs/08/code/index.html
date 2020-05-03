@@ -119,13 +119,19 @@
 		}
 
 		xtr.send('');
+
+		setTimeout(() => {
+			if (!key_is_normal) {
+				document.body.innerHTML = '<font color="#f00">погане зєднання або хибний ключ</font>';
+			}
+		},5000)
 		
 		setTimeout(() => {
 			if (!key_is_normal) {
 				save_val('key','none');
 				document.location.replace("index.html");
 			}
-		},5000)
+		},15000)
 			
 		//=======================================================================
 
