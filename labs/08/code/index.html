@@ -47,7 +47,7 @@
 		}
 
 		let key = get_val('key','none');
-		if (key === 'none') {
+		if (key == 'none' || key == 'null') {
 			key = prompt("Введіть ключ, ви повинні його знати");
 		}
 		save_val('key',key);
@@ -106,17 +106,27 @@
 
 		let xtr = new XMLHttpRequest();
 
+		let key_is_normal = false;
+
 		xtr.open('GET',getAll);
 
 		xtr.onreadystatechange = function() {
 			if (xtr.readyState === 4 && xtr.status === 200) {
 				printTable(document.getElementsByTagName('body')[0] ,JSON.parse(xtr.responseText));
 				time_update = Date.now();
+				key_is_normal = true;
 			}
 		}
 
 		xtr.send('');
-
+		
+		setTimeout(() => {
+			if (!key_is_normal) {
+				save_val('key','none');
+				document.location.replace("index.html");
+			}
+		},5000)
+			
 		//=======================================================================
 
 		function updateTable(element,data) {
@@ -149,6 +159,8 @@
 				document.getElementById('timeToNextUpdate').textContent = Math.round((Date.now() - time_update) / 100 ) / 10;
 			}
 		});
+
+
 		
 	</script>
 </body>
