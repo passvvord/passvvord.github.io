@@ -56,8 +56,8 @@
 		}
 		save_val('key',key);
 
-		const getAll = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AAPl,AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=symbol,companyName,latestPrice,latestUpdate&token=' + key;
-		const Update = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AAPl,AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=latestPrice,latestUpdate&token=' + key;
+		const getAll = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=symbol,companyName,latestPrice,latestUpdate&token=' + key;
+		const Update = 'https://cloud.iexapis.com/v1/stock/market/batch?symbols=AMZN,ADBE,TSLA,TMUS,QCOM,NFLX,MSFT,INTC&types=quote&filter=latestPrice,latestUpdate&token=' + key;
 
 		let time_update = 0;
 
