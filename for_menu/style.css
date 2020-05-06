@@ -14,6 +14,16 @@
 	--lab_box_content_c: #FF7042;
 	--lab_box_bg_c: #1a1a1a;
 	--bg_c: #303030;
+
+	--bg-border-color: #252525;
+
+	--scrollbar-border-color: var(--bg-border-color);
+	--scrollbar-bg-color: var(--scrollbar-border-color);
+	--scrollbar-thumb-color: var(--lab_box_content_c);
+}
+
+::-webkit-scrollbar-thumb {
+	box-shadow: 0 0 4vh 4vh #ff7046;
 }
 
 body {

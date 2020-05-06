@@ -193,11 +193,24 @@
 	src: url(font/lato/Lato-ThinItalic.ttf);
 }
 
-
-
-
 :root {
+	--scrollbar-border-color: #000;
+	--scrollbar-bg-color: transparent;
+	--scrollbar-thumb-color: #000;
+}
 
+::-webkit-scrollbar {
+    width: 1vh;
+    height: 1vh;
+}
+
+::-webkit-scrollbar-track {
+	background: var(--scrollbar-bg-color);
+    box-shadow: inset 0 0 0 0.2vh var(--scrollbar-border-color); 
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-color);
 }
 
 html {
