@@ -31,7 +31,7 @@
 		}
 
 		#latestUpdate:after {
-			content: 'c';
+			content: 'c назад';
 		}
 	</style>
 </head>
@@ -150,7 +150,7 @@
 		function calclatestUpdate(data) {
 			let temp = Date.now();
 			for (i in data) {
-				data[i].quote.latestUpdate = Math.round((data[i].quote.latestUpdate - temp)/10)/100;
+				data[i].quote.latestUpdate = Math.round((temp - data[i].quote.latestUpdate)/10)/100;
 			}
 			return data;
 		}
