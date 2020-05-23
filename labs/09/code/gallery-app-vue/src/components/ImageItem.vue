@@ -1,8 +1,13 @@
 <template>
-    <div id="ImageItem">
-        <img id="img" v-bind:src="image.src">
+    <div class="ImageItem" v-bind:class="{fullscreen: image.fullscreen}">
+        <img id="img" 
+        	v-bind:src="image.src" 
+        	v-on:click="image.fullscreen = !image.fullscreen"
+        	
+        >
         <div id="del" v-on:click="$emit('delete-image', image.id)">⨉</div>
     </div>
+    <!-- v-on:click="$emit('open-image', image.id)" -->
 </template>
 
 <script>
@@ -17,7 +22,7 @@ export default {
 </script>
 
 <style scoped>
-#ImageItem {
+.ImageItem {
     width: 20vh;
     height: 20vh;
     margin: 1vh;
@@ -28,12 +33,7 @@ export default {
     justify-content: center;
     box-shadow: 0 0 0 0.2vh #fff;
     overflow: hidden;
-}
-
-img {
-    height: 20vh;
-    width: 20vh;
-    object-fit: cover;
+    transition-duration: 0.2s;
 }
 
 #del {
@@ -53,8 +53,36 @@ img {
     user-select: none;
 }
 
-#ImageItem:hover>#del,
-#del:hover {
+.ImageItem:hover>#del, #del:hover {
     visibility: visible;
 }
+
+.fullscreen:hover>#del {
+    visibility: hidden;
+}
+
+.fullscreen {
+	position: fixed;
+	top: 0;
+	width: 100vw;
+    height: 100vh;
+    margin: 0;
+    border-radius: 0vh;
+	background: rgba(0, 0, 0, 0.75);
+	box-shadow: none;
+}
+
+img {
+    height: 20vh;
+    width: 20vh;
+    object-fit: cover;
+    /*transition-duration: 0.2s;*/
+}
+
+.fullscreen > img {
+	height: 100vh;
+    width: 100vw;
+    object-fit: contain;
+}
+
 </style>

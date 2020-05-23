@@ -24,7 +24,7 @@ export default {
                     const newImage = {
                     	id: Date.now(),
                     	src: event.target.result,
-                    	status: 0
+                    	fullscreen: false
                     }
 
                     this.$emit('add-image',newImage);
