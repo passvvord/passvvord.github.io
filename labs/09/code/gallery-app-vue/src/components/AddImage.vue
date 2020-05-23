@@ -1,6 +1,12 @@
 <template>
     <div id="AddImage">
-        <input type="file" id="addImage" v-on:change="AddImage()" ref="file" multiple accept="image/*">
+        <input 
+        	type="file" 
+        	id="addImage" 
+        	v-on:change="AddImage()" 
+        	ref="file" 
+        	multiple accept="image/*"
+        >
     </div>
 </template>
 
@@ -14,20 +20,42 @@ export default {
         },
 
         AddImage(data) {
-            //console.log('submit ');
             if (window.FileList && window.File && window.FileReader) {
                 const file = this.$refs.file.files[0];
+                const fileS = this.$refs.file.style
+
+                if (!file.type || !file.type.match('image.*')) {
+                	fileS.transitionDuration = '0.1s';
+                	fileS.background = '#f00';
+                	setTimeout( () => {
+						fileS.transitionDuration = '1s';
+                		fileS.background = 'transparent';
+                	},200);
+                	
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.addEventListener('load', event => {
-                    //console.log(event.target.result);
 
                     const newImage = {
-                    	id: Date.now(),
-                    	src: event.target.result,
-                    	fullscreen: false
+                        id: Date.now(),
+                        src: event.target.result,
+                        fullscreen: false,
+                        prev: false,
+                        next: false
                     }
 
-                    this.$emit('add-image',newImage);
+					fileS.transitionDuration = '0.1s';
+                	fileS.background = '#0f0';
+                	setTimeout( () => {
+						fileS.transitionDuration = '1s';
+                		fileS.background = 'transparent';
+                	},200);
+
+                    this.$emit('add-image', newImage);
+
+
 
                 });
                 reader.readAsDataURL(file);

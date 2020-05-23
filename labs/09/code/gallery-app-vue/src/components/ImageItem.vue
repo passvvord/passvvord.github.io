@@ -1,13 +1,14 @@
 <template>
-    <div class="ImageItem" v-bind:class="{fullscreen: image.fullscreen}">
+    <div 
+		class="ImageItem" 
+		v-bind:class="{fullscreen: image.fullscreen, prev: image.prev, next: image.next}"
+	>
         <img id="img" 
         	v-bind:src="image.src" 
-        	v-on:click="image.fullscreen = !image.fullscreen"
-        	
+        	v-on:click="$emit('open-image', image.id)"
         >
         <div id="del" v-on:click="$emit('delete-image', image.id)">⨉</div>
     </div>
-    <!-- v-on:click="$emit('open-image', image.id)" -->
 </template>
 
 <script>
@@ -31,9 +32,16 @@ export default {
     align-content: center;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 0 0.2vh #fff;
+    box-shadow: 0 0 0 0.2vh rgba(255,255,255,0.75);
     overflow: hidden;
-    transition-duration: 0.2s;
+    user-select: none;
+}
+
+img {
+    height: 20vh;
+    width: 20vh;
+    object-fit: cover;
+    transition-duration: 0.5s;
 }
 
 #del {
@@ -50,16 +58,14 @@ export default {
     margin-left: 9.5vh;
     visibility: hidden;
     cursor: pointer;
-    user-select: none;
+
 }
 
 .ImageItem:hover>#del, #del:hover {
     visibility: visible;
 }
 
-.fullscreen:hover>#del {
-    visibility: hidden;
-}
+
 
 .fullscreen {
 	position: fixed;
@@ -70,13 +76,7 @@ export default {
     border-radius: 0vh;
 	background: rgba(0, 0, 0, 0.75);
 	box-shadow: none;
-}
-
-img {
-    height: 20vh;
-    width: 20vh;
-    object-fit: cover;
-    /*transition-duration: 0.2s;*/
+	z-index: 100;
 }
 
 .fullscreen > img {
@@ -84,5 +84,27 @@ img {
     width: 100vw;
     object-fit: contain;
 }
+
+.fullscreen:hover > #del, .prev:hover > #del, .next:hover > #del {
+    visibility: hidden;
+}
+
+.prev , .next {
+	z-index: 101;
+	position: fixed;
+	opacity: 0.25;
+	top: 40vh;
+	transition-duration: 0.5s;
+}
+
+.prev {left: -5vh;}
+.next {right: -5vh;}
+
+.prev:hover, .next:hover {
+	opacity: 1;
+}
+
+.prev:hover {left: -2vh;}
+.next:hover {right: -2vh;}
 
 </style>

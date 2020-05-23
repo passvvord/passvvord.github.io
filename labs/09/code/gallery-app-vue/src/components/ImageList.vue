@@ -4,10 +4,9 @@
         	v-for="image of images" 
         	v-bind:image="image"
         	v-on:delete-image="deleteImage"
-      
+        	v-on:open-image="openImage"      
         />
     </div>
-   <!--  v:on:open-image="openImage" -->
 </template>
 
 <script>
@@ -21,9 +20,9 @@ export default {
     	deleteImage(id) {
     		this.$emit('delete-image',id);
     	},
-    	// openImage(id) {
-    	// 	this.$emit('open-image',id);
-    	// }
+    	openImage(id) {
+    		this.$emit('open-image',id);
+    	}
     }
 }
 </script>
