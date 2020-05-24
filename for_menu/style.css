@@ -141,7 +141,7 @@ div > a > .img_box {
 .bg23 > a > .lab_num:after,
 .bg08 > a > .lab_num:after,
 .bg09 > a > .lab_num:after,
-.bg07 > a > .lab_num:after,
+.bg10 > a > .lab_num:after,
 .bg13 > a > .lab_num:after,
 .bg25 > a > .lab_num:after,
 .bg27 > a > .lab_num:after,
@@ -217,7 +217,7 @@ body > .all-content > .flex_div > div > a > .img_box {
 .bg29 > a > .img_box {	background: url(imgs/29.png); }
 
 
- .flex_div > .bg10, .flex_div > .bg14 {
+.flex_div > .bg14 {
 	height: 0;
 	visibility: hidden;
 }
