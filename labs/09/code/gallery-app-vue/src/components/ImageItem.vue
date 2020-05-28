@@ -65,8 +65,6 @@ img {
     visibility: visible;
 }
 
-
-
 .fullscreen {
 	position: fixed;
 	top: 0;
@@ -94,8 +92,14 @@ img {
 	position: fixed;
 	opacity: 0.25;
 	top: 40vh;
+    animation: openImage 0.5s linear 1;
 	transition-duration: 0.5s;
 }
+
+/*.prev > img , .next > img {
+    animation: openImage2 0.5s linear 1;
+}*/
+
 
 .prev {left: -5vh;}
 .next {right: -5vh;}
@@ -104,7 +108,15 @@ img {
 	opacity: 1;
 }
 
+/*.prev:hover > img, .next:hover > img {
+    animation: none;
+}*/
+
 .prev:hover {left: -2vh;}
 .next:hover {right: -2vh;}
+
+@keyframes openImage {
+    0%,100%   {z-index: 101}
+}
 
 </style>
