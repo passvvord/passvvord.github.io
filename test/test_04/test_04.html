@@ -2,64 +2,128 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Button</title>
-	<link rel="stylesheet" href="style.css">
-	
+<!-- 	<meta name="viewport" content="width=device-width, initial-scale=1.0" -->
+	<title>Document</title>
+	<style type="text/css">
+		html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#bg1 {
+  background: black;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  filter: blur(20px) contrast(100);
+  
+  background: black;
+}
+	</style>
 </head>
 <body>
-	
-	<div class="input-box">
-		<div class="input-name">Нікнейм</div>
-		<input type="text" maxlength="20" onchange="username = this.value">
-		<div class="comment">
-			введіть до 20 символів<br>
-			якщо такого імені не існує то буде ствоений новий акаунт
-		</div>
-		<br>
-		<div class="input-name">Пароль</div>
-		<input type="text" maxlength="10" onchange="password = this.value">
-		<div class="comment">
-			введіть до 10 символів
-		</div>
-		<input type="button" value="Створити акаунт / Вхід" id="user-data">
-	</div>
-	
-	<br>
+	<div id='bg1'><canvas id="canvas"></div>
 
-	<div id="click_counter">
+		<script type="text/javascript">
+      // Це не моє (лише перероблене мною) але красиво
 		
-	</div>
+var ctx = canvas.getContext('2d');
 
-	<div id="the_button">
-		button
-	</div>
+var settings = {
+  lineLength: 50,
+  speed: 2,
+  lifeTime: 1000,
+  maxParticles: 50,
+  radius: 15,
+};
 
-	<!-- The core Firebase JS SDK is always required and must be listed first -->
-	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-database.js"></script>
+function onResize() {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+}
+function rotate(vec, angle) {
+  angle = angle * Math.PI / 180;
+  return [(vec[0] * Math.cos(angle)) - (vec[1] * Math.sin(angle)), (vec[0] * Math.sin(angle)) + (vec[1] * Math.cos(angle))];
+}
+var dirVecs = [
+  [1, 0],
+  rotate([1, 0], 120),
+  rotate([1, 0], 240)
+];
+var particles = [];
 
-	<!-- TODO: Add SDKs for Firebase products that you want to use
-	     https://firebase.google.com/docs/web/setup#available-libraries -->
-	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-analytics.js"></script>
+function particle() {
+  this.x = 0;
+  this.y = 0;
+  this.age = 0;
+  this.dir = dirVecs[Math.floor(Math.random() * 3)];
+  this.color = 'hsl(' + ((Date.now() / 100.0) % 360.0) + ', 90%, light%)';
+}
+particle.prototype.updateAndDraw = function() {
+  this.age += 1;
+  if (this.age % settings.lineLength == 0) {
+    var dir1 = rotate(this.dir, 120);
+    var dir2 = rotate(this.dir, -60);
+    var options = [];
+    options = [dir1, dir2];
+    this.dir = options[Math.floor(Math.random() * options.length)];
+  }
+  ctx.fillStyle = this.color.replace('light', '70');
+  ctx.beginPath();
+  ctx.arc(width/2.0 + this.x, height/2.0 + this.y, settings.radius, 0, 6.3);
+  
+  ctx.shadowBlur = settings.radius * 6;
+  ctx.shadowColor = this.color.replace('light', '30');
+  ctx.fill();
+  this.x += this.dir[0] * settings.speed;
+  this.y += this.dir[1] * settings.speed;
+}
 
-	<script>
-	  // Your web app's Firebase configuration
-	  var firebaseConfig = {
-	    apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
-	    authDomain: "aai-database-01.firebaseapp.com",
-	    databaseURL: "https://aai-database-01.firebaseio.com",
-	    projectId: "aai-database-01",
-	    storageBucket: "aai-database-01.appspot.com",
-	    messagingSenderId: "81794330347",
-	    appId: "1:81794330347:web:36a965d9973f836c2458ae",
-	    measurementId: "G-EMTZ00K0W9"
-	  };
-	  // Initialize Firebase
-	  firebase.initializeApp(firebaseConfig);
-	  firebase.analytics();
+function updateAndDraw() {
+  ctx.shadowBlur = 0;
+  ctx.globalCompositeOperation = 'source-over';
+  
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+  ctx.fillRect(0, 0, width, height);
+  ctx.globalCompositeOperation = 'lighter';
+  
+  for (var i = particles.length - 1; i >= 0; i--) {
+    particles[i].updateAndDraw();
+    if (particles[i].age > settings.lifeTime) {
+      particles.splice(i, 1);
+    }
+  }
+  if (particles.length < settings.maxParticles) {
+    if (Math.random() > 0.9) {
+      particles.push(new particle());
+    }
+  } else if (particles.length > settings.maxParticles) {
+    particles.splice(0, settings.maxParticles);
+  }
+  requestAnimationFrame(updateAndDraw);
+}
+
+function init() {
+  onResize();
+  window.onresize = onResize;
+  updateAndDraw();
+  var gui = new dat.GUI();
+  gui.add(settings, 'lifeTime', 50, 3000);
+  gui.add(settings, 'maxParticles', 1, 200);
+  gui.add(settings, 'radius', 0.5, 6);
+  gui.add(settings, 'avoidVisited');
+  gui.add(settings, 'clearTrails');
+  gui.add(settings, 'restart');
+}
+
+init();
 	</script>
-
-	<script type="text/javascript" src="script.js"></script>
-
 </body>
 </html>
