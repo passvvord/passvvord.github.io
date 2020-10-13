@@ -138,7 +138,7 @@ div > a > .img_box {
 	filter: opacity(70%);
 }
 
-.bg23 > a > .lab_num:after,
+/*.bg23 > a > .lab_num:after,
 .bg08 > a > .lab_num:after,
 .bg09 > a > .lab_num:after,
 .bg10 > a > .lab_num:after,
@@ -156,7 +156,7 @@ div > a > .img_box {
 	border-radius: 1vh;
 	font-size: 2vh;
 	font-family: roboto;
-}
+}*/
 
 .bg11 > a > .img_box,
 .bg12 > a > .img_box,
