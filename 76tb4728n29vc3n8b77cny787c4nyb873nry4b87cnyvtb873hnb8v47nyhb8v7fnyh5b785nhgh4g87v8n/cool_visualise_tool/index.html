@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://threejs.org/build/three.js"></script>
+    <script src="script.js" defer></script>
+    <script src="preloader2.js"></script>  
+    <script src="dicom-reader.js" defer></script>
+        <script src="libs/jszip.min.js"></script>
+    <script src="libs/daikon.min.js"></script>
+    <title>Document</title>
+    <style>
+
+        	body { margin: 0; overflow: hidden;}
+			
+			canvas { width: 100%; height: 100% }
+			
+			div {
+				position: fixed; 
+			}
+
+			#text {
+				margin: 2em;
+			}
+		</style>
+</head>
+
+<body>
+    <div>
+    	<input id="zip-input" type="file" onChange="initView()">
+<!--         <span>Мінімум</span>
+        <input id="min_val" type="number" size="3" min="0" max="10">
+        <span>Максимум</span>
+        <input id="max_val" type="number" size="3" min="0" max="10"> -->
+    </div>
+<!--     <div id="text">відкрийте файл</div> -->
+
+</body>
+
+</html>
