@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	
+	<script type="text/javascript" src="libs/daikon.min.js"></script>
+	<script type="text/javascript" src="libs/gpu.min.js"></script>
+
+	<link href="style/style.css" rel="stylesheet">
+	<link href="style/global.css" rel="stylesheet">
+	<script type="text/javascript" src="js/toolsControl.js" defer></script>
+
+	<title>...</title>
+
+</head>
+<body>
+	<div id="zone3d">
+		<div id="block3d"></div>
+	</div>
+	
+	<div id="toolBlock">
+
+		<div id="openFile" class="tool">
+			<div class="toolHead">
+				<div>Open File</div>
+				<div class="hideTool">▲</div><!-- △▽ -->
+			</div>
+			<div class="toolBody">
+				<div id="qual_perf">
+					<div id="qual_perfText">quality/performance <br>(chose before opening the file)</div>
+					<img src="icons/quality2.svg" id="qualityIcon">
+					<!-- <div> -->
+						<input type="range" min="1" max="3" value="1" step="1">
+					<!-- </div> -->
+					<img src="icons/performance2.svg" id="performanceIcon">
+				</div>
+				
+				<br>
+				<div class="openFileLine">
+					<img src="icons/file.png">
+					<div>
+						<input type="file" id="oneDicomFile" style="--content: &quot;open one DICOM |&quot;;">
+					</div>
+				</div>
+				<br>
+				<div class="openFileLine">
+					<img src="icons/files.png">
+					<div>
+						<input type="file" id="manyDicomFiles" multiple style="--content: &quot;open many DICOM |&quot;;">
+					</div>
+				</div>
+				<br>
+				<div class="openFileLine">
+					<img src="icons/zip.png">
+					<div>
+						<input type="file" id="manyDicomFilesInZip" style="--content: &quot;open many DICOM in zip |&quot;;">
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+		<div id="fileInfo" class="tool">
+			<div class="toolHead">
+				<div>File info</div>
+				<div class="hideTool">▲</div>
+			</div>
+			<div class="toolBody">
+				<div>Open file and u will see info</div>
+			</div>
+		</div>
+	
+	</div>
+
+	<div id="box3d">
+		<div id="box3dfront">Z-</div>
+		<div id="box3dleft">X-</div>
+		<div id="box3dright">X+</div>
+		<div id="box3dback">Z+</div>
+		<div id="box3dtop">Y+</div>
+		<div id="box3dbottom">Y-</div>
+	</div>
+
+<script type="text/javascript">
+
+const dicomfile = document.getElementById('oneDicomFile');
+// let series = new daikon.Series();
+
+dicomfile.addEventListener('change', c => {
+    window.fileList = c.target.files;
+    window.fileList[0].arrayBuffer().then(f=>{
+    	window.image = daikon.Series.parseImage(new DataView(f))
+		console.log(image.hasPixelData(),image)
+		window.imagePx = new Int16Array(image.getInterpretedData())
+		console.log(window.imagePx)
+		console.log('min:',window.imagePx.reduce((a,b)=>(b<a?b:a)),
+			'max:',window.imagePx.reduce((a,b)=>(b>a?b:a)) )
+		console.log('x:',image.getCols(),'y:',image.getRows(),'z:',window.imagePx.length/image.getCols()/image.getRows());
+
+		const X = image.getCols();
+		const Y = image.getRows();
+		const Z = Math.floor(window.imagePx.length/X/Y);
+		const min = window.imagePx.reduce((a,b)=>(b<a?b:a));
+		const max = window.imagePx.reduce((a,b)=>(b>a?b:a));
+		const mmdelta = max-min;
+
+		let Zcanv = (x,y,z,X,Y)=>(x+y*X+z*X*Y)
+
+		let canvBlock = document.getElementById("block3d");
+		canvBlock.style.width = `${X}px`;
+		canvBlock.style.height = `${Y}px`;
+
+
+		for (let i = 0; i < 150; i+=1) {
+			for (let j = 0; j < 10; j+=1) {
+				for (let k = 0; k < 50; k+=1) {
+					window.imagePx[i+j*X+k*X*Y] = max;
+				}
+			}
+		}
+
+//                                                            Z X Y
+		function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
+			for (let a = 0; a < A; a+=ago) {
+				let canv = document.createElement('canvas');
+				canv.id = axName+a;
+				canv.className = axName+'layer';
+				canv.width = B;
+				canv.height = C;
+				canv.style.transform = layerTransform(A,a);
+				Block3D.appendChild(canv);
+			}
+		}
+
+		function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,showMin,showMax,nc,ago=1) {
+			let posf;
+			if (axName === 'X') {
+				posf = (x,y,z,X,Y,Z)=>((Z-z)+y*Z+x*Y*Z);
+			} else if (axName === 'Y') {
+				posf = (y,z,x,Y,X,Z)=>(x+(Z-z)*X+y*X*Z);
+			} else if (axName === 'Z') {
+				posf = (z,x,y,Z,X,Y)=>(x+y*X+z*X*Y);
+			}
+			
+			for (let a = 0; a < A; a+=ago) {
+				let ctx = document.getElementById(axName+a).getContext("2d");
+				let pixels = new Uint8ClampedArray(B*C*4);
+				for (let c = 0; c < C; c++) {
+					for (let b = 0; b < B; b++) {
+						const px = (c*B+b)*4;
+						const temp = data[posf(a,b,c,A,B,C)]
+						if (temp >= showMin && temp <= showMax) {
+							// pixels[px+nc] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
+							pixels[px] = pixels[px+1] = pixels[px+2] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
+						}
+					}
+				}
+				ctx.putImageData(new ImageData(pixels,B,C), 0, 0);
+			}
+		}
+
+		let temp = Date.now()
+		
+		initLayer(canvBlock,window.imagePx,'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`,Z,X,Y)
+		upgradeLayer(canvBlock,window.imagePx,'Z',Z,X,Y,min,max-min,1000,3500,0)
+		
+		console.log(Date.now()-temp)
+		temp = Date.now()
+
+		initLayer(canvBlock,window.imagePx,'X',(A,a)=>`rotateY(90deg) translateZ(${Math.floor(A/2-a)}px)`,X,Y,Z)
+		upgradeLayer(canvBlock,window.imagePx,'X',X,Y,Z,min,max-min,1000,3500,1)
+
+		console.log(Date.now()-temp)
+		temp = Date.now()
+
+		initLayer(canvBlock,window.imagePx,'Y',(A,a)=>`rotateX(-90deg) translateZ(${Math.floor(A/2-a)}px)`,Y,Z,X)
+		upgradeLayer(canvBlock,window.imagePx,'Y',Y,Z,X,min,max-min,1000,3500,2)
+
+		console.log(Date.now()-temp)
+		temp = Date.now()
+
+
+
+
+		// for (let z = 0; z < Z; z+=1) {
+		// 	let canv = document.createElement('canvas');
+		// 	canv.id = 'Z'+z;
+		// 	canv.className = 'Zlayer';
+		// 	canv.width = X;
+		// 	canv.height = Y;
+		// 	canv.style.transform = `translateZ(${Math.floor(z-Z/2)}px)`;
+			
+		// 	let ctx = canv.getContext("2d");
+
+		// 	let pixels = new Uint8ClampedArray(X*Y*4);
+		// 	// const t = max - min;
+		// 	for (let y = 0; y < Y; y++) {
+		// 		for (let x = 0; x < X; x++) {
+		// 			const px = (y*X + x)*4;
+		// 			pixels[px] = pixels[px + 1] = pixels[px + 2] = pixels[px + 3] = Math.floor( (window.imagePx[Zcanv(x,y,z,X,Y)]-min)/mmdelta*255 );
+		// 			if (pixels[px] < 100) {
+		// 				pixels[px + 3] = 0				 
+		// 			}
+		// 			//
+		// 			// pixels[px + 3] = 255;
+		// 		}
+		// 	}
+
+		// 	ctx.putImageData(new ImageData(pixels,X,Y), 0, 0);
+
+		// 	canvBlock.appendChild(canv);
+		// }
+
+		
+
+		// for (let x = 0; x < X; x+=1) {
+		// 	let canv = document.createElement('canvas');
+		// 	canv.id = 'X'+x;
+		// 	canv.className = 'Xlayer';
+		// 	canv.width = Y;
+		// 	canv.height = Z;
+		// 	canv.style.transform = `rotateZ(90deg) rotateX(90deg) translateZ(${Math.floor(x-X/2)}px)`;
+			
+		// 	let ctx = canv.getContext("2d");
+
+		// 	let pixels = new Uint8ClampedArray(Y*Z*4);
+		// 	// const t = max - min;
+		// 	for (let z = 0; z < Z; z++) {
+		// 		for (let y = 0; y < Y; y++) {
+		// 			const px = (z*Y + y)*4;
+		// 			pixels[px] = pixels[px + 1] = pixels[px + 2] = pixels[px + 3] = Math.floor( (window.imagePx[Zcanv(x,y,z,X,Y)]-min)/mmdelta*255 );
+		// 			if (pixels[px] < 100) {
+		// 				pixels[px + 3] = 0			 
+		// 			}
+		// 			//pixels[px + 3] = 255;
+		// 		}
+		// 	}
+
+		// 	ctx.putImageData(new ImageData(pixels,Y,Z), 0, 0);
+
+		// 	canvBlock.appendChild(canv);
+		// }
+
+		console.log('done')
+
+
+		// // output some header info
+		// console.log("Number of images read is " + series.images.length);
+		// console.log("Each slice is " + series.images[0].getCols() + " x " + series.images[0].getRows());
+		// console.log("Each voxel is " + series.images[0].getBitsAllocated() + " bits, " + 
+		//     (series.images[0].littleEndian ? "little" : "big") + " endian");
+
+		// // concat the image data into a single ArrayBuffer
+		// series.concatenateImageData(null, function (imageData) {
+		//     console.log("Total image data size is " + imageData.byteLength + " bytes");
+		// });
+
+	})
+    console.log(window.fileList);
+});
+
+
+</script>
+
+</body>
+</html>
