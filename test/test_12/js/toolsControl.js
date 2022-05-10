@@ -116,6 +116,8 @@ function getColArrayFromParams(visParams,imgmin,imgmax) {
 }
 
 document.querySelector("#toolPartRender").addEventListener('click', ()=>{
+	draw_preloader()
+
 	upgradeLayer(
 		document.getElementById("block3d")
 		,window.image['pixels']
@@ -131,4 +133,6 @@ document.querySelector("#toolPartRender").addEventListener('click', ()=>{
 			,window.image['max']
 		)
 	)
+	
+	remove_preloader()
 })
