@@ -26,8 +26,8 @@
 }
 
 ::-webkit-scrollbar {
-  width: var(--fontSize);
-  height: var(--fontSize);
+	width: var(--fontSize);
+	height: var(--fontSize);
 }
 
 ::-webkit-scrollbar-track {
@@ -35,7 +35,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--textCol);
+	background: var(--textCol);
 }
 
 body {
@@ -47,7 +47,7 @@ body {
 
 	display: grid;
 	grid-template-columns: auto 20vw;
-  	grid-template-rows: 100vh;
+	grid-template-rows: 100vh;
 }
 
 @media (max-width: 100vh) {
@@ -110,8 +110,8 @@ body {
 }
 
 @keyframes spinning {
-  from  {transform: rotateY(  0deg) rotateX(115deg) }
-  to	{transform: rotateY(-360deg) rotateX(115deg) }
+	from  {transform: rotateY(  0deg) rotateX(115deg) }
+	to	{transform: rotateY(-360deg) rotateX(115deg) }
 }
 
 .Xlayer, .Ylayer, .Zlayer {
@@ -167,13 +167,13 @@ body {
 
 .hideTool, .hideToolPart {
 	cursor: pointer;
-	transition-duration: 0.5s;
+/*	transition-duration: 0.5s;*/
 }
 
-.hideTool:hover, .hideToolPart:hover {
+/*.hideTool:hover, .hideToolPart:hover {
 	background: var(--textCol);
 	color: var(--darkGray);
-}
+}*/
 
 .toolBody {
 	padding: var(--space);
@@ -198,85 +198,6 @@ body {
 	grid-column: 1/4;
 	text-align: center;
 	/*padding: 1vh;*/
-}
-
-/*input[type=range] {
-	margin: var(--space);
-}*/
-
-input[type=range] {
-	-webkit-appearance: none;
-	background: transparent;
-	outline: none;
-}
-
-input[type=range]::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	cursor: pointer;
-	height: var(--fontSize);
-	width: var(--fontSize);
-	border-radius: var(--fontSize);
-
-
-	/*border-radius: 100%;*/
-	background: var(--textCol);
-	/*box-shadow: -100vw 0 0 100vw #ddd;*/
-}
-
-/*input[type=range]::-ms-track {
-	background: #f00; 
-	border-color: transparent;
-	color: transparent;
-}*/
-
-input[type=range]::-webkit-slider-runnable-track {
-	width: 100%;
-	height: var(--fontSize);
-	border-radius: var(--fontSize);
-	background: var(--lightGray);
-	padding: 0;
-}
-
-input[type=file] {
-	font-family: blogger;
-}
-
-input[type=file]::-webkit-file-upload-button {
-	-webkit-appearance: none;
-	padding: 0;
-	outline: none;
-	border: none;
-	width: 0;
-}
-
-input[type=file]::before {
-	content: var(--content);
-	font-size: var(--fontSize);
-	color: var(--textCol);
-	white-space: nowrap;
-	-webkit-user-select: none;
-	cursor: pointer;
-}
-
-input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
-	-webkit-appearance: none;
-}
-
-input[type=number] {
-	padding: 0;
-	background: var(--lightGray);
-	color: var(--textCol);
-	outline: none;
-	border: none;
-	text-align: center;
-	/*border-bottom: 1px solid var(--textCol);*/
-	font-size: var(--fontSize);
-	font-family: blogger;
-	/*border-radius: var(--fontSize);*/
-}
-
-input[type=number]:focus {
-	border-bottom: 1px solid var(--textCol);
 }
 
 .openFileLine {
@@ -310,6 +231,12 @@ input[type=number]:focus {
 
 .slider > div, .toolPartCheckboxLine > div, .colLineInput > div {
 	text-align: center;
+}
+
+#Gradientline {
+	height: var(--fontSize);
+	width: -webkit-fill-available;
+	border-top: solid 1px var(--textCol);
 }
 
 .toolPartBody {

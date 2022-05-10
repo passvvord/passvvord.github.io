@@ -23,7 +23,7 @@ document.querySelectorAll(".slider > input[type=range]").forEach(el=>{
 	['mousemove','touchmove'].forEach(event=>{
 		el.addEventListener(event,mm=>{
 			if (mm.buttons === 1 || event === 'touchmove') {
-				el.parentNode.querySelectorAll("input[type=number]")[0].value = el.value;
+				el.parentNode.querySelector("input[type=number]").value = el.value;
 			}
 		})
 	})
@@ -33,7 +33,7 @@ document.querySelectorAll(".slider > input[type=number]").forEach(el=>{
 	el.addEventListener('keyup',kp=>{
 		if      (parseInt(el.value) > parseInt(el.max) ) { el.value = el.max; } 
 		else if (parseInt(el.value) < parseInt(el.min) ) { el.value = el.min; }
-		el.parentNode.querySelectorAll("input[type=range]")[0].value = el.value;
+		el.parentNode.querySelector("input[type=range]").value = el.value;
 	})
 });
 
@@ -77,12 +77,58 @@ document.getElementById("toolPartAdd").addEventListener('click', c=>{
 	document.getElementById("toolPartsBlock").appendChild(new_el);
 })
 
+function getVisParams() {
+	let visParams = []
+	document.querySelectorAll("#visParams .toolPartBody").forEach(el=>{
+		visParams.push({
+			"min": parseInt(el.querySelector(".visParamsMin[type=number]").value),
+			"max": parseInt(el.querySelector(".visParamsMax[type=number]").value),
+			"gradient": el.querySelector(".visParamsGradient[type=checkbox]").checked,
+			"rgba0": ['R','G','B','A'].map(a=>parseInt(el.querySelector(`.visParams${a}0[type=number]`).value)),
+			"rgba1": ['R','G','B','A'].map(a=>parseInt(el.querySelector(`.visParams${a}1[type=number]`).value))
+		})
+	})
+	return visParams
+}
 
+function getColArrayFromParams(visParams,imgmin,imgmax) {
+	let res = new Uint8Array(256*4)
 
+	for (let i = 0; i < visParams.length; i++) {
+		const start = Math.round((visParams[i]["min"]-imgmin)/(imgmax-imgmin)*255);
+		const end = Math.round((visParams[i]["max"]-imgmin)/(imgmax-imgmin)*255);
+		for (let j = start; j <= end; j+=1) {
+			if (visParams[i]["gradient"]) {
+				for (let col = 0; col < 4; col+=1) {
+					res[j*4+col] = Math.round( ((j-start)/(end-start))*(visParams[i]["rgba1"][col]-visParams[i]["rgba0"][col])+visParams[i]["rgba0"][col]);
+				}
+			} else {
+				for (let col = 0; col < 4; col+=1) {
+					res[j*4+col] = visParams[i]["rgba0"][col];
+				}
+			}
+		}
+	}
 
+	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),256,1), 0, 0)
 
+	return res
+}
 
-// let diapazone_settings = [
-// 	{min: 200, max: 400, status: 'show'},
-// 	{min: 200, max: 400, status: 'hide'},
-// ]
+document.querySelector("#toolPartRender").addEventListener('click', ()=>{
+	upgradeLayer(
+		document.getElementById("block3d")
+		,window.image['pixels']
+		,'Z'
+		,window.image['Z']
+		,window.image['X']
+		,window.image['Y']
+		,window.image['min']
+		,window.image['max']-window.image['min']
+		,getColArrayFromParams(
+			getVisParams()
+			,window.image['min']
+			,window.image['max']
+		)
+	)
+})

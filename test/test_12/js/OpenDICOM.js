@@ -10,7 +10,7 @@ function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
 	}
 }
 
-function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,showMin,showMax,nc,ago=1) {
+function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,ColArray,ago=1) {
 	let posf;
 	if (axName === 'X') {
 		posf = (x,y,z,X,Y,Z)=>((Z-z)+y*Z+x*Y*Z);
@@ -25,11 +25,9 @@ function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,showMin,showMax,nc,ago
 		let pixels = new Uint8ClampedArray(B*C*4);
 		for (let c = 0; c < C; c++) {
 			for (let b = 0; b < B; b++) {
-				const px = (c*B+b)*4;
-				const temp = data[posf(a,b,c,A,B,C)]
-				if (temp >= showMin && temp <= showMax) {
-					// pixels[px+nc] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
-					pixels[px] = pixels[px+1] = pixels[px+2] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
+				const temp = Math.round( (data[posf(a,b,c,A,B,C)]-min)/delta*255 )
+				for (let col = 0; col < 4; col+=1) {
+					pixels[(c*B+b)*4+col] = ColArray[temp*4+col];
 				}
 			}
 		}
@@ -67,12 +65,14 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		document.querySelectorAll("#visParams .slider > input").forEach(el=>{
 			el.min = min;
 			el.max = max;
-			if (el.value == 1) {
+			if (el.className == 'visParamsMax') {
 				el.value = max;
 			} else {
 				el.value = min;
 			}
 		})
+
+		const ColArray = getColArrayFromParams(getVisParams(),image['min'],image['max']);
 
 
 		const FileInfo = {
@@ -91,11 +91,11 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		canvBlock.style.height = `${Y}px`;
 		
 		initLayer(canvBlock,window.image['pixels'],'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`,Z,X,Y)
-		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,min,max,0)
+		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
 		initLayer(canvBlock,window.image['pixels'],'X',(A,a)=>`rotateY(90deg) translateZ(${Math.floor(A/2-a)}px)`,X,Y,Z)
-		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,min,max,1)
+		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,ColArray)
 		initLayer(canvBlock,window.image['pixels'],'Y',(A,a)=>`rotateX(-90deg) translateZ(${Math.floor(A/2-a)}px)`,Y,Z,X)
-		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,min,max,2)
+		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,ColArray)
 		remove_preloader()
 
 	})

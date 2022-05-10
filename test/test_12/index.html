@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="js/style.js"></script>
 
 	<link href="style/style.css" rel="stylesheet">
+	<link href="style/input.css" rel="stylesheet">
 	<link href="style/global.css" rel="stylesheet">
 
 	<script type="text/javascript" src="js/preloader.js"></script>
@@ -107,6 +108,7 @@
 				<div>Visualization parametrs</div>
 				<div class="hideTool">▲</div>
 			</div>
+			<canvas id="Gradientline" height="1" width="256"></canvas>
 			<div class="toolBody">
 				<!-- <div>hide diapason, gradient min/max, add custom diapason</div> -->
 				<div id="toolPartsBlock">
@@ -117,39 +119,39 @@
 						</div>
 						<div class="toolPartBody">
 							<div class="slider">
-								<input type="range" min="-1" max="-1" value="-1" step="1">
+								<input class="visParamsMin" type="range" min="-1000" max="1000" value="0" step="1">
 								<div>min:</div>
-								<input type="number" min="-1" max="-1" value="-1" step="1">
+								<input class="visParamsMin" type="number" min="-1000" max="1000" value="0" step="1">
 							</div>
 							<div class="slider">
-								<input type="range" min="1" max="1" value="1" step="1">
+								<input class="visParamsMax" type="range" min="-1000" max="1000" value="0" step="1">
 								<div>max:</div>
-								<input type="number" min="1" max="1" value="1" step="1">
+								<input class="visParamsMax" type="number" min="-1000" max="1000" value="0" step="1">
 							</div>
 							<div class="toolPartTextLine">Color:</div>
 							<div class="toolPartCheckboxLine">
 								<div>Gradient:</div>
-								<div><input type="checkbox" checked></div>
+								<div><input class="visParamsGradient" type="checkbox" checked></div>
 							</div>
 							<div class="colLineInput">
-								<input type="number" min="0" max="255" value="0" step="1">
+								<input class="visParamsR0" type="number" min="0" max="255" value="0" step="1">
 								<div>-> R -></div>
-								<input type="number" min="0" max="255" value="255" step="1">
+								<input class="visParamsR1" type="number" min="0" max="255" value="255" step="1">
 							</div>
 							<div class="colLineInput">
-								<input type="number" min="0" max="255" value="0" step="1">
+								<input class="visParamsG0" type="number" min="0" max="255" value="0" step="1">
 								<div>-> G -></div>
-								<input type="number" min="0" max="255" value="255" step="1">
+								<input class="visParamsG1" type="number" min="0" max="255" value="255" step="1">
 							</div>
 							<div class="colLineInput">
-								<input type="number" min="0" max="255" value="0" step="1">
+								<input class="visParamsB0" type="number" min="0" max="255" value="0" step="1">
 								<div>-> B -></div>
-								<input type="number" min="0" max="255" value="255" step="1">
+								<input class="visParamsB1" type="number" min="0" max="255" value="255" step="1">
 							</div>
 							<div class="colLineInput">
-								<input type="number" min="0" max="255" value="0" step="1">
+								<input class="visParamsA0" type="number" min="0" max="255" value="0" step="1">
 								<div>-> A -></div>
-								<input type="number" min="0" max="255" value="255" step="1">
+								<input class="visParamsA1" type="number" min="0" max="255" value="255" step="1">
 							</div>
 							<div class="toolPartShowGradient"></div>
 						</div>
