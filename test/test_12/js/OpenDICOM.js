@@ -1,0 +1,102 @@
+function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
+	for (let a = 0; a < A; a+=ago) {
+		let canv = document.createElement('canvas');
+		canv.id = axName+a;
+		canv.className = axName+'layer';
+		canv.width = B;
+		canv.height = C;
+		canv.style.transform = layerTransform(A,a);
+		Block3D.appendChild(canv);
+	}
+}
+
+function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,showMin,showMax,nc,ago=1) {
+	let posf;
+	if (axName === 'X') {
+		posf = (x,y,z,X,Y,Z)=>((Z-z)+y*Z+x*Y*Z);
+	} else if (axName === 'Y') {
+		posf = (y,z,x,Y,X,Z)=>(x+(Z-z)*X+y*X*Z);
+	} else if (axName === 'Z') {
+		posf = (z,x,y,Z,X,Y)=>(x+y*X+z*X*Y);
+	}
+	
+	for (let a = 0; a < A; a+=ago) {
+		let ctx = document.getElementById(axName+a).getContext("2d");
+		let pixels = new Uint8ClampedArray(B*C*4);
+		for (let c = 0; c < C; c++) {
+			for (let b = 0; b < B; b++) {
+				const px = (c*B+b)*4;
+				const temp = data[posf(a,b,c,A,B,C)]
+				if (temp >= showMin && temp <= showMax) {
+					// pixels[px+nc] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
+					pixels[px] = pixels[px+1] = pixels[px+2] = pixels[px+3] = Math.round( (temp-min)/delta*255 );
+				}
+			}
+		}
+		ctx.putImageData(new ImageData(pixels,B,C), 0, 0);
+	}
+}
+
+// hideElement(document.getElementById("fileInfo").querySelectorAll(".hideTool")[0])
+// hideElement(document.getElementById("visParams").querySelectorAll(".hideTool")[0])
+hideElement(document.getElementById("histogram").querySelectorAll(".hideTool")[0])
+hideElement(document.getElementById("choseZone").querySelectorAll(".hideTool")[0])
+hideElement(document.getElementById("settings").querySelectorAll(".hideTool")[0])
+
+window.image = {}
+
+document.getElementById('oneDicomFile').addEventListener('change', c => {
+	draw_preloader()
+    c.target.files[0].arrayBuffer().then(f=>{
+    	let image = daikon.Series.parseImage(new DataView(f))
+		window.image['pixels'] = new Int16Array(image.getInterpretedData())
+		console.log(window.image['pixels'])
+
+		const X = image.getCols();
+		const Y = image.getRows();
+		const Z = Math.floor(window.image['pixels'].length/X/Y);
+		const min = window.image['pixels'].reduce((a,b)=>(b<a?b:a));
+		const max = window.image['pixels'].reduce((a,b)=>(b>a?b:a));
+
+		window.image['X'] = X;
+		window.image['Y'] = Y;
+		window.image['Z'] = Z;
+		window.image['min'] = min;
+		window.image['max'] = max;
+
+		document.querySelectorAll("#visParams .slider > input").forEach(el=>{
+			el.min = min;
+			el.max = max;
+			if (el.value == 1) {
+				el.value = max;
+			} else {
+				el.value = min;
+			}
+		})
+
+
+		const FileInfo = {
+			"xSize": `X: ${X} px`,
+			"ySize": `Y: ${Y} px`,
+			"zSize": `Z: ${Z} px`,
+			"minDensity": `min density: ${min}`,
+			"maxDensity": `max density: ${max}`,
+			"usedMemoryMiB": `RAM used for image: ${Math.round(1000*window.image['pixels'].length*2/1024/1024)/1000} MiB`,
+		}
+
+		for (let i in FileInfo) { document.getElementById(i).textContent = FileInfo[i]; }
+
+		let canvBlock = document.getElementById("block3d");
+		canvBlock.style.width = `${X}px`;
+		canvBlock.style.height = `${Y}px`;
+		
+		initLayer(canvBlock,window.image['pixels'],'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`,Z,X,Y)
+		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,min,max,0)
+		initLayer(canvBlock,window.image['pixels'],'X',(A,a)=>`rotateY(90deg) translateZ(${Math.floor(A/2-a)}px)`,X,Y,Z)
+		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,min,max,1)
+		initLayer(canvBlock,window.image['pixels'],'Y',(A,a)=>`rotateX(-90deg) translateZ(${Math.floor(A/2-a)}px)`,Y,Z,X)
+		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,min,max,2)
+		remove_preloader()
+
+	})
+});

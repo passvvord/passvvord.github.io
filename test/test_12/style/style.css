@@ -133,6 +133,7 @@ body {
 	border-radius: var(--space);
 	overflow: hidden;
 	box-shadow: 0 0 var(--space) #000;
+	font-size: var(--fontSize);
 }
 
 .toolHead, .toolPartHead {
@@ -180,9 +181,9 @@ body {
 	/*padding: 1vh;*/
 }
 
-input[type=range] {
+/*input[type=range] {
 	margin: var(--space);
-}
+}*/
 
 input[type=range] {
 	-webkit-appearance: none;
@@ -274,6 +275,7 @@ input[type=number]:focus {
 	border: solid 1px var(--textCol);
 	border-radius: var(--space);
 	overflow: hidden;
+	margin-bottom: var(--space);
 }
 
 .slider {
@@ -284,6 +286,7 @@ input[type=number]:focus {
 
 .slider > input[type=range] {
 	grid-column: 1/3;
+	margin: var(--space) 0;
 }
 
 .slider > div, .toolPartCheckboxLine > div, .colLineInput > div {
@@ -316,11 +319,11 @@ input[type=number]:focus {
 .toolPartShowGradient {
 	height: var(--fontSize);
 	margin-top: var(--space);
-	background: linear-gradient(to right, rgba(0,0,0,0), rgba(255,0,0,1));
+	background: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,1));
 }
 
 #toolPartAdd, #toolPartRender {
-	margin-top: var(--space);
+	margin-bottom: var(--space);
 	border-radius: var(--space);
 	font-family: blogger_b;
 	padding: var(--space);

@@ -2,7 +2,8 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 	<script type="text/javascript" src="libs/daikon.min.js"></script>
 	<script type="text/javascript" src="libs/gpu.min.js"></script>
 
@@ -10,6 +11,7 @@
 	<link href="style/global.css" rel="stylesheet">
 	<script type="text/javascript" src="js/preloader.js"></script>
 	<script type="text/javascript" src="js/toolsControl.js" defer></script>
+	<script type="text/javascript" src="js/OpenDICOM.js" defer></script>
 	
 
 	<title>...</title>
@@ -68,7 +70,7 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
-				<div id="xSize">Open file before</div>
+				<div id="xSize"></div>
 				<div id="ySize"></div>
 				<div id="zSize"></div>
 				<div id="minDensity"></div>
@@ -104,52 +106,51 @@
 			</div>
 			<div class="toolBody">
 				<!-- <div>hide diapason, gradient min/max, add custom diapason</div> -->
-
-				<div class="toolPart">
-					<div class="toolPartHead">
-						<div>diapazone</div>
-						<div class="hideToolPart">▲</div>
+				<div id="toolPartsBlock">
+					<div class="toolPart">
+						<div class="toolPartHead">
+							<div>diapazone</div>
+							<div class="hideToolPart">▲</div>
+						</div>
+						<div class="toolPartBody">
+							<div class="slider">
+								<input type="range" min="-1" max="-1" value="-1" step="1">
+								<div>min:</div>
+								<input type="number" min="-1" max="-1" value="-1" step="1">
+							</div>
+							<div class="slider">
+								<input type="range" min="1" max="1" value="1" step="1">
+								<div>max:</div>
+								<input type="number" min="1" max="1" value="1" step="1">
+							</div>
+							<div class="toolPartTextLine">Color:</div>
+							<div class="toolPartCheckboxLine">
+								<div>Gradient:</div>
+								<div><input type="checkbox" checked></div>
+							</div>
+							<div class="colLineInput">
+								<input type="number" min="0" max="255" value="0" step="1">
+								<div>-> R -></div>
+								<input type="number" min="0" max="255" value="255" step="1">
+							</div>
+							<div class="colLineInput">
+								<input type="number" min="0" max="255" value="0" step="1">
+								<div>-> G -></div>
+								<input type="number" min="0" max="255" value="255" step="1">
+							</div>
+							<div class="colLineInput">
+								<input type="number" min="0" max="255" value="0" step="1">
+								<div>-> B -></div>
+								<input type="number" min="0" max="255" value="255" step="1">
+							</div>
+							<div class="colLineInput">
+								<input type="number" min="0" max="255" value="0" step="1">
+								<div>-> A -></div>
+								<input type="number" min="0" max="255" value="255" step="1">
+							</div>
+							<div class="toolPartShowGradient"></div>
+						</div>
 					</div>
-					<div class="toolPartBody">
-						<div class="slider">
-							<input type="range" min="-1000" max="3000" value="-1000" step="1">
-							<div>min:</div>
-							<input type="number" min="-1000" max="3000" value="-1000" step="1">
-						</div>
-						<div class="slider">
-							<input type="range" min="-1000" max="3000" value="3000" step="1">
-							<div>max:</div>
-							<input type="number" min="-1000" max="3000" value="3000" step="1">
-						</div>
-						<div class="toolPartTextLine">Color:</div>
-						<div class="toolPartCheckboxLine">
-							<div>Gradient:</div>
-							<div><input type="checkbox" checked></div>
-						</div>
-						<div class="colLineInput">
-							<input type="number" min="0" max="255" value="0" step="1">
-							<div>-> R -></div>
-							<input type="number" min="0" max="255" value="255" step="1">
-						</div>
-						<div class="colLineInput">
-							<input type="number" min="0" max="255" value="0" step="1">
-							<div>-> G -></div>
-							<input type="number" min="0" max="255" value="255" step="1">
-						</div>
-						<div class="colLineInput">
-							<input type="number" min="0" max="255" value="0" step="1">
-							<div>-> B -></div>
-							<input type="number" min="0" max="255" value="255" step="1">
-						</div>
-						<div class="colLineInput">
-							<input type="number" min="0" max="255" value="0" step="1">
-							<div>-> A -></div>
-							<input type="number" min="0" max="255" value="255" step="1">
-						</div>
-						<div class="toolPartShowGradient"></div>
-					</div>
-
-
 				</div>
 				<div id="toolPartAdd">+</div>
 				<div id="toolPartRender">Render</div>
@@ -186,6 +187,21 @@
 					<input type="range" min="0" max="1" value="0.2" step="0.01">
 					<div>layers opacity:</div>
 					<input type="number" min="0" max="1" value="0.2" step="0.01">
+				</div>
+				<div class="slider">
+					<input type="range" min="-180" max="180" value="0" step="0.1">
+					<div>X rotate:</div>
+					<input type="number" min="-180" max="180" value="0" step="0.1">
+				</div>
+				<div class="slider">
+					<input type="range" min="-180" max="180" value="0" step="0.1">
+					<div>Y rotate:</div>
+					<input type="number" min="-180" max="180" value="0" step="0.1">
+				</div>
+				<div class="slider">
+					<input type="range" min="-180" max="180" value="0" step="0.1">
+					<div>Z rotate:</div>
+					<input type="number" min="-180" max="180" value="0" step="0.1">
 				</div>
 			</div>
 		</div>
