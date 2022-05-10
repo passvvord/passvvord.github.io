@@ -25,6 +25,19 @@
 	--space: calc(var(--fontSize)/2);
 }
 
+::-webkit-scrollbar {
+  width: var(--fontSize);
+  height: var(--fontSize);
+}
+
+::-webkit-scrollbar-track {
+	background: var(--lightGray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--textCol);
+}
+
 body {
 	background: #000;
 	margin: 0;
