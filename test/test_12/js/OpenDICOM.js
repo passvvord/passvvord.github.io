@@ -45,10 +45,11 @@ window.image = {}
 
 document.getElementById('oneDicomFile').addEventListener('change', c => {
 	draw_preloader()
+
     c.target.files[0].arrayBuffer().then(f=>{
     	let image = daikon.Series.parseImage(new DataView(f))
 		window.image['pixels'] = new Int16Array(image.getInterpretedData())
-		console.log(window.image['pixels'])
+		// console.log(window.image['pixels'])
 
 		const X = image.getCols();
 		const Y = image.getRows();
@@ -72,8 +73,9 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 			}
 		})
 
-		const ColArray = getColArrayFromParams(getVisParams(),image['min'],image['max']);
-
+		// console.log(getVisParams(),window.image['min'],window.image['max'])
+		const ColArray = getColArrayFromParams(getVisParams(),window.image['min'],window.image['max']);
+		// console.log(ColArray)
 
 		const FileInfo = {
 			"xSize": `X: ${X} px`,
@@ -89,13 +91,15 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		let canvBlock = document.getElementById("block3d");
 		canvBlock.style.width = `${X}px`;
 		canvBlock.style.height = `${Y}px`;
-		
-		initLayer(canvBlock,window.image['pixels'],'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`,Z,X,Y)
-		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
-		initLayer(canvBlock,window.image['pixels'],'X',(A,a)=>`rotateY(90deg) translateZ(${Math.floor(A/2-a)}px)`,X,Y,Z)
-		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,ColArray)
+				
+		initLayer(canvBlock,window.image['pixels'],'X',(A,a)=>`rotateY(90deg) translateZ(${Math.floor(A/2-a)}px)` ,X,Y,Z)
 		initLayer(canvBlock,window.image['pixels'],'Y',(A,a)=>`rotateX(-90deg) translateZ(${Math.floor(A/2-a)}px)`,Y,Z,X)
+		initLayer(canvBlock,window.image['pixels'],'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`                ,Z,X,Y)
+		
+		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,ColArray)
 		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,ColArray)
+		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
+
 		remove_preloader()
 
 	})

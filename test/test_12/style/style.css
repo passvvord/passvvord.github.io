@@ -116,7 +116,7 @@ body {
 
 .Xlayer, .Ylayer, .Zlayer {
 	position: absolute;
-	opacity: 0.25;
+	opacity: 1;
 }
 
 .Xlayer {
@@ -140,6 +140,7 @@ body {
 
 @media (max-width: 100vh) {
 	#toolBlock {
+		border-left: none;
 		border-top: solid 1px var(--textCol);
 	}
 }
