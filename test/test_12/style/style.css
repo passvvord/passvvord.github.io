@@ -30,6 +30,14 @@
 	height: var(--fontSize);
 }
 
+@media (max-width: 100vh) {
+	::-webkit-scrollbar {
+		width: calc(var(--fontSize)*1.5);
+		height: calc(var(--fontSize)*1.5);
+	}
+}
+
+
 ::-webkit-scrollbar-track {
 	background: var(--lightGray);
 }
