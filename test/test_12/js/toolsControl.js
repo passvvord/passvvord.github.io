@@ -15,65 +15,81 @@ document.querySelectorAll(".hideTool").forEach(el=>{
 	el.addEventListener('click', ()=>{hideElement(el)})
 })
 
-document.querySelectorAll(".hideToolPart").forEach(el=>{
-	el.addEventListener('click', ()=>{hideElement(el,"toolPartBody","wrong style (click on .hideToolPart)")})
-})
+function ColToolPartEvents(element) {
+	element.querySelectorAll(".hideToolPart").forEach(el=>{
+		el.addEventListener('click', ()=>{hideElement(el,"toolPartBody","wrong style (click on .hideToolPart)")})
+	})
 
-document.querySelectorAll(".slider > input[type=range]").forEach(el=>{
-	['mousemove','touchmove'].forEach(event=>{
-		el.addEventListener(event,mm=>{
-			if (mm.buttons === 1 || event === 'touchmove') {
-				el.parentNode.querySelector("input[type=number]").value = el.value;
-			}
+	element.querySelectorAll(".removeToolPart").forEach(el=>{
+		el.addEventListener('click', ()=>{
+			el.parentNode.parentNode.remove()
 		})
 	})
-});
 
-document.querySelectorAll(".slider > input[type=number]").forEach(el=>{
-	el.addEventListener('keyup',kp=>{
-		if      (parseInt(el.value) > parseInt(el.max) ) { el.value = el.max; } 
-		else if (parseInt(el.value) < parseInt(el.min) ) { el.value = el.min; }
-		el.parentNode.querySelector("input[type=range]").value = el.value;
-	})
-});
+	element.querySelectorAll(".slider > input[type=range]").forEach(el=>{
+		['mousemove','touchmove'].forEach(event=>{
+			el.addEventListener(event,mm=>{
+				if (mm.buttons === 1 || event === 'touchmove') {
+					el.parentNode.querySelector("input[type=number]").value = el.value;
+				}
+			})
+		})
+	});
 
-document.querySelectorAll(".colLineInput > input[type=number]").forEach(el=>{
-	el.addEventListener('keyup',kp=>{
-		if      (parseInt(el.value) > parseInt(el.max) ) { el.value = el.max; } 
-		else if (parseInt(el.value) < parseInt(el.min) ) { el.value = el.min; }
-		const vals = document.querySelectorAll(".colLineInput > input[type=number]")
-		if (el.parentNode.parentNode.querySelectorAll(".toolPartCheckboxLine > div > input[type=checkbox]")[0].checked) {
-			el.parentNode.parentNode.querySelectorAll(".toolPartShowGradient")[0]
-				.style.background = `linear-gradient(to right, rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255}), rgba(${vals[1].value},${vals[3].value},${vals[5].value},${vals[7].value/255}))`;
-		} else {
-			el.parentNode.parentNode.querySelectorAll(".toolPartShowGradient")[0]
-				.style.background = `rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255})`;
-		}
-	})
-});
+	element.querySelectorAll(".slider > input[type=number]").forEach(el=>{
+		el.addEventListener('keyup',kp=>{
+			if      (parseInt(el.value) > parseInt(el.max) ) { el.value = el.max; } 
+			else if (parseInt(el.value) < parseInt(el.min) ) { el.value = el.min; }
+			el.parentNode.querySelector("input[type=range]").value = el.value;
+		})
+	});
 
-document.querySelectorAll(".toolPartCheckboxLine > div > input[type=checkbox]").forEach(el=>{
-	el.addEventListener('click',c=>{
-		const vals = document.querySelectorAll(".colLineInput > input[type=number]")
-		// console.log(c.target,c.target.checked,el.parentNode.parentNode.querySelectorAll(".toolPartShowGradient"))
-		if (c.target.checked) {
-			el.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient")[0]
-				.style.background = `linear-gradient(to right, rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255}), rgba(${vals[1].value},${vals[3].value},${vals[5].value},${vals[7].value/255}))`;
-		} else {
-			el.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient")[0]
-				.style.background = `rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255})`;
-		}
-	})
-})
+	element.querySelectorAll(".colLineInput > input[type=number]").forEach(el=>{
+		el.addEventListener('keyup',kp=>{
+			if      (parseInt(el.value) > parseInt(el.max) ) { el.value = el.max; } 
+			else if (parseInt(el.value) < parseInt(el.min) ) { el.value = el.min; }
+			const vals = el.parentNode.parentNode.querySelectorAll(".colLineInput > input[type=number]")
+			if (el.parentNode.parentNode.querySelectorAll(".toolPartCheckboxLine > div > input[type=checkbox]")[0].checked) {
+				el.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient").forEach(sg=>{
+					sg.style.background = `linear-gradient(to right, rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255}), rgba(${vals[1].value},${vals[3].value},${vals[5].value},${vals[7].value/255}))`;
+				})
+			} else {
+				el.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient").forEach(sg=>{
+					sg.style.background = `rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255})`;
+				})
+			}
+		})
+	});
+
+	element.querySelectorAll(".toolPartCheckboxLine > div > input[type=checkbox]").forEach(el=>{
+		el.addEventListener('click',c=>{
+			const vals = el.parentNode.parentNode.parentNode.querySelectorAll(".colLineInput > input[type=number]")
+			// console.log(vals)
+			// console.log(c.target,c.target.checked,el.parentNode.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient"))
+			if (c.target.checked) {
+				el.parentNode.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient").forEach(sg=>{
+					sg.style.background = `linear-gradient(to right, rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255}), rgba(${vals[1].value},${vals[3].value},${vals[5].value},${vals[7].value/255}))`;
+				})
+			} else {
+				el.parentNode.parentNode.parentNode.parentNode.querySelectorAll(".toolPartShowGradient").forEach(sg=>{
+					sg.style.background = `rgba(${vals[0].value},${vals[2].value},${vals[4].value},${vals[6].value/255})`;
+				})
+			}
+		})
+	})	
+}
+
+
 
 document.getElementById("toolPartAdd").addEventListener('click', c=>{
 	let toolPartArr = c.target.parentNode.getElementsByClassName("toolPart");
 	let new_el = toolPartArr[toolPartArr.length-1].cloneNode(true);
-	new_el.querySelectorAll(".hideToolPart").forEach(el=>{
-		el.addEventListener('click', ()=>{
-			hideElement(el,"toolPartBody","wrong style (click on .hideToolPart)")
-		})
-	});
+	ColToolPartEvents(new_el)
+	// new_el.querySelectorAll(".hideToolPart").forEach(el=>{
+	// 	el.addEventListener('click', ()=>{
+	// 		hideElement(el,"toolPartBody","wrong style (click on .hideToolPart)")
+	// 	})
+	// });
 	document.getElementById("toolPartsBlock").appendChild(new_el);
 })
 
@@ -116,23 +132,41 @@ function getColArrayFromParams(visParams,imgmin,imgmax) {
 }
 
 document.querySelector("#toolPartRender").addEventListener('click', ()=>{
-	draw_preloader()
+	// draw_preloader()
+	console.log('render strat')
+	let temp = Date.now()
 
-	upgradeLayer(
-		document.getElementById("block3d")
-		,window.image['pixels']
-		,'Z'
-		,window.image['Z']
-		,window.image['X']
-		,window.image['Y']
+	const ColArray = getColArrayFromParams(
+		getVisParams()
 		,window.image['min']
-		,window.image['max']-window.image['min']
-		,getColArrayFromParams(
-			getVisParams()
-			,window.image['min']
-			,window.image['max']
-		)
+		,window.image['max']
 	)
+
+	console.log('col array, need time:',Date.now()-temp)
+	temp = Date.now()
+
+	const AX = ['X','Y','Z']
+
+	for (let ax = 0; ax < AX.length; ax+=1) {
+
+		upgradeLayer(
+			document.getElementById("block3d")
+			,window.image['pixels']
+			,AX[ax]
+			,window.image[AX[ax]]
+			,window.image[AX[(ax+1)%AX.length]]
+			,window.image[AX[(ax+2)%AX.length]]
+			,window.image['min']
+			,window.image['max']-window.image['min']
+			,ColArray
+		)
+
+		console.log(AX[ax],'rendered, need time:',Date.now()-temp)
+		temp = Date.now()
+	}
+
 	
-	remove_preloader()
+	// remove_preloader()
 })
+
+ColToolPartEvents(document)

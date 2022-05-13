@@ -125,6 +125,7 @@ body {
 .Xlayer, .Ylayer, .Zlayer {
 	position: absolute;
 	opacity: 1;
+	image-rendering: pixelated;
 }
 
 .Xlayer {
@@ -164,9 +165,15 @@ body {
 	font-size: var(--fontSize);
 }
 
-.toolHead, .toolPartHead {
+.toolHead {
 	display: grid;
 	grid-template-columns: 50% 50%;
+}
+
+.toolPartHead {
+	display: grid;
+	grid-template-columns: 50% 25% 25%;
+	/*grid-template-rows: auto var(--space) var(--fontSize);*/
 }
 
 .toolHead > div, .toolPartHead > div {
@@ -174,7 +181,7 @@ body {
 	text-align: center;
 }
 
-.hideTool, .hideToolPart {
+.hideTool, .hideToolPart, .removeToolPart {
 	cursor: pointer;
 /*	transition-duration: 0.5s;*/
 }
