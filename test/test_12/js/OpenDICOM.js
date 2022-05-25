@@ -1,3 +1,34 @@
+function openFullscreen() {
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen();
+  } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
+    document.documentElement.webkitRequestFullscreen();
+  } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
+    document.documentElement.msRequestFullscreen();
+  }
+}
+
+function closeFullscreen() {
+  if (document.exitFullscreen) {
+    document.exitFullscreen();
+  } else if (document.webkitExitFullscreen) { /* Safari */
+    document.webkitExitFullscreen();
+  } else if (document.msExitFullscreen) { /* IE11 */
+    document.msExitFullscreen();
+  }
+}
+
+window.fullscreen = false;
+document.querySelector('#box3d').addEventListener('click', c=>{
+	if (window.fullscreen) {
+		closeFullscreen();
+		window.fullscreen = false;
+	} else {
+		openFullscreen();
+		window.fullscreen = true;
+	}
+})
+
 function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
 	for (let a = 0; a < A; a+=ago) {
 		let canv = document.createElement('canvas');
