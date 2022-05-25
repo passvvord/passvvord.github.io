@@ -1,6 +1,6 @@
 :root {
-	--cXrot: -115deg;
-	--cYrot: 0deg;
+	--cXrot: -45deg;
+	--cYrot: 45deg;
 	--cZrot: 0deg;
 
 	/*--one: calc(1vh + 1vw);*/
@@ -50,6 +50,9 @@ body {
 	background: #000;
 	margin: 0;
 	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
 	font-family: blogger;
 	font-size: var(--fontSize);
 
@@ -78,8 +81,8 @@ body {
 	position: fixed;
 	margin: var(--cube3dsize);
 	transform-style: preserve-3d;
-	transform: rotateX(var(--cXrot)) rotateY(var(--cYrot)) rotateZ(var(--cZrot));
-	animation: spinning 15s infinite linear;
+	transform: rotate3d(1,0,0, var(--cXrot)) rotate3d(0,1,0, var(--cYrot)) rotate3d(0,0,1, var(--cZrot));
+	/*animation: spinning 15s infinite linear;*/
 }
 
 #box3d > div {
@@ -113,8 +116,8 @@ body {
 
 #block3d {
 	transform-style: preserve-3d;
-	transform: translateX(var(--cXmove)) translateY(var(--cYmove)) translateZ(var(--cZmove)) rotateX(var(--cXrot)) rotateY(var(--cYrot)) rotateZ(var(--cZrot));
-	animation: spinning 15s infinite linear;
+	transform: translateX(var(--cXmove)) translateY(var(--cYmove)) translateZ(var(--cZmove)) rotate3d(1,0,0, var(--cXrot)) rotate3d(0,1,0, var(--cYrot)) rotate3d(0,0,1, var(--cZrot)) scale3d(2,2,2);
+	/*animation: spinning 15s infinite linear;*/
 }
 
 @keyframes spinning {
@@ -298,4 +301,10 @@ body {
 #toolPartAdd:hover, #toolPartRender:hover {
 	background: var(--textCol);
 	color: var(--darkGray);
-}	
+}
+
+#histCanv {
+	height: calc(var(--fontSize)*10);
+	margin-top: var(--space);
+	/*border: 1px solid #f00;*/
+}

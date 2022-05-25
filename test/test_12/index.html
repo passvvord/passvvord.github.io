@@ -2,9 +2,11 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 	<script type="text/javascript" src="libs/daikon.min.js"></script>
+	<script type="text/javascript" src="libs/math.min.js"></script>
 	<script type="text/javascript" src="libs/gpu.min.js"></script>
 
 	<script type="text/javascript" src="js/style.js"></script>
@@ -14,9 +16,13 @@
 	<link href="style/global.css" rel="stylesheet">
 
 	<script type="text/javascript" src="js/preloader.js"></script>
+	<script type="text/javascript" src="js/hist.js"></script>
 	<script type="text/javascript" src="js/toolsControl.js" defer></script>
+
+	<script type="text/javascript" src="js/zone3d.js" defer></script>
+	<script type="text/javascript" src="js/histTool.js" defer></script>
 	<script type="text/javascript" src="js/OpenDICOM.js" defer></script>
-	
+		
 
 	<title>...</title>
 
@@ -116,19 +122,19 @@
 						<div class="toolPartHead">
 							<div>diapazone</div>
 							<div class="hideToolPart">▲</div>
-							<div class="removeToolPart">X</div>
+							<div class="removeToolPart">🗙</div>
 						</div>
 						<div class="toolPartShowGradient"></div>
 						<div class="toolPartBody">
 							<div class="slider">
-								<input class="visParamsMin" type="range" min="-1000" max="1000" value="0" step="1">
+								<input class="visParamsMin imageMin" type="range" min="-1000" max="1000" value="0" step="1">
 								<div>min:</div>
-								<input class="visParamsMin" type="number" min="-1000" max="1000" value="0" step="1">
+								<input class="visParamsMin imageMin" type="number" min="-1000" max="1000" value="0" step="1">
 							</div>
 							<div class="slider">
-								<input class="visParamsMax" type="range" min="-1000" max="1000" value="0" step="1">
+								<input class="visParamsMax imageMax" type="range" min="-1000" max="1000" value="0" step="1">
 								<div>max:</div>
-								<input class="visParamsMax" type="number" min="-1000" max="1000" value="0" step="1">
+								<input class="visParamsMax imageMax" type="number" min="-1000" max="1000" value="0" step="1">
 							</div>
 							<div class="toolPartTextLine">Color:</div>
 							<div class="toolPartCheckboxLine">
@@ -170,7 +176,24 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
-				<div>Open file before</div>
+				<div id="histCanv">
+					
+				</div>
+				<div class="slider">
+					<input class="histMin imageMin" type="range" min="-1000" max="1000" value="0" step="1">
+					<div>min:</div>
+					<input class="histMin imageMin" type="number" min="-1000" max="1000" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="histMax imageMax" type="range" min="-1000" max="1000" value="0" step="1">
+					<div>max:</div>
+					<input class="histMax imageMax" type="number" min="-1000" max="1000" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="histCount" type="range" min="10" max="100" value="10" step="1">
+					<div>count:</div>
+					<input class="histCount" type="number" min="10" max="100" value="10" step="1">
+				</div>
 			</div>
 		</div>
 
@@ -212,14 +235,14 @@
 				</div>
 			</div>
 		</div>
-	
+
 	</div>
 
 	<div id="box3d">
-		<div id="box3dfront">Z-</div>
+		<div id="box3dfront">Z+</div>
 		<div id="box3dleft">X-</div>
 		<div id="box3dright">X+</div>
-		<div id="box3dback">Z+</div>
+		<div id="box3dback">Z-</div>
 		<div id="box3dtop">Y+</div>
 		<div id="box3dbottom">Y-</div>
 	</div>
