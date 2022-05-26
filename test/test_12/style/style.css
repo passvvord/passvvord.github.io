@@ -115,6 +115,9 @@ body {
 }
 
 #block3d {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transform-style: preserve-3d;
 	/*transform: translateX(var(--cXmove)) translateY(var(--cYmove)) translateZ(var(--cZmove)) rotate3d(1,0,0, var(--cXrot)) rotate3d(0,1,0, var(--cYrot)) rotate3d(0,0,1, var(--cZrot)) scale3d(2,2,2);*/
 	/*animation: spinning 15s infinite linear;*/
