@@ -1,2 +1,0 @@
-document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
-document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
