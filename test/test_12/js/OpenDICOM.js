@@ -29,6 +29,10 @@ document.querySelector('#box3d').addEventListener('click', c=>{
 	}
 })
 
+document.querySelector('#box3d').addEventListener('dblclick', c=>{
+
+})
+
 function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
 	for (let a = 0; a < A; a+=ago) {
 		let canv = document.createElement('canvas');
@@ -66,22 +70,32 @@ function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,ColArray,ago=1) {
 	}
 }
 
-// document.querySelector('#zone3d').addEventListener('mousemove',mm=>{
-// 	if (mm.buttons === 1 && Math.sqrt(mm.movementX*mm.movementX+mm.movementY*mm.movementY) > 0.1) {
-// 		// console.log(mm.movementX,mm.movementY)
-// 		const matrix = getMatrix(document.querySelector('#zone3d > #block3d'),mm.movementX,mm.movementY)
-// 		document.querySelector('#zone3d > #block3d').style.transform = matrix;
-// 		document.querySelector('#box3d').style.transform = matrix;
-// 	}
-// })
+function upgradeLayer2(Block3D,data,axName,A,B,C,min,delta,ColArray,ago=1) {
+	let posf;
+	if (axName === 'X') {
+		posf = (x,z,y,X,Z,Y)=>(x+y*X+(Z-z)*X*Y);
+	} else if (axName === 'Y') {
+		posf = (y,x,z,Y,X,Z)=>(x+(Y-y)*X+z*X*Y);
+	} else if (axName === 'Z') {
+		posf = (z,x,y,Z,X,Y)=>(x+y*X+z*X*Y);
+	}
+	
+	for (let a = 0; a < A; a+=ago) {
+		let ctx = document.getElementById(axName+a).getContext("2d");
+		let pixels = new Uint8ClampedArray(B*C*4);
+		for (let c = 0; c < C; c++) {
+			for (let b = 0; b < B; b++) {
+				const temp = Math.round( (data[posf(a,b,c,A,B,C)]-min)/delta*255 )
+				for (let col = 0; col < 4; col+=1) {
+					pixels[(c*B+b)*4+col] = ColArray[temp*4+col];
+				}
+			}
+		}
+		ctx.putImageData(new ImageData(pixels,B,C), 0, 0);
+	}
+}
 
-const roundM2D = (A,n=4)=>A.map(a=>a.map(aa=>Math.round(aa*10**n)/10**n));
-const rMZa_90 = roundM2D( math.rotationMatrix(-math.pi / 2, [0, 0, 1]) )
-const getRotationMatrixFromAllMatrix = (A)=>[[A[0],A[1],A[2]],[A[4],A[5],A[6]],[A[8],A[9],A[10]]];
-// const setNewRotationToOldMatrix = (N,O)=>`matrix3d(${N[0][0]},${N[0][1]},${N[0][2]},${O[3]},${N[1][0]},${N[1][1]},${N[1][2]},${O[7]},${N[2][0]},${N[2][1]},${N[2][2]},${O[11]},${O[12]},${O[13]},${O[14]},${O[15]})`;
-const setNewRotationToOldMatrix = (N,O)=>[N[0][0],N[0][1],N[0][2],O[3],N[1][0],N[1][1],N[1][2],O[7],N[2][0],N[2][1],N[2][2],O[11],O[12],O[13],O[14],O[15]];
 const get3DmatrixFrom2D = (A)=>[A[0],A[1],0,0 ,A[2],A[3],0,0 ,0,0,1,0 ,A[4],A[5],0,1]
-
 
 function get3DMatrixTransform(el) {
 	const tempStringMatrix = getComputedStyle(el)['transform']
@@ -96,6 +110,11 @@ function get3DMatrixTransform(el) {
 	}	
 }
 
+const roundM2D = (A,n=4)=>A.map(a=>a.map(aa=>Math.round(aa*10**n)/10**n));
+const rMZa_90 = roundM2D( math.rotationMatrix(-math.pi / 2, [0, 0, 1]) )
+const getRotationMatrixFromAllMatrix = (A)=>[[A[0],A[1],A[2]],[A[4],A[5],A[6]],[A[8],A[9],A[10]]];
+const setNewRotationToOldMatrix = (N,O)=>[N[0][0],N[0][1],N[0][2],O[3],N[1][0],N[1][1],N[1][2],O[7],N[2][0],N[2][1],N[2][2],O[11],O[12],O[13],O[14],O[15]];
+
 function getNewMatrixAfterAnyRotate(matrix,mmx,mmy,angleF) {
 	// const currentMatrix = get3DMatrixTransform(boxEl);
 	return setNewRotationToOldMatrix(
@@ -108,6 +127,14 @@ function getNewMatrixAfterAnyRotate(matrix,mmx,mmy,angleF) {
 		),
 		matrix
 	);
+}
+
+function setLayersVisibilityByRotateMatrix(rotateMatrix) {
+	switch (math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a)).reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
+		case 0: document.getElementById('zone3d').setAttribute('style','--lX: auto;'); break;
+		case 1: document.getElementById('zone3d').setAttribute('style','--lY: auto;'); break;
+		case 2: document.getElementById('zone3d').setAttribute('style','--lZ: auto;'); break;
+	}
 }
 
 function getNewMatrixAfterOzRotate(matrix,angle) {
@@ -126,7 +153,12 @@ function getNewMatrixAfterOzRotate(matrix,angle) {
 
 const getMatrixFromArray = (A)=>`matrix3d(${A.join(',')})`;
 
-function getNewMatrixAfterZoom(matrix,zoom,zoomMin=0.2,zoomMax=6) {
+function noZoomMatrix(A) {
+	A[15] = 1;
+	return A;
+}
+
+function getNewMatrixAfterZoom(matrix,zoom,zoomMin=0.5,zoomMax=10) {
 	// let currentMatrix = get3DMatrixTransform(boxEl);
 	matrix[15]=Math.max(Math.min(matrix[15]*zoom,1/zoomMin),1/zoomMax);
 	return matrix;
@@ -137,32 +169,33 @@ document.getElementById('zone3d').oncontextmenu = ()=>false;
 document.getElementById('zone3d').addEventListener('mousemove',mm=>{
 	if (Math.abs(mm.movementX)+Math.abs(mm.movementY) > 0) { // sometimes can be 0 mmX and 0 mmY
 		if (mm.buttons === 1) { //LMB only
-			const matrix = getMatrixFromArray(getNewMatrixAfterAnyRotate(
+			const matrix = getNewMatrixAfterAnyRotate(
 				get3DMatrixTransform(document.getElementById('block3d')),
 				mm.movementX,
 				mm.movementY,
 				(mx,my)=>(Math.sqrt(mx*mx+my*my)/180)*math.pi
-			));
-			document.querySelector('#zone3d > #block3d').style.transform = matrix;
-			document.querySelector('#box3d').style.transform = matrix;
+			);
+			setLayersVisibilityByRotateMatrix(getRotationMatrixFromAllMatrix(matrix));
+			document.querySelector('#zone3d > #block3d').style.transform = getMatrixFromArray(matrix);
+			document.querySelector('#box3d').style.transform = getMatrixFromArray(noZoomMatrix(matrix));
 		} else if (mm.buttons === 2) { //RMB only
-			const matrix = getMatrixFromArray(getNewMatrixAfterOzRotate(
+			const matrix = getNewMatrixAfterOzRotate(
 				get3DMatrixTransform(document.getElementById('block3d')),
 				(mm.movementX/180)*math.pi*0.5
-			));
-			document.querySelector('#zone3d > #block3d').style.transform = matrix;
-			document.querySelector('#box3d').style.transform = matrix;
+			);
+			document.querySelector('#zone3d > #block3d').style.transform = getMatrixFromArray(matrix);
+			document.querySelector('#box3d').style.transform = getMatrixFromArray(noZoomMatrix(matrix));
 		}
 	}
 })
 
 document.getElementById('zone3d').addEventListener('wheel',w=>{
-	const matrix = getMatrixFromArray(getNewMatrixAfterZoom(
+	const matrix = getNewMatrixAfterZoom(
 		get3DMatrixTransform(document.getElementById('block3d'))
 		,1+w.deltaY/2000
-	));
-	document.querySelector('#zone3d > #block3d').style.transform = matrix;
-	document.querySelector('#box3d').style.transform = matrix;
+	);
+	document.querySelector('#zone3d > #block3d').style.transform = getMatrixFromArray(matrix);
+	document.querySelector('#box3d').style.transform = getMatrixFromArray(noZoomMatrix(matrix));
 })
 
 document.getElementById('zone3d').addEventListener('touchstart',ts=>{
@@ -178,14 +211,15 @@ const vec2DangleBeetwen = (A,B)=>Math.acos(vec2DscaMult(A,B)/(vec2DLen(A)*vec2DL
 document.getElementById('zone3d').addEventListener('touchmove',tm=>{
 	if (Object.keys(tm.touches).length === 1 && Object.keys(window.oldTouches).length === 1) {
 
-		const matrix = getMatrixFromArray(getNewMatrixAfterAnyRotate(
+		const matrix = getNewMatrixAfterAnyRotate(
 			get3DMatrixTransform(document.getElementById('block3d')),
 			tm.touches[0].screenX-window.oldTouches[0].screenX,
 			tm.touches[0].screenY-window.oldTouches[0].screenY,
 			(mx,my)=>(Math.sqrt(mx*mx+my*my)/180)*math.pi
-		));
-		document.querySelector('#zone3d > #block3d').style.transform = matrix;
-		document.querySelector('#box3d').style.transform = matrix;
+		);
+		setLayersVisibilityByRotateMatrix(getRotationMatrixFromAllMatrix(matrix));
+		document.querySelector('#zone3d > #block3d').style.transform = getMatrixFromArray(matrix);
+		document.querySelector('#box3d').style.transform = getMatrixFromArray(noZoomMatrix(matrix));
 
 	} else if (Object.keys(tm.touches).length === 2 && Object.keys(window.oldTouches).length === 2) {
 
@@ -196,12 +230,12 @@ document.getElementById('zone3d').addEventListener('touchmove',tm=>{
 			get3DMatrixTransform(document.getElementById('block3d'))
 			,1-1*(vec2DLen(newDeltaVector)-vec2DLen(oldDeltaVector))/500
 		);
-		matrix = getMatrixFromArray(getNewMatrixAfterOzRotate(
+		matrix = getNewMatrixAfterOzRotate(
 			matrix,
 			2*vec2DsignBeetwen(oldDeltaVector,newDeltaVector)*vec2DangleBeetwen(oldDeltaVector,newDeltaVector)
-		));
-		document.querySelector('#zone3d > #block3d').style.transform = matrix;
-		document.querySelector('#box3d').style.transform = matrix;
+		);
+		document.querySelector('#zone3d > #block3d').style.transform = getMatrixFromArray(matrix);
+		document.querySelector('#box3d').style.transform = getMatrixFromArray(noZoomMatrix(matrix));
 
 	}
 	window.oldTouches = tm.touches;
@@ -285,6 +319,8 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,ColArray)
 		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
 		console.log('layers rendered')
+
+		setLayersVisibilityByRotateMatrix([[1,0,0],[0,1,0],[0,0,1]]);
 
 		remove_preloader()
 
