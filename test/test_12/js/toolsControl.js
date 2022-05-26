@@ -145,23 +145,23 @@ document.querySelector("#toolPartRender").addEventListener('click', ()=>{
 	console.log('col array, need time:',Date.now()-temp)
 	temp = Date.now()
 
-	const AX = ['X','Y','Z']
+	const AX = [['X','Y','Z'],['Z','X','X'],['Y','Z','Y']];
 
 	for (let ax = 0; ax < AX.length; ax+=1) {
 
 		upgradeLayer(
 			document.getElementById("block3d")
 			,window.image['pixels']
-			,AX[ax]
-			,window.image[AX[ax]]
-			,window.image[AX[(ax+1)%AX.length]]
-			,window.image[AX[(ax+2)%AX.length]]
+			,AX[0][ax]
+			,window.image[AX[0][ax]]
+			,window.image[AX[1][ax]]
+			,window.image[AX[2][ax]]
 			,window.image['min']
 			,window.image['max']-window.image['min']
 			,ColArray
 		)
 
-		console.log(AX[ax],'rendered, need time:',Date.now()-temp)
+		console.log(AX[0][ax],'rendered, need time:',Date.now()-temp)
 		temp = Date.now()
 	}
 

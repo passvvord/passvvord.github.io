@@ -48,9 +48,9 @@ function initLayer(Block3D,data,axName,layerTransform,A,B,C,ago=1) {
 function upgradeLayer(Block3D,data,axName,A,B,C,min,delta,ColArray,ago=1) {
 	let posf;
 	if (axName === 'X') {
-		posf = (x,z,y,X,Z,Y)=>(x+y*X+(Z-z)*X*Y);
+		posf = (x,z,y,X,Z,Y)=>(x+y*X+(Z-1-z)*X*Y);
 	} else if (axName === 'Y') {
-		posf = (y,x,z,Y,X,Z)=>(x+(Y-y)*X+z*X*Y);
+		posf = (y,x,z,Y,X,Z)=>(x+(Y-1-y)*X+z*X*Y);
 	} else if (axName === 'Z') {
 		posf = (z,x,y,Z,X,Y)=>(x+y*X+z*X*Y);
 	}
@@ -315,8 +315,8 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		initLayer(canvBlock,window.image['pixels'],'Z',(A,a)=>`translateZ(${Math.floor(A/2-a)}px)`                ,Z,X,Y)
 		console.log('layers inited')
 		
-		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Y,Z,min,max-min,ColArray)
-		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,Z,X,min,max-min,ColArray)
+		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Z,Y,min,max-min,ColArray)
+		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,X,Z,min,max-min,ColArray)
 		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
 		console.log('layers rendered')
 
