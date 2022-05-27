@@ -1,0 +1,313 @@
+:root {
+	--cXrot: -45deg;
+	--cYrot: 45deg;
+	--cZrot: 0deg;
+
+	/*--one: calc(1vh + 1vw);*/
+
+	--cXmove: 0px;
+	--cYmove: 0px;
+	--cZmove: 0px;
+
+	--lZ: none;
+	--lX: none;
+	--lY: none;
+
+	--pers: 0px;
+
+	--black: #000;
+	--gray: #1A1A1A;
+	--darkGray: #111111;/*var(--darkGray)*/
+	--lightGray: #404040;
+	--textCol: #CBCBCB;/*var(--textCol)*/
+
+	--fontSize: calc(var(--vh)*1.6);
+	--space: calc(var(--fontSize)/2);
+}
+
+::-webkit-scrollbar {
+	width: var(--fontSize);
+	height: var(--fontSize);
+}
+
+@media (max-width: 100vh) {
+	::-webkit-scrollbar {
+		width: calc(var(--fontSize)*1.5);
+		height: calc(var(--fontSize)*1.5);
+	}
+}
+
+
+::-webkit-scrollbar-track {
+	background: var(--lightGray);
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--textCol);
+}
+
+body {
+	background: #000;
+	margin: 0;
+	padding: 0;
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden;
+	font-family: blogger;
+	font-size: var(--fontSize);
+
+	display: grid;
+	grid-template-columns: auto 20vw;
+	grid-template-rows: 100vh;
+}
+
+@media (max-width: 100vh) {
+	body {
+		display: grid;
+		height: 100vh;
+		grid-template-columns: auto;
+		grid-template-rows: 50% 50%;
+	}
+}
+
+/*.centerText {
+	text-align: center;
+}*/
+
+#box3d {
+	--cube3dsize: 5vh;
+	width: var(--cube3dsize);
+	height: var(--cube3dsize);
+	position: fixed;
+	margin: var(--cube3dsize);
+	transform-style: preserve-3d;
+	/*transform: rotate3d(1,0,0, var(--cXrot)) rotate3d(0,1,0, var(--cYrot)) rotate3d(0,0,1, var(--cZrot));*/
+	/*animation: spinning 15s infinite linear;*/
+}
+
+#box3d > div {
+	font-family: blogger_b;
+	width: var(--cube3dsize);
+	height: var(--cube3dsize);
+	font-size: calc(var(--cube3dsize)/2);
+	background: #fff;
+	color: var(--black);
+	border: solid 1px var(--black);
+	position: absolute;
+
+	text-align: center;
+	line-height: var(--cube3dsize);
+}
+
+#box3dfront  { transform: rotateY(0deg) translateZ(calc(var(--cube3dsize)/2));  }
+#box3dleft   { transform: rotateY(-90deg) translateZ(calc(var(--cube3dsize)/2));}
+#box3dright  { transform: rotateY(90deg) translateZ(calc(var(--cube3dsize)/2)); }
+#box3dback   { transform: rotateY(180deg) translateZ(calc(var(--cube3dsize)/2));}
+#box3dtop    { transform: rotateX(90deg) translateZ(calc(var(--cube3dsize)/2)); }
+#box3dbottom { transform: rotateX(-90deg) translateZ(calc(var(--cube3dsize)/2));}
+
+#zone3d {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	overflow: hidden;
+}
+
+#block3d {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transform-style: preserve-3d;
+	/*transform: translateX(var(--cXmove)) translateY(var(--cYmove)) translateZ(var(--cZmove)) rotate3d(1,0,0, var(--cXrot)) rotate3d(0,1,0, var(--cYrot)) rotate3d(0,0,1, var(--cZrot)) scale3d(2,2,2);*/
+	/*animation: spinning 15s infinite linear;*/
+}
+
+@keyframes spinning {
+	from  {transform: rotateY(  0deg) rotateX(115deg) }
+	to	{transform: rotateY(-360deg) rotateX(115deg) }
+}
+
+.Xlayer, .Ylayer, .Zlayer {
+	position: absolute;
+	/*opacity: 1;*/
+	/*image-rendering: pixelated;*/
+}
+
+.Xlayer {
+	display: var(--lX);
+}
+
+.Ylayer {
+	display: var(--lY);
+}
+
+.Zlayer {
+	display: var(--lZ);
+}
+
+#toolBlock {
+	background: var(--darkGray);
+	overflow-x: hidden;
+	overflow-y: scroll;
+	border-left: solid 1px var(--textCol);
+}
+
+@media (max-width: 100vh) {
+	#toolBlock {
+		border-left: none;
+		border-top: solid 1px var(--textCol);
+	}
+}
+
+.tool {
+	background: #1A1A1A;
+	border: solid 1px var(--textCol);
+	color: var(--textCol);
+	margin: var(--space);
+	border-radius: var(--space);
+	overflow: hidden;
+	box-shadow: 0 0 var(--space) #000;
+	font-size: var(--fontSize);
+}
+
+.toolHead {
+	display: grid;
+	grid-template-columns: 50% 50%;
+}
+
+.toolPartHead {
+	display: grid;
+	grid-template-columns: 50% 25% 25%;
+	/*grid-template-rows: auto var(--space) var(--fontSize);*/
+}
+
+.toolHead > div, .toolPartHead > div {
+	padding: var(--space);
+	text-align: center;
+}
+
+.hideTool, .hideToolPart, .removeToolPart {
+	cursor: pointer;
+/*	transition-duration: 0.5s;*/
+}
+
+/*.hideTool:hover, .hideToolPart:hover {
+	background: var(--textCol);
+	color: var(--darkGray);
+}*/
+
+.toolBody {
+	padding: var(--space);
+	border-top: solid 1px var(--textCol);
+}
+
+#qual_perf {
+	display: grid;
+	grid-template-columns: calc(var(--fontSize)*2.5) auto calc(var(--fontSize)*2.5);
+	grid-template-rows: auto auto;
+}
+
+/*#qual_perf > div {
+	
+}*/
+
+#qual_perf > img, .openFileLine > img {
+	width: calc(var(--fontSize)*2.5);
+}
+
+#qual_perfText {
+	grid-column: 1/4;
+	text-align: center;
+	/*padding: 1vh;*/
+}
+
+.openFileLine {
+	display: grid;
+	grid-template-columns: calc(var(--fontSize)*2.5) auto;
+}
+
+.openFileLine > div {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.toolPart {
+	border: solid 1px var(--textCol);
+	border-radius: var(--space);
+	overflow: hidden;
+	margin-bottom: var(--space);
+}
+
+.slider {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-template-rows: auto auto;
+}
+
+.slider > input[type=range] {
+	grid-column: 1/3;
+	margin: var(--space) 0;
+}
+
+.slider > div, .toolPartCheckboxLine > div, .colLineInput > div {
+	text-align: center;
+}
+
+#Gradientline {
+	height: var(--fontSize);
+	width: -webkit-fill-available;
+	border-top: solid 1px var(--textCol);
+}
+
+.toolPartBody {
+	border-top: solid 1px var(--textCol);
+	padding: var(--space);
+}
+
+.toolPartTextLine {
+	margin-top: var(--space);
+	padding-top: var(--space);
+	border-top: solid 1px var(--textCol);
+	text-align: center;
+}
+
+.colLineInput {
+	display: grid;
+	grid-template-columns: 40% 20% 40%;
+	margin-top: var(--space);
+}
+
+.toolPartCheckboxLine {
+	display: grid;
+	grid-template-columns: 50% 50%;
+}
+
+.toolPartShowGradient {
+	height: var(--fontSize);
+	margin-top: var(--space);
+	background: linear-gradient(to right, rgba(0,0,0,0), rgba(255,255,255,1));
+}
+
+#toolPartAdd, #toolPartRender {
+	margin-bottom: var(--space);
+	border-radius: var(--space);
+	font-family: blogger_b;
+	padding: var(--space);
+	border: solid 1px var(--textCol);
+	text-align: center;
+	cursor: pointer;
+	transition-duration: 0.5s;
+}
+
+#toolPartAdd:hover, #toolPartRender:hover {
+	background: var(--textCol);
+	color: var(--darkGray);
+}
+
+#histCanv {
+	height: calc(var(--fontSize)*10);
+	margin-top: var(--space);
+	/*border: 1px solid #f00;*/
+}
