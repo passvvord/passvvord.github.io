@@ -22,9 +22,11 @@ window.fullscreen = false;
 document.querySelector('#box3d').addEventListener('click', c=>{
 	if (window.fullscreen) {
 		closeFullscreen();
+		document.body.className = '';
 		window.fullscreen = false;
 	} else {
 		openFullscreen();
+		document.body.className = 'fullscreen3dzone';
 		window.fullscreen = true;
 	}
 })

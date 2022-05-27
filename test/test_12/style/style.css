@@ -61,12 +61,22 @@ body {
 	grid-template-rows: 100vh;
 }
 
+.fullscreen3dzone {
+	grid-template-columns: 100vw 0;
+}
+
 @media (max-width: 100vh) {
 	body {
 		display: grid;
 		height: 100vh;
 		grid-template-columns: auto;
 		grid-template-rows: 50% 50%;
+	}
+}
+
+@media (max-width: 100vh) {
+	.fullscreen3dzone {
+		grid-template-rows: 100vh 0;
 	}
 }
 
