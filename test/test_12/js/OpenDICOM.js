@@ -414,8 +414,8 @@ document.getElementById('zone3d').addEventListener('touchmove',tm=>{
 // hideElement(document.getElementById("fileInfo").querySelectorAll(".hideTool")[0])
 // hideElement(document.getElementById("visParams").querySelectorAll(".hideTool")[0])
 // hideElement(document.getElementById("histogram").querySelectorAll(".hideTool")[0])
-hideElement(document.getElementById("choseZone").querySelectorAll(".hideTool")[0])
-hideElement(document.getElementById("settings").querySelectorAll(".hideTool")[0])
+// hideElement(document.getElementById("choseZone").querySelectorAll(".hideTool")[0])
+// hideElement(document.getElementById("settings").querySelectorAll(".hideTool")[0])
 
 window.image = {}
 
@@ -486,11 +486,17 @@ document.getElementById('oneDicomFile').addEventListener('change', c => {
 		console.log('layers inited')
 		
 		let temp = Date.now()
-		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Z,Y,min,max-min,ColArray)
-		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,X,Z,min,max-min,ColArray)
-		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,min,max-min,ColArray)
+
+		upgradeLayer(canvBlock,window.image['pixels'],'X',X,Z,Y,ColArray['min'],ColArray['max']-ColArray['min'],ColArray['colArray'])
+		upgradeLayer(canvBlock,window.image['pixels'],'Y',Y,X,Z,ColArray['min'],ColArray['max']-ColArray['min'],ColArray['colArray'])
+		upgradeLayer(canvBlock,window.image['pixels'],'Z',Z,X,Y,ColArray['min'],ColArray['max']-ColArray['min'],ColArray['colArray'])
 		// console.log('XYZ rendered, need time:')
 		console.log('XYZ rendered, need time:',Date.now()-temp)
+
+		initChoseZone(ChoseZoneElement,X,Y,Z)
+		setChoseZone(ChoseZoneElement,{
+			visible: false, X0: 0, X1: X, Y0: 0, Y1: Y, Z0: 0, Z1: Z,
+		})
 
 		setLayersVisibilityByRotateMatrix([[1,0,0],[0,1,0],[0,0,1]]);
 

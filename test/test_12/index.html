@@ -8,6 +8,8 @@
 	<script type="text/javascript" src="libs/daikon.min.js"></script>
 	<script type="text/javascript" src="libs/math.min.js"></script>
 	<script type="text/javascript" src="libs/gpu.min.js"></script>
+	<!-- <script type="text/javascript" src="libs/FastIntegerCompression.js"></script> -->
+	<!-- <script type="text/javascript" src="libs/lz4.min.js"></script> -->
 
 	<script type="text/javascript" src="js/style.js"></script>
 
@@ -18,6 +20,7 @@
 	<script type="text/javascript" src="js/preloader.js"></script>
 	<script type="text/javascript" src="js/hist.js"></script>
 	<script type="text/javascript" src="js/toolsControl.js" defer></script>
+	<script type="text/javascript" src="js/tools/choseZone.js" defer></script>
 
 	<script type="text/javascript" src="js/zone3d.js" defer></script>
 	<script type="text/javascript" src="js/histTool.js" defer></script>
@@ -28,8 +31,18 @@
 
 </head>
 <body>
-	<div id="zone3d">
-		<div id="block3d"></div>
+	<div id="zone3d" class="noselect">
+		<div id="block3d">
+			
+			<div id="cutZone">
+				<div id="cutZoneX0"></div>
+				<div id="cutZoneX1"></div>
+				<div id="cutZoneY0"></div>
+				<div id="cutZoneY1"></div>
+				<div id="cutZoneZ0"></div>
+				<div id="cutZoneZ1"></div>
+			</div>
+		</div>
 	</div>
 	
 	<div id="toolBlock">
@@ -115,8 +128,14 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<canvas id="Gradientline" height="1" width="256"></canvas>
+			<div id="fillMinMax"></div>
 			<div class="toolBody">
 				<!-- <div>hide diapason, gradient min/max, add custom diapason</div> -->
+				<div class="slider">
+					<input class="globalOpacity" type="range" min="0" max="1" value="1" step="0.01">
+					<div>global opacity:</div>
+					<input class="globalOpacity" type="number" min="0" max="1" value="1" step="0.01">
+				</div>
 				<div id="toolPartsBlock">
 					<div class="toolPart">
 						<div class="toolPartHead">
@@ -165,8 +184,8 @@
 						</div>
 					</div>
 				</div>
-				<div id="toolPartAdd">+</div>
-				<div id="toolPartRender">Render</div>
+				<div class="button noselect" id="toolPartAdd">+</div>
+				<div class="button noselect" id="toolPartRender">Render</div>
 			</div>
 		</div>
 
@@ -203,7 +222,43 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
-				<div>Open file before</div>
+				<div class="checkboxLine">
+					<div>Show zone cutter</div>
+					<input id="showZoneCutter" type="checkbox" checked>
+				</div>
+				
+				<div class="slider">
+					<input class="choseZoneX0" type="range" min="0" max="1" value="0" step="1">
+					<div>min X:</div>
+					<input class="choseZoneX0" type="number" min="0" max="1" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="choseZoneX1" type="range" min="0" max="1" value="0" step="1">
+					<div>max X:</div>
+					<input class="choseZoneX1" type="number" min="0" max="1" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="choseZoneY0" type="range" min="0" max="1" value="0" step="1">
+					<div>min Y:</div>
+					<input class="choseZoneY0" type="number" min="0" max="1" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="choseZoneY1" type="range" min="0" max="1" value="0" step="1">
+					<div>max Y:</div>
+					<input class="choseZoneY1" type="number" min="0" max="1" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="choseZoneZ0" type="range" min="0" max="1" value="0" step="1">
+					<div>min Z:</div>
+					<input class="choseZoneZ0" type="number" min="0" max="1" value="0" step="1">
+				</div>
+				<div class="slider">
+					<input class="choseZoneZ1" type="range" min="0" max="1" value="0" step="1">
+					<div>max Z:</div>
+					<input class="choseZoneZ1" type="number" min="0" max="1" value="0" step="1">
+				</div>
+
+				<div class="button noselect" id="cutZoneRenderButton">Cut</div>
 			</div>
 		</div>
 
@@ -213,38 +268,20 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
-				<div class="slider">
-					<input type="range" min="0" max="1" value="0.2" step="0.01">
-					<div>layers opacity:</div>
-					<input type="number" min="0" max="1" value="0.2" step="0.01">
-				</div>
-				<div class="slider">
-					<input type="range" min="-180" max="180" value="0" step="0.1">
-					<div>X rotate:</div>
-					<input type="number" min="-180" max="180" value="0" step="0.1">
-				</div>
-				<div class="slider">
-					<input type="range" min="-180" max="180" value="0" step="0.1">
-					<div>Y rotate:</div>
-					<input type="number" min="-180" max="180" value="0" step="0.1">
-				</div>
-				<div class="slider">
-					<input type="range" min="-180" max="180" value="0" step="0.1">
-					<div>Z rotate:</div>
-					<input type="number" min="-180" max="180" value="0" step="0.1">
-				</div>
+
+\
 			</div>
 		</div>
 
 	</div>
 
-	<div id="box3d">
-		<div id="box3dfront">Z+</div>
+	<div id="box3d" class="noselect">
+		<div id="box3dfront">Z-</div>
 		<div id="box3dleft">X-</div>
 		<div id="box3dright">X+</div>
-		<div id="box3dback">Z-</div>
-		<div id="box3dtop">Y-</div>
-		<div id="box3dbottom">Y+</div>
+		<div id="box3dback">Z+</div>
+		<div id="box3dtop">Y+</div>
+		<div id="box3dbottom">Y-</div>
 	</div>
 
 </body>

@@ -15,6 +15,35 @@ document.querySelectorAll(".hideTool").forEach(el=>{
 	el.addEventListener('click', ()=>{hideElement(el)})
 })
 
+// ['mousemove','touchmove'].forEach(event=>{
+// 	const el = document.querySelector(".globalOpacity[type=range]");
+// 	el.addEventListener(event,mm=>{
+// 		if (mm.buttons === 1 || event === 'touchmove') {
+// 			document.getElementById('block3d').style.setProperty('--globalLayerOpacity',el.value);
+// 		}
+// 	})
+// })
+
+document.querySelector(".globalOpacity[type=range]").addEventListener('mousemove',mm=>{
+	const el = document.querySelector(".globalOpacity[type=range]");
+	if (mm.buttons === 1) {
+		document.getElementById('block3d').style.setProperty('--globalLayerOpacity',el.value);
+	}
+})
+
+document.querySelector(".globalOpacity[type=range]").addEventListener('touchmove',tm=>{
+	const el = document.querySelector(".globalOpacity[type=range]");
+	document.getElementById('block3d').style.setProperty('--globalLayerOpacity',el.value);
+})
+
+document.querySelector(".globalOpacity[type=number]").addEventListener('keyup',kp=>{
+	const el = document.querySelector(".globalOpacity[type=number]");
+	if      (parseFloat(el.value) > parseFloat(el.max) ) { el.value = el.max; } 
+	else if (parseFloat(el.value) < parseFloat(el.min) ) { el.value = el.min; }
+	document.getElementById('block3d').style.setProperty('--globalLayerOpacity',el.value);
+})
+
+
 function ColToolPartEvents(element) {
 	element.querySelectorAll(".hideToolPart").forEach(el=>{
 		el.addEventListener('click', ()=>{hideElement(el,"toolPartBody","wrong style (click on .hideToolPart)")})
@@ -107,8 +136,13 @@ function getVisParams() {
 	return visParams
 }
 
-function getColArrayFromParams(visParams,imgmin,imgmax) {
-	let res = new Uint8Array(256*4)
+function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
+	let res = new Uint8Array(256*4);
+
+	const imgmin = (visParams.length>1?visParams.reduce((a,b)=>(b.min<a.min?b.min:a.min)):visParams[0].min);
+	const imgmax = (visParams.length>1?visParams.reduce((a,b)=>(b.max>a.max?b.max:a.max)):visParams[0].max);
+
+	console.log(imgmin,imgmax)
 
 	for (let i = 0; i < visParams.length; i++) {
 		const start = Math.round((visParams[i]["min"]-imgmin)/(imgmax-imgmin)*255);
@@ -127,8 +161,9 @@ function getColArrayFromParams(visParams,imgmin,imgmax) {
 	}
 
 	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),256,1), 0, 0)
+	document.getElementById('fillMinMax').textContent = `fillmin: ${imgmin}, fillmax: ${imgmax}`;
 
-	return res
+	return {'colArray':res,'min':imgmin,'max':imgmax}
 }
 
 document.querySelector("#toolPartRender").addEventListener('click', ()=>{
@@ -137,8 +172,8 @@ document.querySelector("#toolPartRender").addEventListener('click', ()=>{
 
 	const ColArray = getColArrayFromParams(
 		getVisParams()
-		,window.image['min']
-		,window.image['max']
+		// ,window.image['min']
+		// ,window.image['max']
 	)
 
 	console.log('col array, need time:',Date.now()-temp)
@@ -154,9 +189,9 @@ document.querySelector("#toolPartRender").addEventListener('click', ()=>{
 			,window.image[AX[0][ax]]
 			,window.image[AX[1][ax]]
 			,window.image[AX[2][ax]]
-			,window.image['min']
-			,window.image['max']-window.image['min']
-			,ColArray
+			,ColArray['min']
+			,ColArray['max']-ColArray['min']
+			,ColArray['colArray']
 		)
 
 	console.log(AX[0][ax],'rendered, need time:',Date.now()-temp)
