@@ -1,19 +1,26 @@
 :root {
-	--cXrot: -45deg;
+/*	--cXrot: -45deg;
 	--cYrot: 45deg;
-	--cZrot: 0deg;
+	--cZrot: 0deg;*/
 
 	/*--one: calc(1vh + 1vw);*/
 
-	--cXmove: 0px;
+/*	--cXmove: 0px;
 	--cYmove: 0px;
-	--cZmove: 0px;
+	--cZmove: 0px;*/
 
 	--lZ: none;
 	--lX: none;
 	--lY: none;
 
-	--pers: 0px;
+/*	--ZlXsc: 1;
+	--ZlYsc: 1;
+	--XlXsc: 1;
+	--XlYsc: 1;
+	--YlXsc: 1;
+	--YlYsc: 1;*/
+
+	/*--pers: 0px;*/
 
 	--black: #000;
 	--gray: #1A1A1A;
@@ -167,44 +174,51 @@ body {
 	position: absolute;
 	border: dashed 1px #f00;
 	background: rgba(255,0,0,0.3);
+	background-position: center;
+	/*animation: activeCutZone 1s infinite linear;*/
 }
 
 #cutZoneX0 {
-	/*border: solid 1px #f00; */
+	background-image: url(../icons/X0.svg);
 	width: calc(var(--cutZ1) - var(--cutZ0)); 
 	height: calc(var(--cutY1) - var(--cutY0)); 
-	transform: rotateY(-90deg) translate3d(calc((var(--cutZ1) - var(--cutZ0))/2 + var(--Zsize)/2 - var(--cutZ1)),calc(var(--Ysize) - var(--cutY1)),calc((var(--cutZ1) - var(--cutZ0))/2 - var(--cutX0)) );
+	transform: rotateY(-90deg) translate3d(calc((var(--cutZ1) - var(--cutZ0))/2 + var(--Zsize)/2 - var(--cutZ1) ),var(--cutY0),calc((var(--cutZ1) - var(--cutZ0))/2 - var(--cutX0)) );
 }
 #cutZoneX1 {
-	/*border: solid 1px #f00; */
+	background-image: url(../icons/X1.svg);
 	width: calc(var(--cutZ1) - var(--cutZ0)); 
 	height: calc(var(--cutY1) - var(--cutY0)); 
-	transform: rotateY(-90deg) translate3d(calc((var(--cutZ1) - var(--cutZ0))/2 + var(--Zsize)/2 - var(--cutZ1)),calc(var(--Ysize) - var(--cutY1)),calc((var(--cutZ1) - var(--cutZ0))/2 - var(--cutX1)) );
+	transform: rotateY(-90deg) translate3d(calc((var(--cutZ1) - var(--cutZ0))/2 + var(--Zsize)/2 - var(--cutZ1) ),var(--cutY0),calc((var(--cutZ1) - var(--cutZ0))/2 - var(--cutX1)) );
 }
 #cutZoneY0 {
-	/*border: solid 1px #0f0; */
+	background-image: url(../icons/Y0.svg);
 	width: calc(var(--cutX1) - var(--cutX0)); 
 	height: calc(var(--cutZ1) - var(--cutZ0)); 
-	transform: rotateX(-90deg) translate3d(var(--cutX0), calc((var(--cutZ1) - var(--cutZ0))/2 - var(--Zsize)/2 + var(--cutZ0)), calc(var(--Ysize) - (var(--cutZ1) - var(--cutZ0))/2 - var(--cutY0)));
+	transform: rotateX(-90deg) translate3d(var(--cutX0), calc((var(--cutZ1) - var(--cutZ0))/2 - var(--Zsize)/2 + var(--cutZ0)), calc(var(--cutY0) - (var(--cutZ1) - var(--cutZ0))/2));
 }
 #cutZoneY1 {
-	/*border: solid 1px #0f0; */
+	background-image: url(../icons/Y1.svg);
 	width: calc(var(--cutX1) - var(--cutX0)); 
 	height: calc(var(--cutZ1) - var(--cutZ0)); 
-	transform: rotateX(-90deg) translate3d(var(--cutX0), calc((var(--cutZ1) - var(--cutZ0))/2 - var(--Zsize)/2 + var(--cutZ0)), calc(var(--Ysize) - (var(--cutZ1) - var(--cutZ0))/2 - var(--cutY1)));
+	transform: rotateX(-90deg) translate3d(var(--cutX0), calc((var(--cutZ1) - var(--cutZ0))/2 - var(--Zsize)/2 + var(--cutZ0)), calc(var(--cutY1) - (var(--cutZ1) - var(--cutZ0))/2));
 }
 #cutZoneZ0 {
-	/*border: solid 1px #00f; */
+	background-image: url(../icons/Z0.svg);
 	width: calc(var(--cutX1) - var(--cutX0)); 
 	height: calc(var(--cutY1) - var(--cutY0)); 
-	transform: translate3d(var(--cutX0), calc(var(--Ysize) - var(--cutY1)), calc(var(--Zsize)/2 - var(--cutZ0)));
+	transform: translate3d(var(--cutX0), var(--cutY0), calc(var(--Zsize)/2 - var(--cutZ0)));
 }
 #cutZoneZ1 {
-	/*border: solid 1px #00f; */
+	background-image: url(../icons/Z1.svg);
 	width: calc(var(--cutX1) - var(--cutX0)); 
 	height: calc(var(--cutY1) - var(--cutY0)); 
-	transform: translate3d(var(--cutX0), calc(var(--Ysize) - var(--cutY1)), calc(var(--Zsize)/2 - var(--cutZ1)));
+	transform: translate3d(var(--cutX0), var(--cutY0), calc(var(--Zsize)/2 - var(--cutZ1) ));
 }
+
+/*@keyframes activeCutZone {
+	0%,100% {border-style: dashed; }
+	50%     {border-style: dotted;}
+}*/
 
 /*@keyframes spinning {
 	from  {transform: rotateY(  0deg) rotateX(115deg) }
@@ -258,6 +272,10 @@ body {
 .toolHead {
 	display: grid;
 	grid-template-columns: 50% 50%;
+}
+
+#fillMinMax {
+	padding: 0 var(--space);
 }
 
 .toolPartHead {
@@ -335,7 +353,7 @@ body {
 	margin: var(--space) 0;
 }
 
-.slider > div, .toolPartCheckboxLine > div, .colLineInput > div {
+.slider > div, .toolPartCheckboxLine > div, .colLineInput > div, .checkboxLine > div {
 	text-align: center;
 }
 
@@ -363,7 +381,7 @@ body {
 	margin-top: var(--space);
 }
 
-.toolPartCheckboxLine {
+.toolPartCheckboxLine, .checkboxLine {
 	display: grid;
 	grid-template-columns: 50% 50%;
 }
@@ -390,7 +408,11 @@ body {
 	color: var(--darkGray);
 }
 
-#toolPartAdd {
+#cutZoneRenderButton, #showConturesButton, #returnToImageButton {
+	margin-top: var(--space);
+}
+
+#toolPartAdd, #visParams > .toolBody > .slider {
 	margin-bottom: var(--space);
 /*	border-radius: var(--space);
 	font-family: blogger_b;
