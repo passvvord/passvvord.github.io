@@ -7,7 +7,7 @@ function calcOneSliderEvents(slider) {
 	})
 
 	slider.querySelector("input[type=range]").addEventListener('touchmove',tm=>{
-		slider.querySelector("input[type=number]").value = mm.target.value;
+		slider.querySelector("input[type=number]").value = tm.target.value;
 	})
 
 	slider.querySelector("input[type=number]").addEventListener('keyup',kp=>{
@@ -23,7 +23,7 @@ function addOnChangeFunctionOnSlider(slider,func,parseFunc = parseInt) {
 	})
 
 	slider.querySelector("input[type=range]").addEventListener('touchmove',tm=>{
-		func(parseFunc(mm.target.value));
+		func(parseFunc(tm.target.value));
 	})
 
 	slider.querySelector("input[type=number]").addEventListener('keyup',kp=>{
