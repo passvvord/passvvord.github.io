@@ -1,32 +1,22 @@
 const hideLayersElement = document.querySelector('#hideLayers')
 
 function initHideLayers(Xsize,Ysize,Zsize,element = hideLayersElement) {
-	initTool(element);
-
 	element.querySelectorAll('.hideLayersX0, .hideLayersX1').forEach(a=>{ a.min = 0; a.max = Xsize; })
 	element.querySelectorAll('.hideLayersY0, .hideLayersY1').forEach(a=>{ a.min = 0; a.max = Ysize; })
 	element.querySelectorAll('.hideLayersZ0, .hideLayersZ1').forEach(a=>{ a.min = 0; a.max = Zsize; })
+}
+
+function initHideLayersEvents(element = hideLayersElement) {
+	initTool(element);
 
 	const names = ['X0','X1','Y0','Y1','Z0','Z1'];
 
 	names.forEach(a=>{
-		// element.querySelector(`.hideLayers${a}[type=range]`).addEventListener('mousemove',mm=>{
-		// 	if (mm.buttons === 1) {
-		// 		renderHideLalers(a);
-		// 	}
-		// })
-		// element.querySelector(`.hideLayers${a}[type=range]`).addEventListener('touchmove',tm=>{
-		// 	renderHideLalers(a);
-		// })
-		// element.querySelector(`.hideLayers${a}[type=number]`).addEventListener('keyup',kp=>{
-		// 	renderHideLalers(a);
-		// })
-
 		addOnChangeFunctionOnSlider(
 			element.querySelector(`.hideLayers${a}`).parentElement,
 			(val)=>{renderHideLalers(a)}
 		)
-	})
+	})	
 }
 
 const renderHideLayersPart = (min,max,value,noneFunc,axName,el)=>{
@@ -38,7 +28,7 @@ const renderHideLayersPart = (min,max,value,noneFunc,axName,el)=>{
 			if (noneFunc(i,value)) {
 				temp.style.setProperty('display','none')
 		// console.log(`try to hide #${axName}${i}`)
-				
+
 			} else {
 				temp.style.setProperty('display','')
 			}

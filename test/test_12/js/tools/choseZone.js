@@ -1,7 +1,6 @@
 const choseZoneElement = document.querySelector('#choseZone')
 
 function initChoseZone(Xsize,Ysize,Zsize,element=choseZoneElement) {
-	initTool(element);
 
 	element.querySelectorAll('.choseZoneX0, .choseZoneX1').forEach(a=>{ a.min = 0; a.max = Xsize; })
 	element.querySelectorAll('.choseZoneY0, .choseZoneY1').forEach(a=>{ a.min = 0; a.max = Ysize; })
@@ -10,6 +9,13 @@ function initChoseZone(Xsize,Ysize,Zsize,element=choseZoneElement) {
 	document.getElementById('cutZone').style.setProperty('--Xsize' ,`${Xsize}px` )
 	document.getElementById('cutZone').style.setProperty('--Ysize' ,`${Ysize}px` )
 	document.getElementById('cutZone').style.setProperty('--Zsize' ,`${Zsize}px` )
+	// document.getElementById('cutZone').style.display = 'none';
+	// const czp = 
+	// document.querySelector('#cutZone').style.transform = `translate3d(0px,0px,0px)`
+}
+
+function initChoseZoneEvents(element = choseZoneElement) {
+	initTool(element);
 
 	const names = ['X0','X1','Y0','Y1','Z0','Z1'];
 
@@ -37,10 +43,7 @@ function initChoseZone(Xsize,Ysize,Zsize,element=choseZoneElement) {
 
 	element.querySelector('#cutZoneRenderButton').addEventListener('click',c=>{
 		updateZone3DbyChangingChoseZoneParams()
-	})
-
-
-
+	})	
 }
 
 function setChoseZone(params,element=choseZoneElement) {

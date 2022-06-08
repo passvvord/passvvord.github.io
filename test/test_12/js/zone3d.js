@@ -211,7 +211,7 @@ function initBlock3D(element = Block3Delement) {
 	const czp = window.zone3Dparams.ChoseZoneParams;
 
 	const tempDate = Date.now()
-	consoleOut(`call initBlock3D(element: ${element})`)
+	// consoleOut(`call initBlock3D(element: ${element})`)
 
 	for (let x = czp.X0; x < czp.X1; x++) {
 		let canv = createElement('canvas',{id: `X${x}`,className: 'Xlayer', width: czp.Z1-czp.Z0, height: czp.Y1-czp.Y0})
@@ -236,14 +236,14 @@ function initBlock3D(element = Block3Delement) {
 
 function removeBlock3D(element = Block3Delement) {
 	const tempDate = Date.now()
-	consoleOut(`call removeBlock3D(element: ${element})`)
+	// consoleOut(`call removeBlock3D(element: ${element})`)
 	element.querySelectorAll('canvas').forEach(a=>a.remove())
 	consoleOut(`removeBlock3D need time: ${Date.now() - tempDate} ms`)
 }
 
 function updateBlock3D(element = Block3Delement) {
 	const tempDate = Date.now()
-	consoleOut(`call updateBlock3D(element: ${element})`)
+	// consoleOut(`call updateBlock3D(element: ${element})`)
 	// data3D,X,Y,Z,min,delta,ColArray,
 	const params = getColArrayFromParams(window.zone3Dparams.VisParams)
 	const ColArray = params.colArray;
@@ -319,6 +319,11 @@ function updateBlock3D(element = Block3Delement) {
 	consoleOut(`updateBlock3D need time: ${Date.now() - tempDate} ms`)
 }
 
+function getCutedZone3DdataByChoseZoneParams(data,czp) {
+	// const czp = window.zone3Dparams.ChoseZoneParams;
+	return data.slice(czp.Z0,czp.Z1).map(a=>a.slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)))
+}
+
 function updateZone3DbyChangingVisParams() {
 	consoleOut('updateZone3DbyChangingVisParams')
 	window.zone3Dparams.VisParams = getVisParams();
@@ -335,38 +340,48 @@ function updateZone3DbyChangingChoseZoneParams() {
 	CutBlockelement.style.transform = `translate3d(${window.zone3Dparams.X/2-(czp.X1+czp.X0)/2}px,${window.zone3Dparams.Y/2-(czp.Y1+czp.Y0)/2}px,${(czp.Z1+czp.Z0)/2-window.zone3Dparams.Z/2}px)`
 }
 
-function calcBlock3D(data,X,Y,Z,min,max,element = Block3Delement) {
+// function calcBlock3D(data,X,Y,Z,min,max,IsContures = false,element = Block3Delement) {
+function calcBlock3D(data,params,element = Block3Delement) {
 	window.zone3Ddata = data;
-	// window.zone3DdataIs3Darray = dataIs3Darray;
-	
-	initChoseZone(X,Y,Z)
-	setChoseZone({visible: false, X0: 0, X1: X, Y0: 0, Y1: Y, Z0: 0, Z1: Z})
+	window.zone3Dparams = params;
 
-	initVisParams();
-	if (max > 4000) {
-		setVisParams(
-			[
-				{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
-				{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
-			],min,max
-		)		
-	} else {
-		setVisParams(
-			[
-				{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
-			],min,max
-		)		
-	}
+	initChoseZone(
+		window.zone3Dparams.X,
+		window.zone3Dparams.Y,
+		window.zone3Dparams.Z
+	)
+	setChoseZone(window.zone3Dparams.ChoseZoneParams)
+	const czp = window.zone3Dparams.ChoseZoneParams;
+	consoleOut(window.zone3Dparams)
+	consoleOut(czp,window.zone3Dparams.X/2,(czp.X1+czp.X0)/2)
+	CutBlockelement.style.transform = `translate3d(${window.zone3Dparams.X/2-(czp.X1+czp.X0)/2}px,${window.zone3Dparams.Y/2-(czp.Y1+czp.Y0)/2}px,${(czp.Z1+czp.Z0)/2-window.zone3Dparams.Z/2}px)`
 
-	window.zone3Dparams = {
-		X: X, Y: Y, Z: Z, 
-		min: min, max: max, 
-		VisParams: getVisParams(), 
-		ChoseZoneParams: getChoseZone()
-	};
+	setVisParams(
+		window.zone3Dparams.VisParams,
+		window.zone3Dparams.min,
+		window.zone3Dparams.max
+	)
 
-	initHideLayers(X,Y,Z);
-	setHideLayers({X0: 0, X1: X, Y0: 0, Y1: Y, Z0: 0, Z1: Z})
+	initHideLayers(
+		window.zone3Dparams.X,
+		window.zone3Dparams.Y,
+		window.zone3Dparams.Z
+	);
+	setHideLayers({
+		X0: 0, X1: window.zone3Dparams.X, 
+		Y0: 0, Y1: window.zone3Dparams.Y, 
+		Z0: 0, Z1: window.zone3Dparams.Z
+	})
+
+	// initVisParams();
+	// if (IsContures) {
+	// 	setVisParams(
+	// 		[
+	// 			{min: min, max: max, gradient: true, rgba0: [0, 0, 30, 0], rgba1: [255, 255, 255, 255]}
+	// 		],min,max
+	// 	)
+	// } else {
+
 
 	removeBlock3D(element);
 	initBlock3D(element);

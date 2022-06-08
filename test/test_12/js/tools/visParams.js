@@ -1,6 +1,6 @@
 const visParamsElement = document.querySelector('#visParams')
 
-function initVisParams(element = visParamsElement) {
+function initVisParamsEvents(element = visParamsElement) {
 	initTool(element);
 
 	addOnChangeFunctionOnSlider(

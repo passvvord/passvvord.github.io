@@ -25,6 +25,7 @@
 	<script type="text/javascript" src="js/tools/choseZone.js" defer></script>
 	<script type="text/javascript" src="js/tools/visParams.js" defer></script>
 	<script type="text/javascript" src="js/tools/hideLayers.js" defer></script>
+	<script type="text/javascript" src="js/tools/showContours.js" defer></script>
 	<script type="text/javascript" src="js/zone3d.js" defer></script>
 	<script type="text/javascript" src="js/tools/fileInfo.js" defer></script>
 	<script type="text/javascript" src="js/tools/openFile.js" defer></script>
@@ -245,9 +246,9 @@
 			</div>
 		</div>
 
-		<div id="analyseBlock" class="tool">
+		<div id="showContours" class="tool">
 			<div class="toolHead noselect">
-				<div>Show contures</div>
+				<div>Show contours</div>
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
@@ -260,21 +261,21 @@
 
 				</div>
 				<div class="toolPartTextLine">detalised lines</div>
-				<div class="slider">
-					<input class="____" type="range" min="1" max="4" value="1" step="1">
+				<div class="slider" id="detalised">
+					<input type="range" min="1" max="4" value="1" step="1">
 					<div>value:</div>
-					<input class="____" type="number" min="1" max="4" value="1" step="1">
+					<input type="number" min="1" max="4" value="1" step="1">
 				</div>
 				<div class="toolPartTextLine">allow in</div>
-				<div class="slider">
-					<input class="____" type="range" min="-1000" max="1000" value="0" step="1">
+				<div class="slider" id="allowInMin">
+					<input type="range" min="-1000" max="1000" value="0" step="1">
 					<div>min:</div>
-					<input class="____" type="number" min="-1000" max="1000" value="0" step="1">
+					<input type="number" min="-1000" max="1000" value="0" step="1">
 				</div>
-				<div class="slider">
-					<input class="____" type="range" min="-1000" max="1000" value="0" step="1">
+				<div class="slider" id="allowInMax">
+					<input type="range" min="-1000" max="1000" value="0" step="1">
 					<div>max:</div>
-					<input class="____" type="number" min="-1000" max="1000" value="0" step="1">
+					<input type="number" min="-1000" max="1000" value="0" step="1">
 				</div>
 				
 				<div class="button noselect" id="showConturesButton">show contures</div>

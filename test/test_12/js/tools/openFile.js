@@ -44,8 +44,29 @@ function initOpenFile(element = openFileElement) {
 			)
 			consoleOut(`histogram calced need time: ${Date.now() - tempDate} ms`)
 			initHistogram(min,max,50)
+			initShowContours(min,max)
+			// setShowContours({detalised: 1, allowInMin: min, allowInMax: max})
 
-			calcBlock3D(get3DarrayFrom1D(pixelData,X,Y,Z),X,Y,Z,min,max)
+			calcBlock3D(
+				get3DarrayFrom1D(pixelData,X,Y,Z),
+				{
+					X: X, Y: Y, Z: Z, 
+					min: min, max: max, 
+					VisParams: (max > 4000?[
+							{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
+							{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
+						]:[
+							{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+						]
+					),
+					ChoseZoneParams: {
+						visible: false, 
+						X0: 0, X1: X, 
+						Y0: 0, Y1: Y, 
+						Z0: 0, Z1: Z
+					}
+				}
+			)
 			document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 			
 			consoleOut('end opening one Dicom File ---------------------------------------------')
@@ -107,8 +128,29 @@ function initOpenFile(element = openFileElement) {
 					)
 					consoleOut(`histogram calced need time: ${Date.now() - tempDate} ms`)
 					initHistogram(min,max,50)
+					initShowContours(min,max)
+					// setShowContours({detalised: 1, allowInMin: min, allowInMax: max})
 
-					calcBlock3D(get3DarrayFrom1D(pixelData,X,Y,Z),X,Y,Z,min,max)
+					calcBlock3D(
+						get3DarrayFrom1D(pixelData,X,Y,Z),
+						{
+							X: X, Y: Y, Z: Z, 
+							min: min, max: max, 
+							VisParams: (max > 4000?[
+									{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
+									{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
+								]:[
+									{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+								]
+							),
+							ChoseZoneParams: {
+								visible: false, 
+								X0: 0, X1: X, 
+								Y0: 0, Y1: Y, 
+								Z0: 0, Z1: Z
+							}
+						}
+					)
 					document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 
 					consoleOut('end opening many Dicom Files -------------------------------------------')
