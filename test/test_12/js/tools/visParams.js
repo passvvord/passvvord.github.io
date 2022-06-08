@@ -64,23 +64,7 @@ function createSlider(textName,className,min,max,value) {
 	slider.appendChild(createElement('div',{textContent: textName}))
 	slider.appendChild(createElement('input',{className: className,type:"number",min: min ,max: max ,value: value ,step:"1"}))
 
-	slider.querySelector("input[type=range]").addEventListener('mousemove',mm=>{
-		if (mm.buttons === 1) {
-			slider.querySelector("input[type=number]").value = mm.target.value;
-		}
-	})
-
-	// slider.querySelector("input[type=range]").addEventListener('mouseup',mu=>{
-	// 	slider.querySelector("input[type=number]").value = mu.target.value;
-	// })
-
-	slider.querySelector("input[type=range]").addEventListener('touchmove',tm=>{
-		slider.querySelector("input[type=number]").value = tm.target.value;
-	})
-
-	slider.querySelector("input[type=number]").addEventListener('keyup',kp=>{
-		slider.querySelector("input[type=range]").value = Math.min(Math.max( parseFloat(kp.target.value) ,parseFloat(kp.target.min)),parseFloat(kp.target.max))
-	})
+	calcOneSliderEvents(slider)
 
 	return slider
 }

@@ -6,6 +6,15 @@ function calcOneSliderEvents(slider) {
 		}
 	})
 
+	slider.querySelector("input[type=range]").addEventListener('click',c=>{
+		slider.querySelector("input[type=number]").value = c.target.value;
+	})
+
+	slider.querySelector("input[type=range]").addEventListener('touchend',te=>{
+		console.log('te slider move',te.target.value)
+		slider.querySelector("input[type=number]").value = te.target.value;
+	})
+
 	slider.querySelector("input[type=range]").addEventListener('touchmove',tm=>{
 		slider.querySelector("input[type=number]").value = tm.target.value;
 	})
@@ -20,6 +29,15 @@ function addOnChangeFunctionOnSlider(slider,func,parseFunc = parseInt) {
 		if (mm.buttons === 1) {
 			func(parseFunc(mm.target.value));
 		}
+	})
+
+	slider.querySelector("input[type=range]").addEventListener('click',c=>{
+		func(parseFunc(c.target.value));
+	})
+
+	slider.querySelector("input[type=range]").addEventListener('touchend',te=>{
+		console.log('te func',te.target.value)
+		func(parseFunc(te.target.value));
 	})
 
 	slider.querySelector("input[type=range]").addEventListener('touchmove',tm=>{

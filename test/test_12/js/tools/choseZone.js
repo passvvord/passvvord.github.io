@@ -20,17 +20,21 @@ function initChoseZoneEvents(element = choseZoneElement) {
 	const names = ['X0','X1','Y0','Y1','Z0','Z1'];
 
 	names.forEach(a=>{
-		element.querySelector(`.choseZone${a}[type=range]`).addEventListener('mousemove',mm=>{
-			if (mm.buttons === 1) {
-				document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${mm.target.value}px`);
-			}
-		})
-		element.querySelector(`.choseZone${a}[type=range]`).addEventListener('touchmove',tm=>{
-			document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${tm.target.value}px`);
-		})
-		element.querySelector(`.choseZone${a}[type=number]`).addEventListener('keyup',kp=>{
-			document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${kp.target.value}px`);
-		})
+		addOnChangeFunctionOnSlider(
+			element.querySelector(`.choseZone${a}`).parentElement,
+			val=>{document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${val}px`)}
+		)
+		// element.querySelector(`.choseZone${a}[type=range]`).addEventListener('mousemove',mm=>{
+		// 	if (mm.buttons === 1) {
+		// 		document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${mm.target.value}px`);
+		// 	}
+		// })
+		// element.querySelector(`.choseZone${a}[type=range]`).addEventListener('touchmove',tm=>{
+		// 	document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${tm.target.value}px`);
+		// })
+		// element.querySelector(`.choseZone${a}[type=number]`).addEventListener('keyup',kp=>{
+		// 	
+		// })
 	})
 
 	element.querySelector('#showZoneCutter').addEventListener('click',c=>{
