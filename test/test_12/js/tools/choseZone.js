@@ -36,8 +36,10 @@ function initChoseZoneEvents(element = choseZoneElement) {
 	element.querySelector('#showZoneCutter').addEventListener('click',c=>{
 		if (c.target.checked){
 			document.getElementById('cutZone').style.display = '';
+			window.zone3Dparams.ChoseZoneParams.visible = true;
 		} else {
 			document.getElementById('cutZone').style.display = 'none';
+			window.zone3Dparams.ChoseZoneParams.visible = false;
 		}
 	})
 
