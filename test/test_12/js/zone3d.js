@@ -1,5 +1,4 @@
-window.zone3Ddata = null;          // [,,,] or [[[],[]],[[],[]]]
-// window.zone3DdataIs3Darray = true; // true     false
+window.zone3Ddata = null;
 window.zone3Dparams = {
 	X: 0, Y: 0, Z: 0, 
 	min: -1000, max: 1000, 
@@ -320,7 +319,6 @@ function updateBlock3D(element = Block3Delement) {
 }
 
 function getCutedZone3DdataByChoseZoneParams(data,czp) {
-	// const czp = window.zone3Dparams.ChoseZoneParams;
 	return data.slice(czp.Z0,czp.Z1).map(a=>a.slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)))
 }
 
@@ -340,7 +338,6 @@ function updateZone3DbyChangingChoseZoneParams() {
 	CutBlockelement.style.transform = `translate3d(${window.zone3Dparams.X/2-(czp.X1+czp.X0)/2}px,${window.zone3Dparams.Y/2-(czp.Y1+czp.Y0)/2}px,${(czp.Z1+czp.Z0)/2-window.zone3Dparams.Z/2}px)`
 }
 
-// function calcBlock3D(data,X,Y,Z,min,max,IsContures = false,element = Block3Delement) {
 function calcBlock3D(data,params,element = Block3Delement) {
 	window.zone3Ddata = data;
 	window.zone3Dparams = params;
@@ -352,8 +349,6 @@ function calcBlock3D(data,params,element = Block3Delement) {
 	)
 	setChoseZone(window.zone3Dparams.ChoseZoneParams)
 	const czp = window.zone3Dparams.ChoseZoneParams;
-	consoleOut(window.zone3Dparams)
-	consoleOut(czp,window.zone3Dparams.X/2,(czp.X1+czp.X0)/2)
 	CutBlockelement.style.transform = `translate3d(${window.zone3Dparams.X/2-(czp.X1+czp.X0)/2}px,${window.zone3Dparams.Y/2-(czp.Y1+czp.Y0)/2}px,${(czp.Z1+czp.Z0)/2-window.zone3Dparams.Z/2}px)`
 
 	setVisParams(
@@ -372,16 +367,6 @@ function calcBlock3D(data,params,element = Block3Delement) {
 		Y0: 0, Y1: window.zone3Dparams.Y, 
 		Z0: 0, Z1: window.zone3Dparams.Z
 	})
-
-	// initVisParams();
-	// if (IsContures) {
-	// 	setVisParams(
-	// 		[
-	// 			{min: min, max: max, gradient: true, rgba0: [0, 0, 30, 0], rgba1: [255, 255, 255, 255]}
-	// 		],min,max
-	// 	)
-	// } else {
-
 
 	removeBlock3D(element);
 	initBlock3D(element);

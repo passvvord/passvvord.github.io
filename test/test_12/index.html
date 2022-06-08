@@ -8,16 +8,14 @@
 	<script type="text/javascript" src="libs/daikon.min.js"></script>
 	<script type="text/javascript" src="libs/math.min.js"></script>
 	<script type="text/javascript" src="libs/gpu.min.js"></script>
-	<!-- <script type="text/javascript" src="libs/FastIntegerCompression.js"></script> -->
-	<!-- <script type="text/javascript" src="libs/lz4.min.js"></script> -->
 
-	<!-- <script type="text/javascript" src="js/style.js"></script> -->
 
 	<link href="style/style.css" rel="stylesheet">
 	<link href="style/input.css" rel="stylesheet">
 	<link href="style/global.css" rel="stylesheet">
 	
 	<script type="text/javascript" src="js/hist.js"></script>
+	<script type="text/javascript" src="js/preloader.js"></script>
 
 	<script type="text/javascript" src="js/tool.js" defer></script>
 
@@ -31,25 +29,14 @@
 	<script type="text/javascript" src="js/tools/openFile.js" defer></script>
 	<script type="text/javascript" src="js/global.js" defer></script>
 
-<!-- 	<script type="text/javascript" src="js/preloader.js"></script>
-	<script type="text/javascript" src="js/hist.js"></script>
-	<script type="text/javascript" src="js/toolsControl.js" defer></script>
-	
-
-
-	
-	<script type="text/javascript" src="js/histTool.js" defer></script>
-	<script type="text/javascript" src="js/OpenDICOM.js" defer></script> -->
-		
-
-	<title>...1</title>
+	<title>temp title</title>
 
 </head>
 <body>
 	<div id="zone3d" class="noselect">
 		<div id="block3d">
 			
-			<div id="cutZone">
+			<div id="cutZone" style="display: none;">
 				<div id="cutZoneX0"></div>
 				<div id="cutZoneX1"></div>
 				<div id="cutZoneY0"></div>
@@ -61,8 +48,6 @@
 	</div>
 	
 	<div id="toolBlock">
-
-		<div id="console" class="tool"></div>
 
 		<div id="openFile" class="tool">
 			<div class="toolHead noselect">
@@ -172,16 +157,6 @@
 			</div>
 		</div>
 
-<!-- 		<div id="currentZoneInfo" class="tool">
-			<div class="toolHead noselect">
-				<div>Current zone info</div>
-				<div class="hideTool">▲</div>
-			</div>
-			<div class="toolBody">
-				<div id="ZoneInfo">...</div>
-			</div>
-		</div> -->
-
 		<div id="visParams" class="tool">
 			<div class="toolHead noselect">
 				<div>Visualization parametrs</div>
@@ -282,6 +257,8 @@
 				<div class="button noselect" id="returnToImageButton">return to image</div>
 			</div>
 		</div>
+
+		<div id="console" style="margin-top: calc(var(--vh)*50); height: calc(var(--vh)*50); overflow-y: scroll;" class="tool"></div>
 
 	</div>
 

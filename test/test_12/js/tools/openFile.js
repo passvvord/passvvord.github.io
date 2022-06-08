@@ -15,6 +15,7 @@ function initOpenFile(element = openFileElement) {
 	initTool(element,true,false);
 
 	element.querySelector('#oneDicomFile').addEventListener('change', c => {
+		draw_preloader()
 		consoleOut('start opening one Dicom File -------------------------------------------')
 		c.target.files[0].arrayBuffer().then(f=>{
 	    	let image = daikon.Series.parseImage(new DataView(f))
@@ -70,11 +71,13 @@ function initOpenFile(element = openFileElement) {
 			document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 			
 			consoleOut('end opening one Dicom File ---------------------------------------------')
+			remove_preloader()
 		})
 		
 	})
 
 	element.querySelector('#manyDicomFiles').addEventListener('change', c => {
+		draw_preloader()
 		consoleOut('start opening many Dicom Files -----------------------------------------')
 
 		let tempArrOfImg = new Array(c.target.files.length)
@@ -154,6 +157,7 @@ function initOpenFile(element = openFileElement) {
 					document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 
 					consoleOut('end opening many Dicom Files -------------------------------------------')
+					remove_preloader()
 				}
 			})			
 		}

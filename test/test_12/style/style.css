@@ -249,6 +249,7 @@ body {
 	overflow-x: hidden;
 	overflow-y: scroll;
 	border-left: solid 1px var(--textCol);
+	padding-bottom: calc(var(--vh)*50);
 }
 
 @media (max-width: 100vh) {
