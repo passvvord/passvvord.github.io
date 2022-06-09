@@ -162,5 +162,4 @@ function initOpenFile(element = openFileElement) {
 			})			
 		}
 	})
-	
 }

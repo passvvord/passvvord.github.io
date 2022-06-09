@@ -11,7 +11,7 @@ function initVisParamsEvents(element = visParamsElement) {
 
 	element.querySelector('#toolPartAdd').addEventListener('click', ()=>{
 		const lastChild = element.querySelector('#toolPartsBlock').lastChild
-		console.log(lastChild)
+		// console.log(lastChild)
 		if (lastChild) {
 			element.querySelector('#toolPartsBlock').appendChild(
 				createVisParamsPart(

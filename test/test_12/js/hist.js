@@ -115,6 +115,22 @@ class HistForBigIntData { // class for big int data for example for Uint16Array(
 		const barZoneHeight = this.#canvas.height - 1*pd - 5*sps - 1*fsize;
 		const barMax = Number(currentHisto.count.reduce((a,b)=>(b>a?b:a)));
 
+		const tempText = `max count: ${barMax}`
+		const tempTextWidth = this.#ctx.measureText(tempText).width
+
+		this.#ctx.fillRect(
+			this.#canvas.width/2-tempTextWidth/2-pd,
+			pd-lnw,
+			tempTextWidth+pd*2,
+			lnw
+		);
+
+		this.#ctx.fillText(
+			tempText,
+			this.#canvas.width/2,
+			0
+		);
+
 		this.#ctx.fillRect(
 			0,
 			pd+barZoneHeight,
