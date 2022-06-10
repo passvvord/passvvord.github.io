@@ -37,7 +37,7 @@
 	height: var(--fontSize);
 }
 
-@media (max-width: calc(var(--vh)*100)) {
+@media (max-width: 120vh) {
 	::-webkit-scrollbar {
 		width: calc(var(--fontSize)*2);
 		height: calc(var(--fontSize)*2);
@@ -81,7 +81,7 @@ body {
 	grid-template-columns: 100vw 0;
 }
 
-@media (max-width: calc(var(--vh)*100) ) {
+@media (max-width: 120vh) {
 	body {
 		display: grid;
 		height: 100vh;
@@ -90,7 +90,7 @@ body {
 	}
 }
 
-@media (max-width: calc(var(--vh)*100)) {
+@media (max-width: 120vh) {
 	.fullscreen3dzone {
 		grid-template-rows: 100vh 0;
 	}
@@ -252,7 +252,7 @@ body {
 	padding-bottom: calc(var(--vh)*50);
 }
 
-@media (max-width: calc(var(--vh)*100)) {
+@media (max-width: 120vh) {
 	#toolBlock {
 		border-left: none;
 		border-top: solid 1px var(--textCol);
