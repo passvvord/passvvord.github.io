@@ -74,7 +74,7 @@ function createVisParamsPart(a,min,max) {
 		appendChildren(createElement('div',{className: 'toolPartHead'}),[
 			createElement('div',{textContent: 'diapzone'}),
 			createElement('div',{className: 'hideToolPart noselect',textContent: '▲'}),
-			createElement('div',{className: 'removeToolPart noselect',textContent: '🗙'})
+			createElement('div',{className: 'removeToolPart noselect',textContent: 'X'})//'🗙'
 		]),
 		createElement('div',{className: 'toolPartShowGradient'}),
 		appendChildren(createElement('div',{className: 'toolPartBody'}),[
