@@ -81,10 +81,12 @@ function initZone3Devents(Zone3D = Zone3Delement,Block3D = Block3Delement,Box3D 
 	}
 
 	function setLayersVisibilityByRotateMatrix(rotateMatrix) {
+		// console.log(`[[${roundM2D(rotateMatrix).join('],[')}]]*[[0],[0],[1]] = [[${math.multiply(roundM2D(rotateMatrix),[0,0,1]).join('],[')}]]`)
+		const currZoneIs = document.querySelectorAll('.currentLayersIs')
 		switch (math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a)).reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
-			case 0: document.getElementById('zone3d').setAttribute('style','--lX: auto;'); break;
-			case 1: document.getElementById('zone3d').setAttribute('style','--lY: auto;'); break;
-			case 2: document.getElementById('zone3d').setAttribute('style','--lZ: auto;'); break;
+			case 0: document.getElementById('zone3d').setAttribute('style','--lX: auto;'); currZoneIs.forEach(el=>{el.textContent = 'X layers'}); break;
+			case 1: document.getElementById('zone3d').setAttribute('style','--lY: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Y layers'}); break;
+			case 2: document.getElementById('zone3d').setAttribute('style','--lZ: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Z layers'}); break;
 		}
 	}
 

@@ -90,6 +90,10 @@
 				<div id="histCanv">
 					
 				</div>
+<!-- 				<div class="checkboxLine">
+					<div>Only same width bars</div>
+					<div><input id="sameWidth" type="checkbox" checked></div>
+				</div> -->
 				<div class="slider">
 					<input class="histMin" type="range" min="-1000" max="1000" value="0" step="1">
 					<div>min:</div>
@@ -183,8 +187,9 @@
 				<div class="hideTool">▲</div>
 			</div>
 			<div class="toolBody">
-				<div> ... text to describe tool ...</div>
-				<div class="toolPartTextLine">Hide X Layers:</div>
+				<div> you can only hide the layers you are currently looking at, now you are looking at 
+				<span class="currentLayersIs"></span></div>
+				<div class="toolPartTextLine">X Layers:</div>
 				<div class="slider">
 					<input class="hideLayersX0" type="range" min="0" max="1" value="0" step="1">
 					<div>hide from 0 to this</div>
@@ -195,7 +200,7 @@
 					<div>hide from this to max</div>
 					<input class="hideLayersX1" type="number" min="0" max="1" value="0" step="1">
 				</div>
-				<div class="toolPartTextLine">Hide Y Layers:</div>
+				<div class="toolPartTextLine">Y Layers:</div>
 				<div class="slider">
 					<input class="hideLayersY0" type="range" min="0" max="1" value="0" step="1">
 					<div>hide from 0 to this</div>
@@ -206,7 +211,7 @@
 					<div>hide from this to max</div>
 					<input class="hideLayersY1" type="number" min="0" max="1" value="0" step="1">
 				</div>
-				<div class="toolPartTextLine">Hide Z Layers:</div>
+				<div class="toolPartTextLine">Z Layers:</div>
 				<div class="slider">
 					<input class="hideLayersZ0" type="range" min="0" max="1" value="0" step="1">
 					<div>hide from 0 to this</div>
@@ -256,6 +261,12 @@
 				<div class="button noselect" id="showConturesButton">show contures</div>
 				<div class="button noselect" id="returnToImageButton">return to image</div>
 			</div>
+		</div>
+
+
+		<div id="animate" class="tool">
+			<div class="button noselect" id="AutoSpin">auto spin</div>
+			<div class="button noselect" id="DisableAutoSpin">disable auto spin</div>
 		</div>
 
 		<div id="console" style="margin-top: calc(var(--vh)*50); height: calc(var(--vh)*50); overflow-y: scroll;" class="tool"></div>

@@ -41,13 +41,13 @@ class HistForBigIntData { // class for big int data for example for Uint16Array(
 		this.update(parts,dataMin,dataMax,col)
 	}
 
-	update(parts=this.#parts,min=this.#cutDataByMin,max=this.#cutDataByMax,col=this.#col) {
+	update(parts=this.#parts,min=this.#cutDataByMin,max=this.#cutDataByMax,sameWidth = false,col=this.#col) {
 		this.#parts = parts;
 		this.#cutDataByMin = min;
 		this.#cutDataByMax = max;
 		this.#col = col;
 		// const temp = Date.now()
-		this.#currentHisto = this.#calcCurrentHisto(this.#fullHisto,parts,min,max);
+		this.#currentHisto = this.#calcCurrentHisto(this.#fullHisto,parts,min,max,sameWidth);
 		// console.log(Date.now()-temp)
 		// console.log( this.#currentHisto.count.reduce((a,b)=>a+b) )
 		this.#draw(this.#currentHisto)

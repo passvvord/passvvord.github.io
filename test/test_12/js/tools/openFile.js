@@ -15,6 +15,7 @@ function initOpenFile(element = openFileElement) {
 	initTool(element,true,false);
 
 	element.querySelector('#oneDicomFile').addEventListener('change', c => {
+		const openfiletampdate = Date.now();
 		draw_preloader()
 		consoleOut('start opening one Dicom File -------------------------------------------')
 		c.target.files[0].arrayBuffer().then(f=>{
@@ -29,10 +30,11 @@ function initOpenFile(element = openFileElement) {
 			if (Z != Math.floor(pixelData.length/X/Y)) {consoleOut('data problems while reading')}
 			const min = pixelData.reduce((a,b)=>(b<a?b:a));
 			const max = pixelData.reduce((a,b)=>(b>a?b:a));
-			consoleOut(X,Y,Z,min,max)
+			// consoleOut(X,Y,Z,min,max)
 
 			
-			consoleOut(`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
+			// consoleOut(X,Y,Z,min,max,`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
+			consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
 			updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
 			
 			const tempDate = Date.now()
@@ -72,11 +74,13 @@ function initOpenFile(element = openFileElement) {
 			
 			consoleOut('end opening one Dicom File ---------------------------------------------')
 			remove_preloader()
+			consoleOut(`file opened and renderd, need time: ${Date.now() - openfiletampdate} ms`)
 		})
 		
 	})
 
 	element.querySelector('#manyDicomFiles').addEventListener('change', c => {
+		const openfiletampdate = Date.now();
 		draw_preloader()
 		consoleOut('start opening many Dicom Files -----------------------------------------')
 
@@ -96,15 +100,17 @@ function initOpenFile(element = openFileElement) {
 					const X = tempArrOfImg[0].getCols();
 					const Y = tempArrOfImg[0].getRows();
 					
-					// consoleOut(X,Y,Z,min,max)
+					
 
 					const minFrameNum = tempArrOfImg.reduce((a,b)=>(b.getImageNumber()<a.getImageNumber()?b:a)).getImageNumber()
 					const maxFrameNum = tempArrOfImg.reduce((a,b)=>(b.getImageNumber()>a.getImageNumber()?b:a)).getImageNumber()
 					consoleOut('minFrameNum',minFrameNum,'maxFrameNum',maxFrameNum)
 					
-					const Z = maxFrameNum - minFrameNum;
+					const Z = maxFrameNum - minFrameNum + 1;
 
-					if (Z+1 != tempArrOfImg.length) {throw `there are not enough frames \nyou give: ${tempArrOfImg.map(a=>a.getImageNumber())}`}
+					consoleOut(X,Y,Z)
+
+					if (Z != tempArrOfImg.length) {throw `there are not enough frames \nyou give: ${tempArrOfImg.map(a=>a.getImageNumber())}`}
 
 					let pixelData = new Int16Array(X*Y*Z)
 
@@ -118,7 +124,8 @@ function initOpenFile(element = openFileElement) {
 					}
 					const min = pixelData.reduce((a,b)=>(b<a?b:a));
 					const max = pixelData.reduce((a,b)=>(b>a?b:a));
-					consoleOut(X,Y,Z,min,max)
+					
+					consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${tempArrOfImg[0].getPixelSpacing()}, Orientation: ${tempArrOfImg[0].getOrientation()}, PatientID: ${tempArrOfImg[0].getPatientID()}`)
 					updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
 
 					const tempDate = Date.now()
@@ -158,6 +165,7 @@ function initOpenFile(element = openFileElement) {
 
 					consoleOut('end opening many Dicom Files -------------------------------------------')
 					remove_preloader()
+					consoleOut(`file opened and renderd, need time: ${Date.now() - openfiletampdate} ms`)
 				}
 			})			
 		}

@@ -53,7 +53,7 @@ function initChoseZoneEvents(element = choseZoneElement) {
 }
 
 function setChoseZone(params,element=choseZoneElement) {
-	const names = ['X0','X1','Y0','Y1','Z0','Z1'];
+	const names = Object.keys(params).filter(a=>a!='visible')//['X0','X1','Y0','Y1','Z0','Z1'];
 	names.forEach(a=>{
 		element.querySelectorAll(`.choseZone${a}`).forEach(b=>{
 			const temp = Math.min(Math.max( params[a] ,parseInt(b.min)),parseInt(b.max))
@@ -61,14 +61,15 @@ function setChoseZone(params,element=choseZoneElement) {
 			document.getElementById('cutZone').style.setProperty(`--cut${a}`,`${temp}px`);
 		})
 	})
-
-	element.querySelector('#showZoneCutter').checked = params['visible']
-
-	if (params['visible']){
-		document.getElementById('cutZone').style.display = '';
-	} else {
-		document.getElementById('cutZone').style.display = 'none';
+	if (params['visible'] !== undefined) {
+		if (params['visible'] === true){
+			document.getElementById('cutZone').style.display = '';
+			element.querySelector('#showZoneCutter').checked = params['visible']
+		} else {
+			document.getElementById('cutZone').style.display = 'none';
+		}		
 	}
+
 }
 
 function getChoseZone(element=choseZoneElement) {

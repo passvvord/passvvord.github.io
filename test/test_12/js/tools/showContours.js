@@ -75,7 +75,8 @@ function initShowContoursEvents(element = showContoursElement) {
 				min: 0, 
 				max: Math.ceil(analMax), 
 				VisParams: [
-					{min: 0, max: Math.ceil(analMax), gradient: true, rgba0: [20, 0, 0, 0], rgba1: [255, 255, 255, 255]},
+					{min: 0, max: Math.ceil(analMax), gradient: true, rgba0: [255, 255, 0, 0], rgba1: [255, 0, 0, 255]},
+					// for mode one good is 200 - 6000 
 					// {min: 600, max: Math.ceil(analMax), gradient: true, rgba0: [255, 255, 255, 255], rgba1: [0, 0, 20, 0]}
 				],
 				ChoseZoneParams: {

@@ -180,9 +180,9 @@ function getOneVisParams(el) {
 	}
 }
 
-function getVisParams() {
+function getVisParams(element = visParamsElement) {
 	let visParams = []
-	document.querySelectorAll("#visParams .toolPartBody").forEach(el=>{
+	element.querySelectorAll(".toolPartBody").forEach(el=>{
 		visParams.push(getOneVisParams(el))
 	})
 	return visParams

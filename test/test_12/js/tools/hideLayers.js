@@ -64,7 +64,7 @@ function getHideLayers(element = hideLayersElement) {
 }
 
 function setHideLayers(params,element = hideLayersElement) {
-	const names = ['X0','X1','Y0','Y1','Z0','Z1'];
+	const names = Object.keys(params) //['X0','X1','Y0','Y1','Z0','Z1'];
 	names.forEach(a=>{
 		element.querySelectorAll(`.hideLayers${a}`).forEach(b=>{
 			const temp = Math.min(Math.max( params[a] ,parseInt(b.min)),parseInt(b.max))

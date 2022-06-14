@@ -13,14 +13,19 @@ function initHistogram(min,max,n=50,element = histogramElement) {
 			(val)=>{getInputAndUpgradeHistogram()}
 		)			
 	})
+
+	// element.querySelector("#sameWidth").addEventListener('click',()=>{
+	// 	getInputAndUpgradeHistogram()
+	// })
 }
 
-function getInputAndUpgradeHistogram() {
-	const inp = document.querySelectorAll('#histogram input[type=number]');
+function getInputAndUpgradeHistogram(element = histogramElement) {
+	const inp = element.querySelectorAll('input[type=number]');
 	window.hist.update(
 		parseInt(inp[2].value),
 		parseInt(inp[0].value),
 		parseInt(inp[1].value)
+		// ,element.querySelector("#sameWidth").checked
 	)
 }
 
