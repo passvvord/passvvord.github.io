@@ -32,9 +32,9 @@ function initOpenFile(element = openFileElement) {
 			const max = pixelData.reduce((a,b)=>(b>a?b:a));
 			// consoleOut(X,Y,Z,min,max)
 
-			
+			const orient = image.getOrientation()
 			// consoleOut(X,Y,Z,min,max,`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
-			consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
+			consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${orient}, PatientID: ${image.getPatientID()}`)
 			updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
 			
 			const tempDate = Date.now()
@@ -70,6 +70,8 @@ function initOpenFile(element = openFileElement) {
 					}
 				}
 			)
+			consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
+			document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`
 			document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 			
 			consoleOut('end opening one Dicom File ---------------------------------------------')
@@ -125,6 +127,8 @@ function initOpenFile(element = openFileElement) {
 					const min = pixelData.reduce((a,b)=>(b<a?b:a));
 					const max = pixelData.reduce((a,b)=>(b>a?b:a));
 					
+					const orient = tempArrOfImg[0].getOrientation()
+
 					consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${tempArrOfImg[0].getPixelSpacing()}, Orientation: ${tempArrOfImg[0].getOrientation()}, PatientID: ${tempArrOfImg[0].getPatientID()}`)
 					updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
 
@@ -161,6 +165,8 @@ function initOpenFile(element = openFileElement) {
 							}
 						}
 					)
+					consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
+					document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`
 					document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 
 					consoleOut('end opening many Dicom Files -------------------------------------------')

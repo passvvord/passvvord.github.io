@@ -64,10 +64,10 @@ function setChoseZone(params,element=choseZoneElement) {
 	if (params['visible'] !== undefined) {
 		if (params['visible'] === true){
 			document.getElementById('cutZone').style.display = '';
-			element.querySelector('#showZoneCutter').checked = params['visible']
 		} else {
 			document.getElementById('cutZone').style.display = 'none';
-		}		
+		}
+		element.querySelector('#showZoneCutter').checked = params['visible']		
 	}
 
 }

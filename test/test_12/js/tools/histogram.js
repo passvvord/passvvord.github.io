@@ -29,3 +29,7 @@ function getInputAndUpgradeHistogram(element = histogramElement) {
 	)
 }
 
+
+
+
+

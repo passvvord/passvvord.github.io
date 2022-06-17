@@ -189,7 +189,8 @@ function getVisParams(element = visParamsElement) {
 }
 
 function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
-	let res = new Uint8Array(256*4);
+	const ArrLen = 1000;
+	let res = new Uint8Array(ArrLen*4);
 
 	const imgmin = (visParams.length>1?visParams.reduce((a,b)=>(b.min<a.min?b:a)):visParams[0]).min;
 	const imgmax = (visParams.length>1?visParams.reduce((a,b)=>(b.max>a.max?b:a)):visParams[0]).max;
@@ -197,8 +198,8 @@ function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
 	console.log(imgmin,imgmax)
 
 	for (let i = 0; i < visParams.length; i++) {
-		const start = Math.round((visParams[i]["min"]-imgmin)/(imgmax-imgmin)*255);
-		const end = Math.round((visParams[i]["max"]-imgmin)/(imgmax-imgmin)*255);
+		const start = Math.round((visParams[i]["min"]-imgmin)/(imgmax-imgmin)*(ArrLen-1));
+		const end = Math.round((visParams[i]["max"]-imgmin)/(imgmax-imgmin)*(ArrLen-1));
 		for (let j = start; j <= end; j+=1) {
 			if (visParams[i]["gradient"]) {
 				for (let col = 0; col < 4; col+=1) {
@@ -212,7 +213,7 @@ function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
 		}
 	}
 
-	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),256,1), 0, 0)
+	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),ArrLen,1), 0, 0)
 	document.getElementById('fillMinMax').textContent = `fillmin: ${imgmin}, fillmax: ${imgmax}`;
 
 	return {'colArray':res,'min':imgmin,'max':imgmax}

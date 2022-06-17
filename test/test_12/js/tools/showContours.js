@@ -42,7 +42,6 @@ function initShowContoursEvents(element = showContoursElement) {
 			for (var i = 0; i < ml; i++) {
 				for (var j = 0; j < ml; j++) {
 					for (var k = 0; k < ml; k++) {
-						
 						x+=data[this.thread.z+k][this.thread.y+j][this.thread.x+i]*M[i];
 						y+=data[this.thread.z+k][this.thread.x+j][this.thread.x+j]*M[i];
 						z+=data[this.thread.z+i][this.thread.y+k][this.thread.x+j]*M[i];

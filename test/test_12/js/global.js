@@ -14,9 +14,6 @@ function animateSlider(min,max,func,speed = 2,call = 20) {
 
 window.AutoSpinSetInterval = null;
 
-
-
-
 document.querySelector('#animate > #AutoSpin').addEventListener('click',()=>{
 	const Block3D = Zone3Delement.querySelector('#block3d');
 	const Box3D = document.querySelector('#box3d');
@@ -80,7 +77,7 @@ document.querySelector('#animate > #AutoSpin').addEventListener('click',()=>{
 			get3DMatrixTransform(Block3D),
 			2,
 			0,
-			(mx,my)=>0.004*math.pi
+			(mx,my)=>0.002*math.pi
 		);
 		setLayersVisibilityByRotateMatrix(getRotationMatrixFromAllMatrix(matrix));
 		Block3D.style.transform = getMatrixFromArray(matrix);

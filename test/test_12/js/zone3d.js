@@ -32,16 +32,20 @@ function closeFullscreen() {
 }
 
 window.fullscreen = false;
+window.fullscreenZone3D = false;
 
 function initZone3Devents(Zone3D = Zone3Delement,Block3D = Block3Delement,Box3D = Box3Delement) {
 	Box3D.addEventListener('click', c=>{
-		if (window.fullscreen) {
+		if (window.fullscreen && window.fullscreenZone3D) {
 			closeFullscreen();
 			document.body.className = '';
 			window.fullscreen = false;
-		} else {
-			openFullscreen();
+			window.fullscreenZone3D = false;
+		} else if (window.fullscreen && !window.fullscreenZone3D) {
 			document.body.className = 'fullscreen3dzone';
+			window.fullscreenZone3D = true;
+		} else if (!window.fullscreen && !window.fullscreenZone3D){
+			openFullscreen();
 			window.fullscreen = true;
 		}
 	})
@@ -243,6 +247,8 @@ function removeBlock3D(element = Block3Delement) {
 }
 
 function updateBlock3D(element = Block3Delement) {
+	const vpArrLen = 1000;
+	const vpArrLenM1 = vpArrLen-1;
 	const tempDate = Date.now()
 	// consoleOut(`call updateBlock3D(element: ${element})`)
 	// data3D,X,Y,Z,min,delta,ColArray,
@@ -258,7 +264,7 @@ function updateBlock3D(element = Block3Delement) {
 		let pixels = new Uint8Array((czp.Y1-czp.Y0)*(czp.Z1-czp.Z0)*4);
 		for (let y = czp.Y0; y < czp.Y1; y++) {
 			for (let z = czp.Z0; z < czp.Z1; z++) {
-				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*255 )*4
+				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*vpArrLenM1 )*4
 				const temp1 = ((y-czp.Y0)*(czp.Z1-czp.Z0)+z-czp.Z0)*4
 				for (let col = 0; col < 4; col+=1) {
 					pixels[temp1+col] = ColArray[temp0+col];
@@ -279,7 +285,7 @@ function updateBlock3D(element = Block3Delement) {
 		let pixels = new Uint8Array((czp.X1-czp.X0)*(czp.Z1-czp.Z0)*4);
 		for (let z = czp.Z0; z < czp.Z1; z++) {
 			for (let x = czp.X0; x < czp.X1; x++) {
-				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*255 )*4
+				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*vpArrLenM1 )*4
 				const temp1 = ((z-czp.Z0)*(czp.X1-czp.X0)+x-czp.X0)*4
 				for (let col = 0; col < 4; col+=1) {
 					pixels[temp1+col] = ColArray[temp0+col];
@@ -300,7 +306,7 @@ function updateBlock3D(element = Block3Delement) {
 		let pixels = new Uint8Array((czp.X1-czp.X0)*(czp.Y1-czp.Y0)*4);
 		for (let y = czp.Y0; y < czp.Y1; y++) {
 			for (let x = czp.X0; x < czp.X1; x++) {
-				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*255 )*4
+				const temp0 = Math.round( (window.zone3Ddata[z][y][x]-min)/delta*vpArrLenM1 )*4
 				const temp1 = ((y-czp.Y0)*(czp.X1-czp.X0)+x-czp.X0)*4
 				for (let col = 0; col < 4; col+=1) {
 					pixels[temp1+col] = ColArray[temp0+col];
