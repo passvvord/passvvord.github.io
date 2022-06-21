@@ -1,5 +1,4 @@
 const showContoursElement = document.querySelector('#showContours')
-const gpu = new GPU();
 
 window.currentZoneIsConturelines = false;
 window.TempImage = null; //тут буде зображення коли відображено контур

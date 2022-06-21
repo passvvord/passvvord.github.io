@@ -87,7 +87,16 @@ function initZone3Devents(Zone3D = Zone3Delement,Block3D = Block3Delement,Box3D 
 	function setLayersVisibilityByRotateMatrix(rotateMatrix) {
 		// console.log(`[[${roundM2D(rotateMatrix).join('],[')}]]*[[0],[0],[1]] = [[${math.multiply(roundM2D(rotateMatrix),[0,0,1]).join('],[')}]]`)
 		const currZoneIs = document.querySelectorAll('.currentLayersIs')
-		switch (math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a)).reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
+		// console.log( math.multiply(rotateMatrix,[0,0,-1]).map(a=>Math.abs(a)),math.multiply(rotateMatrix,[0,0,-1]).map(a=>Math.sign(a)) )
+		// console.log( math.multiply(rotateMatrix,[0,0,1] ).map(a=>Math.abs(a)),math.multiply(rotateMatrix,[0,0,1] ).map(a=>Math.sign(a)) )
+		const tempVec = math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a))
+
+		const surf = ['sagittal','frontal','axial']
+		surf.forEach((sur,i)=>{
+			document.querySelector(`#curSurface > #${sur}`).textContent = `${(2*Math.asin(tempVec[i])/Math.PI*100).toFixed(0).padStart(3)}% ${sur.padStart(8)}`
+		})
+
+		switch (tempVec.reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
 			case 0: document.getElementById('zone3d').setAttribute('style','--lX: auto;'); currZoneIs.forEach(el=>{el.textContent = 'X layers'}); break;
 			case 1: document.getElementById('zone3d').setAttribute('style','--lY: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Y layers'}); break;
 			case 2: document.getElementById('zone3d').setAttribute('style','--lZ: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Z layers'}); break;
@@ -232,7 +241,7 @@ function initBlock3D(element = Block3Delement) {
 
 	for (let z = czp.Z0; z < czp.Z1; z++) {
 		let canv = createElement('canvas',{id: `Z${z}`,className: 'Zlayer', width: czp.X1-czp.X0, height: czp.Y1-czp.Y0})
-		canv.style.transform = `translateZ(${(czp.Z1-czp.Z0)/2-(z-czp.Z0)}px)`
+		canv.style.transform = `translateZ(${(czp.Z1-czp.Z0)/2-(z-czp.Z0)}px)` 
 		element.appendChild(canv);
 	}
 
@@ -246,7 +255,7 @@ function removeBlock3D(element = Block3Delement) {
 	consoleOut(`removeBlock3D need time: ${Date.now() - tempDate} ms`)
 }
 
-function updateBlock3D(element = Block3Delement) {
+function updateBlock3D_CPU(element = Block3Delement) {
 	const vpArrLen = 1000;
 	const vpArrLenM1 = vpArrLen-1;
 	const tempDate = Date.now()
@@ -323,8 +332,164 @@ function updateBlock3D(element = Block3Delement) {
 		// canv.fillText(`Z${z}`, 1, 1);
 	}
 
-	consoleOut(`updateBlock3D need time: ${Date.now() - tempDate} ms`)
+	consoleOut(`updateBlock3D CPU need time: ${Date.now() - tempDate} ms`)
 }
+
+// unstable, and have some problems
+function updateBlock3D_GPU(element = Block3Delement) {
+	// const czp = window.zone3Dparams.ChoseZoneParams;
+	const newXsize = window.zone3Dparams.ChoseZoneParams.X1-window.zone3Dparams.ChoseZoneParams.X0;
+	const newYsize = window.zone3Dparams.ChoseZoneParams.Y1-window.zone3Dparams.ChoseZoneParams.Y0;
+	const newZsize = window.zone3Dparams.ChoseZoneParams.Z1-window.zone3Dparams.ChoseZoneParams.Z0;
+
+	if ( (newYsize) < 1 || (newXsize) < 1 || (newZsize) < 1) {throw 'too small area to show'; return;}
+
+	const tempDate = Date.now()
+
+	const vpArrLen = 1000;
+	const vpArrLenM1 = (vpArrLen-1);
+
+	const params = getColArrayFromParams(window.zone3Dparams.VisParams)
+	const ColArray = params.colArray;
+	
+	const min = params.min;
+	const delta = params.max - params.min;
+
+	const getColArrayIngexes = gpu.createKernel(function(data,min,delta,lenM1) {
+		return  Math.round((data[this.thread.z][this.thread.y][this.thread.x]-min)/delta*lenM1)*4
+	}, { output: [newXsize,newYsize,newZsize] })
+
+
+	const ColArrayIngexes = getColArrayIngexes(
+		getCutedZone3DdataByChoseZoneParams(window.zone3Ddata,window.zone3Dparams.ChoseZoneParams),
+		min,delta,vpArrLenM1
+	)
+
+	// console.log(ColArrayIngexes,min,delta,vpArrLenM1)
+
+	for (let x = 0; x < newXsize; x++) {
+		let pixels = new Uint8Array(newYsize*newZsize*4);
+		for (let y = 0; y < newYsize; y++) {
+			for (let z = 0; z < newZsize; z++) {
+				const temp1 = (y*newZsize+z)*4
+				for (let col = 0; col < 4; col+=1) {
+					pixels[temp1+col] = ColArray[ColArrayIngexes[z][y][x]+col];
+				}
+			}
+		}
+		element.querySelector(`#X${x+window.zone3Dparams.ChoseZoneParams.X0}`).getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer),newZsize,newYsize), 0, 0);
+	}
+
+	for (let y = 0; y < newZsize; y++) {
+		let pixels = new Uint8Array(newXsize*newZsize*4);
+		for (let z = 0; z < newZsize; z++) {
+			for (let x = 0; x < newXsize; x++) {
+				const temp1 = (z*newXsize+x)*4
+				for (let col = 0; col < 4; col+=1) {
+					pixels[temp1+col] = ColArray[ColArrayIngexes[z][y][x]+col];
+				}
+			}
+		}
+		element.querySelector(`#Y${y+window.zone3Dparams.ChoseZoneParams.Y0}`).getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer),newXsize,newZsize), 0, 0);
+
+	}
+
+	for (let z = 0; z < newZsize; z++) {
+		let pixels = new Uint8Array(newXsize*newYsize*4);
+		for (let y = 0; y < newYsize; y++) {
+			for (let x = 0; x < newXsize; x++) {
+				const temp1 = (y*newXsize+x)*4
+				for (let col = 0; col < 4; col+=1) {
+					pixels[temp1+col] = ColArray[ColArrayIngexes[z][y][x]+col];
+				}
+			}
+		}
+		element.querySelector(`#Z${z+window.zone3Dparams.ChoseZoneParams.Z0}`).getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(pixels.buffer),newXsize,newYsize), 0, 0);
+	}
+
+	consoleOut(`updateBlock3D GPU need time: ${Date.now() - tempDate} ms`)
+}
+
+// unstable, and have some problems
+function updateBlock3D_GPU_1(element = Block3Delement) {
+	// const czp = window.zone3Dparams.ChoseZoneParams;
+	const newXsize = window.zone3Dparams.ChoseZoneParams.X1-window.zone3Dparams.ChoseZoneParams.X0;
+	const newYsize = window.zone3Dparams.ChoseZoneParams.Y1-window.zone3Dparams.ChoseZoneParams.Y0;
+	const newZsize = window.zone3Dparams.ChoseZoneParams.Z1-window.zone3Dparams.ChoseZoneParams.Z0;
+
+	if ( (newYsize) < 1 || (newXsize) < 1 || (newZsize) < 1) {throw 'too small area to show'; return;}
+
+	const tempDate = Date.now()
+
+	const vpArrLen = 1000;
+	// const vpArrLenM1 = (vpArrLen-1);
+
+	const params = getColArrayFromParams(window.zone3Dparams.VisParams,true)
+	// const temp_zone = getCutedZone3DdataByChoseZoneParams(window.zone3Ddata,window.zone3Dparams.ChoseZoneParams)
+
+	const czp = window.zone3Dparams.ChoseZoneParams;
+	const gpuZ = new GPU({
+		context: createElement('canvas',{width: newXsize, height: newYsize}).getContext('webgl2', { premultipliedAlpha: false })
+	});
+	
+	const renderZslice = gpuZ.createKernel(function(Zslice,ColArray,min,delta_lenM1,len_4,Ysize) {
+		var temp = Math.round((Zslice[Ysize-this.thread.y][this.thread.x]-min)*delta_lenM1)*4
+		if (temp >= 0 && temp <= len_4) {
+			this.color(ColArray[temp], ColArray[temp+1], ColArray[temp+2], ColArray[temp+3]);
+		} else {
+			this.color(0,0,1,0);
+		}
+	},{output: [newXsize,newYsize], graphical: true })
+
+	for (let z = 0; z < newZsize; z++) {
+		renderZslice(
+			window.zone3Ddata[z+czp.Z0].slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)),
+			params.colArray, 
+			params.min, 
+			(vpArrLen-1)/(params.max - params.min),
+			vpArrLen*4,
+			newYsize-1
+		)
+		element
+		.querySelector(`#Z${z+window.zone3Dparams.ChoseZoneParams.Z0}`)
+		.getContext("2d")
+		.putImageData(new ImageData(renderZslice.getPixels() ,newXsize,newYsize), 0, 0);
+	}
+
+	// const gpuX = new GPU({
+	// 	context: createElement('canvas',{width: newXsize, height: newYsize}).getContext('webgl2', { premultipliedAlpha: false })
+	// });
+	
+	// const renderXslice = gpuZ.createKernel(function(Xslice,ColArray,min,delta_lenM1,len_4,Ysize) {
+	// 	var temp = Math.round((Xslice[Ysize-this.thread.y][this.thread.x]-min)*delta_lenM1)*4
+	// 	if (temp >= 0 && temp <= len_4) {
+	// 		this.color(ColArray[temp], ColArray[temp+1], ColArray[temp+2], ColArray[temp+3]);
+	// 	} else {
+	// 		this.color(0,1,0,0);
+	// 	}
+		
+	// },{output: [newXsize,newYsize], graphical: true })
+
+	// for (let z = 0; z < newZsize; z++) {
+	// 	renderZslice(
+	// 		window.zone3Ddata[z+czp.Z0].slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)),
+	// 		params.colArray, 
+	// 		params.min, 
+	// 		(vpArrLen-1)/(params.max - params.min),
+	// 		vpArrLen*4,
+	// 		newYsize-1
+	// 	)
+	// 	element
+	// 	.querySelector(`#Z${z+window.zone3Dparams.ChoseZoneParams.Z0}`)
+	// 	.getContext("2d")
+	// 	.putImageData(new ImageData(renderZslice.getPixels() ,newXsize,newYsize), 0, 0);
+	// }
+
+
+	consoleOut(`updateBlock3D GPU need time: ${Date.now() - tempDate} ms`)
+}
+
+let updateBlock3D = updateBlock3D_CPU;
 
 function getCutedZone3DdataByChoseZoneParams(data,czp) {
 	return data.slice(czp.Z0,czp.Z1).map(a=>a.slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)))

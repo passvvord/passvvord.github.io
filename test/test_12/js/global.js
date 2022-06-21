@@ -12,9 +12,11 @@ function animateSlider(min,max,func,speed = 2,call = 20) {
 	}, call);
 }
 
+
+
 window.AutoSpinSetInterval = null;
 
-document.querySelector('#animate > #AutoSpin').addEventListener('click',()=>{
+document.querySelector('#animate #AutoSpin').addEventListener('click',()=>{
 	const Block3D = Zone3Delement.querySelector('#block3d');
 	const Box3D = document.querySelector('#box3d');
 
@@ -55,7 +57,16 @@ document.querySelector('#animate > #AutoSpin').addEventListener('click',()=>{
 	function setLayersVisibilityByRotateMatrix(rotateMatrix) {
 		// console.log(`[[${roundM2D(rotateMatrix).join('],[')}]]*[[0],[0],[1]] = [[${math.multiply(roundM2D(rotateMatrix),[0,0,1]).join('],[')}]]`)
 		const currZoneIs = document.querySelectorAll('.currentLayersIs')
-		switch (math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a)).reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
+		// console.log( math.multiply(rotateMatrix,[0,0,-1]).map(a=>Math.abs(a)),math.multiply(rotateMatrix,[0,0,-1]).map(a=>Math.sign(a)) )
+		// console.log( math.multiply(rotateMatrix,[0,0,1] ).map(a=>Math.abs(a)),math.multiply(rotateMatrix,[0,0,1] ).map(a=>Math.sign(a)) )
+		const tempVec = math.multiply(rotateMatrix,[0,0,1]).map(a=>Math.abs(a))
+
+		const surf = ['sagittal','frontal','axial']
+		surf.forEach((sur,i)=>{
+			document.querySelector(`#curSurface > #${sur}`).textContent = `${(2*Math.asin(tempVec[i])/Math.PI*100).toFixed(0).padStart(3)}% ${sur.padStart(8)}`
+		})
+
+		switch (tempVec.reduce((a,c,i,A)=>(c>A[a]?i:a),0)) {
 			case 0: document.getElementById('zone3d').setAttribute('style','--lX: auto;'); currZoneIs.forEach(el=>{el.textContent = 'X layers'}); break;
 			case 1: document.getElementById('zone3d').setAttribute('style','--lY: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Y layers'}); break;
 			case 2: document.getElementById('zone3d').setAttribute('style','--lZ: auto;'); currZoneIs.forEach(el=>{el.textContent = 'Z layers'}); break;
@@ -86,12 +97,14 @@ document.querySelector('#animate > #AutoSpin').addEventListener('click',()=>{
 	}, 20);
 })
 
-document.querySelector('#animate > #DisableAutoSpin').addEventListener('click',()=>{
+document.querySelector('#animate #DisableAutoSpin').addEventListener('click',()=>{
 	clearInterval(window.AutoSpinSetInterval)
 })
 
 document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
 document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
+
+const gpu = new GPU();
 
 initOpenFile()
 initFileInfo()

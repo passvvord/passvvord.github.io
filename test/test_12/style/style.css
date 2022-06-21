@@ -434,3 +434,28 @@ body {
 	margin-top: var(--space);
 	/*border: 1px solid #f00;*/
 }
+
+#curSurface {
+	position: fixed;
+	top: 0;
+	left: 15vh;
+	color: #fff;
+}
+
+#curSurface > pre {
+	margin: 0;
+	font-family: blogger;
+	font-size: var(--fontSize);
+}
+
+#frontal {
+	color: #77f;
+}
+
+#sagittal {
+	color: #F77;
+}
+
+#axial {
+	color: #7F7;
+}

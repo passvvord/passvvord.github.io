@@ -78,8 +78,8 @@ function createVisParamsPart(a,min,max) {
 		]),
 		createElement('div',{className: 'toolPartShowGradient'}),
 		appendChildren(createElement('div',{className: 'toolPartBody'}),[
-			createSlider('min:','visParamsMin',min,max,a.min),
-			createSlider('max:','visParamsMax',min,max,a.max),
+			createSlider('window-min (HU):','visParamsMin',min,max,a.min),
+			createSlider('window-max (HU):','visParamsMax',min,max,a.max),
 			createElement('div',{className: 'toolPartTextLine',textContent: 'Color:'}),
 			appendChildren(createElement('div',{className: 'toolPartCheckboxLine'}),[
 				createElement('div',{textContent: 'Gradient:'}),
@@ -188,7 +188,7 @@ function getVisParams(element = visParamsElement) {
 	return visParams
 }
 
-function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
+function getColArrayFromParams(visParams,returnGpuColArray = false) {//,imgmin,imgmax) {
 	const ArrLen = 1000;
 	let res = new Uint8Array(ArrLen*4);
 
@@ -216,5 +216,18 @@ function getColArrayFromParams(visParams) {//,imgmin,imgmax) {
 	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),ArrLen,1), 0, 0)
 	document.getElementById('fillMinMax').textContent = `fillmin: ${imgmin}, fillmax: ${imgmax}`;
 
+
+	if (returnGpuColArray) {
+		const mapDivide = gpu.createKernel(function(data,val) {
+			return data[this.thread.x]/val
+		},{output: [ArrLen*4]})
+
+		res = mapDivide(res,255); // max 8 bit color chanel val
+
+		mapDivide.destroy()		
+	}
+
 	return {'colArray':res,'min':imgmin,'max':imgmax}
+
+
 }
