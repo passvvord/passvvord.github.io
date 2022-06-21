@@ -214,7 +214,7 @@ function getColArrayFromParams(visParams,returnGpuColArray = false) {//,imgmin,i
 	}
 
 	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),ArrLen,1), 0, 0)
-	document.getElementById('fillMinMax').textContent = `fillmin: ${imgmin}, fillmax: ${imgmax}`;
+	document.getElementById('fillMinMax').textContent = `window-fillmin (HU): ${imgmin}, window-fillmax (HU): ${imgmax}`;
 
 
 	if (returnGpuColArray) {
