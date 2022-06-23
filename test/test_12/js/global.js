@@ -11,7 +11,7 @@ function animateSlider(min,max,func,speed = 2,call = 20) {
 		// setHideLayers({Z0: Math.round(0 + (Math.cos( (Date.now()*Math.PI)/(window.animSpeed*2000) )+1)/2*(205-0)) })
 	}, call);
 }
-
+// window.tempan = animateSlider(-999,3000,(val)=>{ document.querySelectorAll('#histogram .histMin').forEach(el=>{el.value = val; getInputAndUpgradeHistogram()}) },5)
 
 
 window.AutoSpinSetInterval = null;

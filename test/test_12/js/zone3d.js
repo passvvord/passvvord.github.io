@@ -255,6 +255,7 @@ function removeBlock3D(element = Block3Delement) {
 	consoleOut(`removeBlock3D need time: ${Date.now() - tempDate} ms`)
 }
 
+//very stable but many calc and long
 function updateBlock3D_CPU(element = Block3Delement) {
 	const vpArrLen = 1000;
 	const vpArrLenM1 = vpArrLen-1;
@@ -335,7 +336,7 @@ function updateBlock3D_CPU(element = Block3Delement) {
 	consoleOut(`updateBlock3D CPU need time: ${Date.now() - tempDate} ms`)
 }
 
-// unstable, and have some problems
+// unstable, and have some problems, dont use
 function updateBlock3D_GPU(element = Block3Delement) {
 	// const czp = window.zone3Dparams.ChoseZoneParams;
 	const newXsize = window.zone3Dparams.ChoseZoneParams.X1-window.zone3Dparams.ChoseZoneParams.X0;
@@ -410,24 +411,33 @@ function updateBlock3D_GPU(element = Block3Delement) {
 	consoleOut(`updateBlock3D GPU need time: ${Date.now() - tempDate} ms`)
 }
 
-// unstable, and have some problems
+// stable but i am not shure
 function updateBlock3D_GPU_1(element = Block3Delement) {
 	// const czp = window.zone3Dparams.ChoseZoneParams;
 	const newXsize = window.zone3Dparams.ChoseZoneParams.X1-window.zone3Dparams.ChoseZoneParams.X0;
 	const newYsize = window.zone3Dparams.ChoseZoneParams.Y1-window.zone3Dparams.ChoseZoneParams.Y0;
 	const newZsize = window.zone3Dparams.ChoseZoneParams.Z1-window.zone3Dparams.ChoseZoneParams.Z0;
+	const newXsizeM1 = newXsize-1;
+	const newYsizeM1 = newYsize-1;
+	const newZsizeM1 = newZsize-1;	
 
 	if ( (newYsize) < 1 || (newXsize) < 1 || (newZsize) < 1) {throw 'too small area to show'; return;}
 
 	const tempDate = Date.now()
 
 	const vpArrLen = 1000;
-	// const vpArrLenM1 = (vpArrLen-1);
 
+	const vpArrLen4 = vpArrLen*4;
+	
 	const params = getColArrayFromParams(window.zone3Dparams.VisParams,true)
+	const tempval = (vpArrLen-1)/(params.max - params.min);
+	
 	// const temp_zone = getCutedZone3DdataByChoseZoneParams(window.zone3Ddata,window.zone3Dparams.ChoseZoneParams)
 
 	const czp = window.zone3Dparams.ChoseZoneParams;
+
+	//--------------------------------------------------------------
+	const tempTimeZstart = Date.now();
 	const gpuZ = new GPU({
 		context: createElement('canvas',{width: newXsize, height: newYsize}).getContext('webgl2', { premultipliedAlpha: false })
 	});
@@ -446,50 +456,82 @@ function updateBlock3D_GPU_1(element = Block3Delement) {
 			window.zone3Ddata[z+czp.Z0].slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)),
 			params.colArray, 
 			params.min, 
-			(vpArrLen-1)/(params.max - params.min),
-			vpArrLen*4,
-			newYsize-1
+			tempval,
+			vpArrLen4,
+			newYsizeM1
 		)
 		element
-		.querySelector(`#Z${z+window.zone3Dparams.ChoseZoneParams.Z0}`)
+		.querySelector(`#Z${z+czp.Z0}`)
 		.getContext("2d")
 		.putImageData(new ImageData(renderZslice.getPixels() ,newXsize,newYsize), 0, 0);
 	}
-
-	// const gpuX = new GPU({
-	// 	context: createElement('canvas',{width: newXsize, height: newYsize}).getContext('webgl2', { premultipliedAlpha: false })
-	// });
+	//--------------------------------------------------------------
+	const tempTimeXstart = Date.now();
+	const gpuX = new GPU({
+		context: createElement('canvas',{width: newZsize, height: newYsize}).getContext('webgl2', { premultipliedAlpha: false })
+	});
 	
-	// const renderXslice = gpuZ.createKernel(function(Xslice,ColArray,min,delta_lenM1,len_4,Ysize) {
-	// 	var temp = Math.round((Xslice[Ysize-this.thread.y][this.thread.x]-min)*delta_lenM1)*4
-	// 	if (temp >= 0 && temp <= len_4) {
-	// 		this.color(ColArray[temp], ColArray[temp+1], ColArray[temp+2], ColArray[temp+3]);
-	// 	} else {
-	// 		this.color(0,1,0,0);
-	// 	}
+	const renderXslice = gpuX.createKernel(function(Xslice,ColArray,min,delta_lenM1,len_4,Ysize) {
+		var temp = Math.round((Xslice[this.thread.x][Ysize-this.thread.y]-min)*delta_lenM1)*4
+		if (temp >= 0 && temp <= len_4) {
+			this.color(ColArray[temp], ColArray[temp+1], ColArray[temp+2], ColArray[temp+3]);
+		} else {
+			this.color(0,1,0,0);
+		}
 		
-	// },{output: [newXsize,newYsize], graphical: true })
+	},{output: [newZsize,newYsize], graphical: true })
 
-	// for (let z = 0; z < newZsize; z++) {
-	// 	renderZslice(
-	// 		window.zone3Ddata[z+czp.Z0].slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)),
-	// 		params.colArray, 
-	// 		params.min, 
-	// 		(vpArrLen-1)/(params.max - params.min),
-	// 		vpArrLen*4,
-	// 		newYsize-1
-	// 	)
-	// 	element
-	// 	.querySelector(`#Z${z+window.zone3Dparams.ChoseZoneParams.Z0}`)
-	// 	.getContext("2d")
-	// 	.putImageData(new ImageData(renderZslice.getPixels() ,newXsize,newYsize), 0, 0);
-	// }
+	for (let x = 0; x < newXsize; x++) {
+		renderXslice(
+			window.zone3Ddata.slice(czp.Z0,czp.Z1).map(a=>a.slice(czp.Y0,czp.Y1).map(b=>b[x+czp.X0])),
+			params.colArray, 
+			params.min, 
+			tempval,
+			vpArrLen4,
+			newYsizeM1
+		)
+		element
+		.querySelector(`#X${x+czp.X0}`)
+		.getContext("2d")
+		.putImageData(new ImageData(renderXslice.getPixels() ,newZsize,newYsize), 0, 0);
+	}
+	//--------------------------------------------------------------
+	const tempTimeYstart = Date.now();
+	const gpuY = new GPU({
+		context: createElement('canvas',{width: newXsize, height: newZsize}).getContext('webgl2', { premultipliedAlpha: false })
+	});
+	
+	const renderYslice = gpuY.createKernel(function(Yslice,ColArray,min,delta_lenM1,len_4,Zsize) {
+		var temp = Math.round((Yslice[Zsize-this.thread.y][this.thread.x]-min)*delta_lenM1)*4
+		if (temp >= 0 && temp <= len_4) {
+			this.color(ColArray[temp], ColArray[temp+1], ColArray[temp+2], ColArray[temp+3]);
+		} else {
+			this.color(0,1,0,0);
+		}
+		
+	},{output: [newXsize,newZsize], graphical: true })
+
+	for (let y = 0; y < newYsize; y++) {
+		renderYslice(
+			window.zone3Ddata.slice(czp.Z0,czp.Z1).map(a=>a[y+czp.Y0].slice(czp.X0,czp.X1)),
+			params.colArray, 
+			params.min, 
+			tempval,
+			vpArrLen4,
+			newZsizeM1
+		)
+		element
+		.querySelector(`#Y${y+czp.Y0}`)
+		.getContext("2d")
+		.putImageData(new ImageData(renderYslice.getPixels() ,newXsize,newZsize), 0, 0);
+	}
 
 
+	consoleOut(`X: ${tempTimeYstart-tempTimeXstart}ms, Y: ${Date.now()-tempTimeYstart}ms, Z: ${tempTimeXstart-tempTimeZstart}ms,`)
 	consoleOut(`updateBlock3D GPU need time: ${Date.now() - tempDate} ms`)
 }
 
-let updateBlock3D = updateBlock3D_CPU;
+let updateBlock3D = updateBlock3D_GPU_1;
 
 function getCutedZone3DdataByChoseZoneParams(data,czp) {
 	return data.slice(czp.Z0,czp.Z1).map(a=>a.slice(czp.Y0,czp.Y1).map(b=>b.slice(czp.X0,czp.X1)))
