@@ -188,8 +188,9 @@ function getVisParams(element = visParamsElement) {
 	return visParams
 }
 
+window.ColArrayLen = 1000;
 function getColArrayFromParams(visParams,returnGpuColArray = false) {//,imgmin,imgmax) {
-	const ArrLen = 1000;
+	const ArrLen = window.ColArrayLen;
 	let res = new Uint8Array(ArrLen*4);
 
 	const imgmin = (visParams.length>1?visParams.reduce((a,b)=>(b.min<a.min?b:a)):visParams[0]).min;
@@ -212,7 +213,7 @@ function getColArrayFromParams(visParams,returnGpuColArray = false) {//,imgmin,i
 			}
 		}
 	}
-
+	document.getElementById('Gradientline').width = ArrLen;
 	document.getElementById('Gradientline').getContext("2d").putImageData(new ImageData(new Uint8ClampedArray(res),ArrLen,1), 0, 0)
 	document.getElementById('fillMinMax').textContent = `window-min (HU): ${imgmin}, window-max (HU): ${imgmax}`;
 
