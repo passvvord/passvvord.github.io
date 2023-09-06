@@ -71,7 +71,9 @@ function initOpenFile(element = openFileElement) {
 				}
 			)
 			// consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
-			document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)*-1})`
+			if (orient) {
+				document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)*-1})`
+			}
 			document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 			
 			consoleOut('end opening one Dicom File ---------------------------------------------')
