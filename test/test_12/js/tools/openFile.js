@@ -58,7 +58,7 @@ function initOpenFile(element = openFileElement) {
 					VisParams: (max > 4000?[
 							{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
 							{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
-						]:(max > 1500?[
+						]:(max > 2500?[
 							{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
 						]:[
 							{min: min, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
@@ -158,9 +158,12 @@ function initOpenFile(element = openFileElement) {
 							VisParams: (max > 4000?[
 									{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
 									{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
-								]:[
+								]:(max > 2500?[
 									{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
-								]
+								]:[
+									{min: min, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+								])
+
 							),
 							ChoseZoneParams: {
 								visible: false, 
