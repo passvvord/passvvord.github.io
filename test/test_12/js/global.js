@@ -82,7 +82,9 @@ document.querySelector('#animate #AutoSpin').addEventListener('click',()=>{
 		A[15] = 1;
 		return A;
 	}
-
+	if (window.AutoSpinSetInterval) {
+		clearInterval(window.AutoSpinSetInterval)
+	}
 	window.AutoSpinSetInterval = setInterval(() => {
 		const matrix = getNewMatrixAfterAnyRotate(
 			get3DMatrixTransform(Block3D),
