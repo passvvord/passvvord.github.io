@@ -4,12 +4,17 @@ function consoleOut(...a) {
 	document.querySelector('#console').innerHTML += a+'<br>'
 }
 
-
+window.tempan = null
 function animateSlider(min,max,func,speed = 2,call = 20) {
-	return setInterval(() => {
-		func( Math.round(min + (Math.cos( (Date.now()*Math.PI)/(speed*2000) )+1)/2*(max-min)) )
-		// setHideLayers({Z0: Math.round(0 + (Math.cos( (Date.now()*Math.PI)/(window.animSpeed*2000) )+1)/2*(205-0)) })
-	}, call);
+	if (window.tempan) {
+		clearInterval(window.tempan)
+	}
+	if (func) {
+		window.tempan = setInterval(() => {
+			func( Math.round(min + (Math.cos( (Date.now()*Math.PI)/(speed*2000) )+1)/2*(max-min)) )
+			// setHideLayers({Z0: Math.round(0 + (Math.cos( (Date.now()*Math.PI)/(window.animSpeed*2000) )+1)/2*(205-0)) })
+		}, call);		
+	}
 }
 // window.tempan = animateSlider(-999,3000,(val)=>{ document.querySelectorAll('#histogram .histMin').forEach(el=>{el.value = val; getInputAndUpgradeHistogram()}) },5)
 
