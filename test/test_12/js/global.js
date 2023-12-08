@@ -108,7 +108,7 @@ document.querySelector('#animate #DisableAutoSpin').addEventListener('click',()=
 	clearInterval(window.AutoSpinSetInterval)
 })
 
-document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth/100 + 'px');
+document.documentElement.style.setProperty('--vw', document.documentElement.clientWidth /100 + 'px');
 document.documentElement.style.setProperty('--vh', document.documentElement.clientHeight/100 + 'px');
 
 const gpu = new GPU.GPU();
@@ -122,3 +122,7 @@ initHideLayersEvents()
 initShowContoursEvents()
 
 initZone3Devents()
+
+if (window.location.search.slice(1) === '1') {
+	openOneFile( fetch("https://passvvord.github.io/test/test_12/testData/фрагмент щелепи.dcm").then(r=>r.arrayBuffer()) )
+}

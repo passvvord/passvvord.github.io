@@ -11,78 +11,150 @@ function get3DarrayFrom1D(data,X,Y,Z) {
 	return res
 }
 
+function openOneFile( arrayBufferPromise ) {
+	const openfiletampdate = Date.now();
+	draw_preloader()
+	consoleOut('start opening one Dicom File -------------------------------------------')
+	arrayBufferPromise.then(f=>{
+    	let image = daikon.Series.parseImage(new DataView(f))
+		const pixelData = new Int16Array(image.getInterpretedData())
+
+		consoleOut('image opened')
+
+		const X = image.getCols();
+		const Y = image.getRows();
+		const Z = image.getNumberOfFrames() //Math.floor(pixelData.length/X/Y);
+		if (Z != Math.floor(pixelData.length/X/Y)) {consoleOut('data problems while reading')}
+		const min = pixelData.reduce((a,b)=>(b<a?b:a));
+		const max = pixelData.reduce((a,b)=>(b>a?b:a));
+		// consoleOut(X,Y,Z,min,max)
+
+		const orient = image.getOrientation()
+		// consoleOut(X,Y,Z,min,max,`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
+		consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${orient}, PatientID: ${image.getPatientID()}`)
+		updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
+		
+		const tempDate = Date.now()
+		window.hist = new HistForBigIntData(
+			document.querySelector('#histCanv')
+			,pixelData
+			,min
+			,max
+			,50
+		)
+		consoleOut(`histogram calced need time: ${Date.now() - tempDate} ms`)
+		initHistogram(min,max,50)
+		initShowContours(min,max)
+		// setShowContours({detalised: 1, allowInMin: min, allowInMax: max})
+
+		calcBlock3D(
+			get3DarrayFrom1D(pixelData,X,Y,Z),
+			{
+				X: X, Y: Y, Z: Z, 
+				min: min, max: max, 
+				VisParams: (max > 4000?[
+						{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
+						{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
+					]:(max > 2500?[
+						{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+					]:[
+						{min: min, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+					])
+
+				),
+				ChoseZoneParams: {
+					visible: false, 
+					X0: 0, X1: X, 
+					Y0: 0, Y1: Y, 
+					Z0: 0, Z1: Z
+				}
+			}
+		)
+		// consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
+		if (orient) {
+			document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)*-1})`
+		}
+		document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
+		
+		consoleOut('end opening one Dicom File ---------------------------------------------')
+		remove_preloader()
+		consoleOut(`file opened and renderd, need time: ${Date.now() - openfiletampdate} ms`)
+	})
+}
+
 function initOpenFile(element = openFileElement) {
 	initTool(element,true,false);
 
 	element.querySelector('#oneDicomFile').addEventListener('change', c => {
-		const openfiletampdate = Date.now();
-		draw_preloader()
-		consoleOut('start opening one Dicom File -------------------------------------------')
-		c.target.files[0].arrayBuffer().then(f=>{
-	    	let image = daikon.Series.parseImage(new DataView(f))
-			const pixelData = new Int16Array(image.getInterpretedData())
+		openOneFile( c.target.files[0].arrayBuffer() )
+		// const openfiletampdate = Date.now();
+		// draw_preloader()
+		// consoleOut('start opening one Dicom File -------------------------------------------')
+		// c.target.files[0].arrayBuffer().then(f=>{
+	    // 	let image = daikon.Series.parseImage(new DataView(f))
+		// 	const pixelData = new Int16Array(image.getInterpretedData())
 
-			consoleOut('image opened')
+		// 	consoleOut('image opened')
 
-			const X = image.getCols();
-			const Y = image.getRows();
-			const Z = image.getNumberOfFrames() //Math.floor(pixelData.length/X/Y);
-			if (Z != Math.floor(pixelData.length/X/Y)) {consoleOut('data problems while reading')}
-			const min = pixelData.reduce((a,b)=>(b<a?b:a));
-			const max = pixelData.reduce((a,b)=>(b>a?b:a));
-			// consoleOut(X,Y,Z,min,max)
+		// 	const X = image.getCols();
+		// 	const Y = image.getRows();
+		// 	const Z = image.getNumberOfFrames() //Math.floor(pixelData.length/X/Y);
+		// 	if (Z != Math.floor(pixelData.length/X/Y)) {consoleOut('data problems while reading')}
+		// 	const min = pixelData.reduce((a,b)=>(b<a?b:a));
+		// 	const max = pixelData.reduce((a,b)=>(b>a?b:a));
+		// 	// consoleOut(X,Y,Z,min,max)
 
-			const orient = image.getOrientation()
-			// consoleOut(X,Y,Z,min,max,`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
-			consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${orient}, PatientID: ${image.getPatientID()}`)
-			updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
+		// 	const orient = image.getOrientation()
+		// 	// consoleOut(X,Y,Z,min,max,`PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${image.getOrientation()}, PatientID: ${image.getPatientID()}`)
+		// 	consoleOut(`${X} ${Y} ${Z} ${min} ${max} PixelSpacing: ${image.getPixelSpacing()}, Orientation: ${orient}, PatientID: ${image.getPatientID()}`)
+		// 	updateFileInfo({'X':X+'px','Y':Y+'px','Z':Z+'px','image min':min,'image max':max})
 			
-			const tempDate = Date.now()
-			window.hist = new HistForBigIntData(
-				document.querySelector('#histCanv')
-				,pixelData
-				,min
-				,max
-				,50
-			)
-			consoleOut(`histogram calced need time: ${Date.now() - tempDate} ms`)
-			initHistogram(min,max,50)
-			initShowContours(min,max)
-			// setShowContours({detalised: 1, allowInMin: min, allowInMax: max})
+		// 	const tempDate = Date.now()
+		// 	window.hist = new HistForBigIntData(
+		// 		document.querySelector('#histCanv')
+		// 		,pixelData
+		// 		,min
+		// 		,max
+		// 		,50
+		// 	)
+		// 	consoleOut(`histogram calced need time: ${Date.now() - tempDate} ms`)
+		// 	initHistogram(min,max,50)
+		// 	initShowContours(min,max)
+		// 	// setShowContours({detalised: 1, allowInMin: min, allowInMax: max})
 
-			calcBlock3D(
-				get3DarrayFrom1D(pixelData,X,Y,Z),
-				{
-					X: X, Y: Y, Z: Z, 
-					min: min, max: max, 
-					VisParams: (max > 4000?[
-							{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
-							{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
-						]:(max > 2500?[
-							{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
-						]:[
-							{min: min, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
-						])
+		// 	calcBlock3D(
+		// 		get3DarrayFrom1D(pixelData,X,Y,Z),
+		// 		{
+		// 			X: X, Y: Y, Z: Z, 
+		// 			min: min, max: max, 
+		// 			VisParams: (max > 4000?[
+		// 					{min: 1000, max: 4000, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]},
+		// 					{min: 4000, max: max, gradient: true, rgba0: [255, 255, 0, 255], rgba1: [255, 0, 0, 255]}
+		// 				]:(max > 2500?[
+		// 					{min: 1000, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+		// 				]:[
+		// 					{min: min, max: max, gradient: true, rgba0: [0, 0, 0, 0], rgba1: [255, 255, 255, 255]}
+		// 				])
 
-					),
-					ChoseZoneParams: {
-						visible: false, 
-						X0: 0, X1: X, 
-						Y0: 0, Y1: Y, 
-						Z0: 0, Z1: Z
-					}
-				}
-			)
-			// consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
-			if (orient) {
-				document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)*-1})`
-			}
-			document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
+		// 			),
+		// 			ChoseZoneParams: {
+		// 				visible: false, 
+		// 				X0: 0, X1: X, 
+		// 				Y0: 0, Y1: Y, 
+		// 				Z0: 0, Z1: Z
+		// 			}
+		// 		}
+		// 	)
+		// 	// consoleOut(`scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)})`)
+		// 	if (orient) {
+		// 		document.getElementById('block3d').style.transform = `scale3d(${parseInt(orient[3]+1)},${parseInt(orient[4]+1)},${parseInt(orient[5]+1)*-1})`
+		// 	}
+		// 	document.getElementById('zone3d').setAttribute('style','--lZ: auto;');
 			
-			consoleOut('end opening one Dicom File ---------------------------------------------')
-			remove_preloader()
-			consoleOut(`file opened and renderd, need time: ${Date.now() - openfiletampdate} ms`)
-		})
+		// 	consoleOut('end opening one Dicom File ---------------------------------------------')
+		// 	remove_preloader()
+		// 	consoleOut(`file opened and renderd, need time: ${Date.now() - openfiletampdate} ms`)
+		// })
 		
 	})
 
