@@ -123,6 +123,6 @@ initShowContoursEvents()
 
 initZone3Devents()
 
-if (window.location.search.slice(1) === '1') {
+if (window.location.search.slice(1) === '0') {
 	openOneFile( fetch("https://passvvord.github.io/test/test_12/testData/фрагмент щелепи.dcm").then(r=>r.arrayBuffer()) )
 }
