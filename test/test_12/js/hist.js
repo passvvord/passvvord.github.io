@@ -17,9 +17,13 @@ class HistForBigIntData { // class for big int data for example for Uint16Array(
 	constructor(element,data,dataMin,dataMax,parts = 15,col = '#fff') {
 		// console.log(element,min,max,parts,element.getBoundingClientRect())
 		this.#element = element;
-		this.#canvas = document.createElement('canvas');
+		if ( this.#element.querySelectorAll('canvas').length >= 1 ) {
+			this.#canvas = this.#element.querySelector('canvas')
+		} else {
+			this.#canvas = document.createElement('canvas');
+			this.#element.appendChild(this.#canvas);
+		}
 		// console.log(this.#element,element)
-		this.#element.appendChild(this.#canvas);
 		let tempsize = element.getBoundingClientRect();
 		if (tempsize.width == 0 || tempsize.height == 0) {
 			throw `histogram init error: width(${tempsize.width}) or height(${tempsize.height}) of object is 0`;
