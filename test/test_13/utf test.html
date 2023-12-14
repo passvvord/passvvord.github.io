@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title></title>
+</head>
+<body>
+
+<div></div>
+
+<script type="text/javascript">
+
+let start = 0
+let end = 2_000
+
+if (window.location.search.length > 1) {
+	let system;
+	switch (window.location.search.slice(1,2)) {
+		case 'b': system =  2; break;
+		case 'd': system = 10; break;
+		case 'x': system = 16; break;
+		default:  system = 16; break;
+	}
+
+	let temp = window.location.search.slice(2).split('-').map(a=>parseInt(a,system))
+	console.log(temp,system)
+	start = temp[0]
+	end = temp[1]
+}
+
+let line = ''
+
+for (let i = start; i < end; i+=1) {
+	line+=`&#${i};`
+	if (i%64 === 0) {
+		line+=' <br>'
+	}
+
+	if (i%256 === 0) {
+		line+=` <br>${i} u${i.toString(16)}<br>`
+	}
+}
+
+
+document.querySelector('div').innerHTML = line
+
+</script>	
+</body>
+</html>
