@@ -20,6 +20,10 @@ body {
 	background-repeat: no-repeat;
 	background-position: center;
 	background-size: contain;
+
+	--seconds-s: calc(var(--seconds) + var(--milliseconds)/1000);
+	--minutes-s: calc(var(--minutes) + var(--seconds-s)/60);
+	--hours-s:   calc(var(--hours) + var(--minutes-s)/60);
 }
 
 :root {
@@ -40,6 +44,7 @@ body {
 	content: var(--str)var(--str-l);
 	background: #ff0;
 	border-radius: 50%;
+/*	transform: rotate(calc((var(--val)/var(--val-max) - 0.25)*1turn));*/
 }
 
 .sec, .min, .hour {
@@ -52,7 +57,7 @@ body {
 </head>
 <body>
 
-	<div class="sec" style="--val: var(--seconds); --val-max: 60; --str: var(--seconds-str); --str-l: 's'">
+	<div class="sec" style="--val: var(--seconds-s); --val-max: 60; --str: var(--seconds-str); --str-l: 's'">
 		<div>
 			<div>
 				<div>
@@ -71,7 +76,7 @@ body {
 		</div>
 	</div>
 
-	<div class="min" style="--val: var(--minutes); --val-max: 60; --str: var(--minutes-str); --str-l: 'm'">
+	<div class="min" style="--val: var(--minutes-s); --val-max: 60; --str: var(--minutes-str); --str-l: 'm'">
 		<div>
 			<div>
 				<div>
@@ -86,7 +91,7 @@ body {
 		</div>
 	</div>
 
-	<div class="hour" style="--val: var(--hours); --val-max: 12; --str: var(--hours-str); --str-l: 'h'">
+	<div class="hour" style="--val: var(--hours-s); --val-max: 12; --str: var(--hours-str); --str-l: 'h'">
 		<div>
 			<div>
 				<div>
@@ -98,11 +103,11 @@ body {
 <script type="text/javascript">
 
 const intervalID = setInterval(()=>{
-	['Seconds','Minutes','Hours'].forEach(p=>{
-		document.body.style.setProperty(`--${p.toLowerCase()}`, new Date()['get'+p]() );
-		document.body.style.setProperty(`--${p.toLowerCase()}-str`, `'${new Date()['get'+p]()}'` );
+	['Seconds','Minutes','Hours','Milliseconds'].forEach(p=>{
+		document.documentElement.style.setProperty(`--${p.toLowerCase()}`, new Date()['get'+p]() );
+		document.documentElement.style.setProperty(`--${p.toLowerCase()}-str`, `'${new Date()['get'+p]()}'` );
 	})
-}, 1000)
+}, 1000/60)
 
 </script>
 
