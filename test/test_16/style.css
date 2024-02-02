@@ -20,6 +20,7 @@ body {
 
 :root {
 	--delta: min( calc(50vh/10), calc(50vw/10) );
+	
 }
 
 .sec, .sec div, .min, .min div, .hour, .hour div {
@@ -31,6 +32,18 @@ body {
 
 	transform: translate(calc(var(--delta) * sin(calc(var(--val)/var(--val-max)*1turn)) ), calc(var(--delta) * -1 * cos(calc(var(--val)/var(--val-max)*1turn)) ));
 }
+
+/*.sec {
+	--t0: 0;
+}
+
+.sec div.c0 {
+	--t1: calc(var(--t0) + 1);
+}
+
+.sec div.c1 {
+	--t0: calc(var(--t1) + 1);
+}*/
 
 .sec::before, .sec div::before, .min::before, .min div::before, .hour::before, .hour div::before {
 	content: var(--str)var(--str-l);
