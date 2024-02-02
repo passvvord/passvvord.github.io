@@ -1,0 +1,40 @@
+body {
+	margin: 0;
+	padding: 0;
+
+	height: 100vh;
+
+	background-image: url(clock.png);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;	
+
+	--seconds-s: calc(var(--seconds) + var(--milliseconds)/1000);
+	--minutes-s: calc(var(--minutes) + var(--seconds-s)/60);
+	--hours-s:   calc(var(--hours) + var(--minutes-s)/60);
+}
+
+:root {
+	--delta: min( calc(50vh/10), calc(50vw/10) );
+}
+
+.sec, .sec div, .min, .min div, .hour, .hour div {
+	position: absolute;
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	transform: translate(calc(var(--delta) * sin(calc(var(--val)/var(--val-max)*1turn)) ), calc(var(--delta) * -1 * cos(calc(var(--val)/var(--val-max)*1turn)) ));
+}
+
+.sec::before, .sec div::before, .min::before, .min div::before, .hour::before, .hour div::before {
+	content: var(--str)var(--str-l);
+	background: #ff0;
+	border-radius: 50%;
+/*	transform: rotate(calc((var(--val)/var(--val-max) - 0.25)*1turn));*/
+}
