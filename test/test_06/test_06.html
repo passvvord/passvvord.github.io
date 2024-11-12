@@ -65,7 +65,7 @@
 	<script>
 	  // Your web app's Firebase configuration
 	  var firebaseConfig = {
-		apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
+		apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c", // yes yes i know i shoudn't do that but database dont contain any critical information
 		authDomain: "aai-database-01.firebaseapp.com",
 		databaseURL: "https://aai-database-01.firebaseio.com",
 		projectId: "aai-database-01",
@@ -95,16 +95,16 @@
 		canvas.height = display_h;
 		canvas.width = display_w;
 
-		setInterval(function() {
+		const intervalId = setInterval(function() {
 			if (display_w != document.documentElement.clientWidth || display_h != document.documentElement.clientHeight) {
 				display_w = document.documentElement.clientWidth;
 				display_h = document.documentElement.clientHeight;
 			}		
 		},2000);
 
-		document.addEventListener("mousemove", e => {
-			let Xvw = Math.round(e.clientX/display_w * 10000)/100;
-			let Yvh = Math.round(e.clientY/display_h * 10000)/100;
+		function updatePosition(x,y) {
+			let Xvw = x/display_w*100;
+			let Yvh = y/display_h*100;
 			
 			from_js.left = Xvw + "vw";
 			from_js.top = Yvh + "vh";
@@ -112,8 +112,11 @@
 			database.ref(path0).set({
 				mouse_x: Xvw,
 				mouse_y: Yvh
-			});			
-		});
+			});				
+		}
+
+		document.addEventListener('mousemove', mm=>{updatePosition(           mm.clientX,           mm.clientY)})
+		document.addEventListener('touchmove', tm=>{updatePosition(tm.touches[0].clientX,tm.touches[0].clientY)})
 
 		database.ref(path0).once('value', snapshot => {
 			ctx.beginPath();
