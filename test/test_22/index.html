@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+<!-- 	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+		}
+	}
+	</script> -->
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "./v0.170.0/build/three.module.js",
+			"three/addons/": "./v0.170.0/examples/jsm/"
+		}
+	}
+	</script>
+	<script type="text/javascript">
+		// import * as THREE from 'three'
+		// import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		// import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
+		// import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+		// import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+		function loadScript(name, defer = false, async = false) {
+			const script = document.createElement('script')
+			script.defer = defer
+			script.async = async
+			script.src = name
+			document.body.appendChild(script)
+		}
+
+		function loadScriptWhenThisDOMloaded(name) {
+			//https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
+			if (document.readyState == 'loading') {
+				document.addEventListener('DOMContentLoaded', ()=>{
+					loadScript(name)
+				})
+			} else { // document.readyState == 'interactive' || document.readyState == 'complete'
+				loadScript(name)
+			}
+		}
+
+		Promise.all([
+			// import(from).then(m=>{window[import as] = m[name to import]})
+			import('three').then(m=>{window.THREE = m}),
+			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
+			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
+		]).then(()=>{
+			loadScriptWhenThisDOMloaded('script.js')
+		})
+	</script>
+	<style type="text/css">
+		body { 
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+<body>
+	<canvas id="screen"></canvas>
+</body>
+</html>
