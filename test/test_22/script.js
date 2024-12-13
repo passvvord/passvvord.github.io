@@ -171,13 +171,13 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 			col1sum*=u_color1modifier;
 
 			if (u_onlyColor) {
-				return col0*col0sum/(col0sum+col1sum) + col1*col1sum/(col0sum+col1sum);
+				// return col0*col0sum/(col0sum+col1sum) + col1*col1sum/(col0sum+col1sum);
 
-				// if (col0sum > col1sum) {
-				// 	return col0;
-				// } else {
-				// 	return col1;
-				// }
+				if (col0sum > col1sum) {
+					return col0;
+				} else {
+					return col1;
+				}
 			} else {
 				if (u_stepAsGrad) {
 					if (col0sum > col1sum) {
