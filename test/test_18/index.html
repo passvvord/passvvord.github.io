@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+<!-- 	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/",
+			"fonts": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/fonts"
+		}
+	}
+	</script> -->
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "./v0.170.0/build/three.module.js",
+			"three/addons/": "./v0.170.0/examples/jsm/"
+		}
+	}
+	</script>
+	<script type="text/javascript">
+		// import * as THREE from 'three'
+		// import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		// import { TextGeometry } from 'three/addons/geometries/TextGeometry.js'
+		// import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+		// import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+		// const fontUrl = 'https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/fonts/helvetiker_bold.typeface.json';
+		const fontUrl = 'v0.170.0/examples/fonts/helvetiker_bold.typeface.json';
+		Promise.all([
+			import('three').then(m=>{window.THREE = m}),
+			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}), // import(from).then(m=>{window[{import as}] = m[{name to import}]})
+			import('three/addons/geometries/TextGeometry.js').then(m=>{window.TextGeometry = m.TextGeometry}),
+			import('three/addons/loaders/FontLoader.js').then(m=>{window.FontLoader = m.FontLoader}),
+			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),			
+			fetch(fontUrl).then(r=>r.text().then(t=>{window.fontObj = JSON.parse(t)})),
+		]).then(()=>{
+			const initScript = document.createElement('script')
+			initScript.src = 'script.js'
+			document.body.appendChild(initScript)
+		})
+	</script>
+	<!-- <script type="module" src="script.js"></script> -->
+	<style type="text/css">
+		body { 
+			margin: 0;
+			overflow: hidden;
+		}
+
+		#screen2 {
+			position: fixed;
+			top: 0;
+			left: 0;
+			outline: solid 1px #fff;
+		}
+	</style>
+</head>
+<body>
+
+	<canvas id="screen"></canvas>
+	<!-- <div id="interface"></div> -->
+	<canvas id="screen2"></canvas>
+
+</body>
+</html>

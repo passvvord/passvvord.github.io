@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+
+	<div class="infiniteScroll">
+		<div class="fullSize">
+			<div class="block" style="background: #f88;">any html<br>structure 1</div>
+			<div class="block" style="background: #8f8;">any html<br>structure 2</div>
+			<div class="block" style="background: #88f;">any html<br>------ structure 3 -------</div>
+			<div class="block" style="background: #888;">any html<br>structure 4</div>
+		</div>
+	</div>
+
+	<style type="text/css">
+		.fullSize {
+			--fullWidth: 600px;
+			width: var(--fullWidth);
+			display: flex;
+			justify-content: space-around;
+			outline: solid 2px #f00;
+			overflow: hidden;
+		}
+
+		.fullSize .block {
+			outline: solid 1px #000;
+			padding: 10px;
+			--pos: calc(mod(calc(var(--yScroll) + var(--xPos)), var(--fullWidth)) - var(--xPos));
+			transform: translateX(var(--pos));
+			transition-duration: 0.1s;
+		}
+	</style>
+
+	<script type="text/javascript">
+
+		function init(
+			 fullSize = document.querySelector('.infiniteScroll > .fullSize')
+			,blockSelector = '.block'
+		) {
+			const fullSizeRect = fullSize.getBoundingClientRect()
+			const blocks = [...fullSize.querySelectorAll(blockSelector)].map(a=>({el: a, rect: a.getBoundingClientRect()}))
+			blocks.forEach((block)=>{
+				block.el.style.setProperty('--xPos', `${block.rect.x - fullSizeRect.x + block.rect.width/2}px`)
+			})
+
+			fullSize.addEventListener('wheel', w=>{
+				w.preventDefault()
+				const scrollVal = parseFloat(fullSize.style.getPropertyValue('--yScroll').slice(0,-2)) || 0;
+				const scrollLimit = fullSizeRect.width
+				//                       to make scroll always in bounds from 0 to +limit
+				const limited = (scrollLimit + (scrollVal + w.deltaY/5)%scrollLimit)%scrollLimit 
+
+				blocks.forEach((block)=>{
+					const xVal = parseFloat(block.el.style.getPropertyValue('--xPos').slice(0,-2)) || 0;
+					if ( Math.abs((scrollVal+xVal)/scrollLimit-1) < 1/4/blocks.length ) {
+						block.el.style.opacity = '0.2'; // this must be 0, this is not 0 only to show how it moves
+					} else {
+						block.el.style.opacity = '';
+					}					
+				})
+
+				fullSize.style.setProperty('--yScroll', limited+'px')
+			});			
+		}		
+
+		init()
+
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+		}
+	}
+	</script>
+	<style type="text/css">
+		body { 
+			margin: 0;
+			overflow: hidden;
+		}
+
+/*		div#preloader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: -webkit-fill-available;
+			width: -webkit-fill-available;
+			background: rgba(0,0,0,0.5);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: 10px;
+		}
+
+		div#preloader > div {
+			--s: 20px;
+			--sd4: calc(var(--s)/4);
+			--sd_4: calc(var(--s)/-4);
+			height: var(--s);
+			width:  var(--s);
+			outline: solid 1px #fff;
+		}
+
+		div#preloader > div.loaded {
+			outline: solid 1px #0f0;
+			background: #0f0;
+		}
+
+		div#preloader > div.loading {
+			outline: solid 1px #fff;
+			animation: loading ease-in-out 1s infinite;
+		}
+
+		@keyframes loading {
+			0%   {box-shadow: inset var(--sd_4) var(--sd_4) 0 var(--sd4) #fff;}
+			25%  {box-shadow: inset var(--sd4 ) var(--sd_4) 0 var(--sd4) #fff;}
+			50%  {box-shadow: inset var(--sd4 ) var(--sd4 ) 0 var(--sd4) #fff;}
+			75%  {box-shadow: inset var(--sd_4) var(--sd4 ) 0 var(--sd4) #fff;}
+			100% {box-shadow: inset var(--sd_4) var(--sd_4) 0 var(--sd4) #fff;}
+		}*/
+	</style>
+</head>
+<body>
+
+	<canvas id="screen"></canvas>
+
+
+	<div id="preloader">
+		
+	</div>
+
+	<script type="text/javascript">
+		// import * as THREE from 'three'
+		// import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		// import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+		// import { VertexNormalsHelper } from 'three/addons/helpers/VertexNormalsHelper.js';
+
+		// const daytexture = 'https://www.solarsystemscope.com/textures/download/2k_earth_daymap.jpg'
+		// const nightTexture = 'https://www.solarsystemscope.com/textures/download/2k_earth_nightmap.jpg'
+
+		async function loadImage(url) { // uhhh this is slow and not good but works
+			console.time('load image: '+url)
+			const response = await fetch(url)
+			const dataURL = await new Promise((resolve)=>{
+				const reader = new FileReader()
+				reader.onload = ()=>resolve(reader.result)
+				response.blob().then(b=>reader.readAsDataURL(b))
+			})
+			return new Promise((resolve)=>{
+				let img = new Image();
+				img.onload = function () {
+					// console.log(this.width, this.height)
+					let canvas = document.createElement('canvas');
+					canvas.width = this.width
+					canvas.height = this.height
+					let ctx = canvas.getContext('2d');
+					ctx.drawImage(this, 0, 0);
+					const imgDat = ctx.getImageData(0, 0, this.width, this.height)
+					console.timeEnd('load image: '+url)
+					resolve(imgDat);
+				}
+				img.src = dataURL;				
+			})
+		}
+
+		const start = performance.now();
+		let loadedCounter=0;
+		const resToLoad = [
+			import('three').then(m=>{window.THREE = m}),
+			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
+			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
+			import('three/addons/helpers/VertexNormalsHelper.js').then(m=>{window.VertexNormalsHelper = m.VertexNormalsHelper}),
+			loadImage('8k_earth_daymap.jpg').then(i=>{window.dayImage=i}),
+			loadImage('8k_earth_nightmap.jpg').then(i=>{window.nightImage=i}),
+		].map((a,i,A)=>a.then(()=>{
+			console.log(`promise index: ${i}, ${++loadedCounter}/${resToLoad.length} loaded, time from satrt: ${(performance.now()-start).toFixed(2)}ms`)
+			// document.querySelector(`div#preloader > div#i${i}`).className = 'loaded'
+		}))
+
+		// const el = document.querySelector('div#preloader')
+		// // console.log(document, el)
+		// for (let i = 0; i < resToLoad.length; i++) {
+		// 	const div = document.createElement('div')
+		// 	div.id = 'i'+i
+		// 	div.className = 'loading'
+		// 	el.appendChild(div)
+		// }m
+
+		// document.addEventListener('DOMContentLoaded', ()=>{})
+
+		Promise.all(resToLoad).then(()=>{
+			const script = document.createElement('script')
+			script.defer = true
+			script.src = 'script.js'
+			document.body.appendChild(script)
+		})
+	</script>
+</body>
+</html>

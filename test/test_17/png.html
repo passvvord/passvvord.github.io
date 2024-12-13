@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>png</title>
+<!-- 	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="script.js" defer></script> -->
+	<!-- <script src="Base64.js"></script> -->
+	<!-- <script src="PNG.js"></script> -->	
+</head>
+<body>
+
+	<input type="file" id="pngFile"><br>
+	<!-- accept="image/png" accept=".png"-->
+
+	<pre id="console"></pre>
+	<script type="text/javascript">
+		function consolelog(...a) {
+			console.log(...a)
+			document.querySelector('#console').innerHTML+=a.join()+'\n\n'
+			// document.querySelector('#console').innerText+=a.join()+'\n'
+			// document.querySelector('#console').textContent+=a.join()+'\n'
+		}
+	</script>
+
+	<script type="text/javascript">
+		/* 
+		url                   (str): url to module you want to import
+		impor (array of str OR str): array of names you want to import
+		as    (array of str OR str): array of names you want to use (must be same size and type as impor or you can don`t set it and as will = impor)
+		*/
+		// async function import_(from, impor, as = undefined) {
+		// 	if ( !( as instanceof Array || typeof as === 'string' ) ) {
+		// 		as = impor;
+		// 	}
+		// 	await import(from).then(m=>{
+		// 		if (impor instanceof Array) {
+		// 			for (let i=0; i<impor.length; i++) {
+		// 				window[as[i]] = m[impor[i]];
+		// 			}			
+		// 		} else if (typeof impor === 'string') {
+		// 			if (impor === '*') {
+		// 				if (as === impor) {
+		// 					console.error('if you are importing all you need to set "as" value')
+		// 				} else {
+		// 					window[as] = m;
+		// 				}
+		// 			} else {
+		// 				window[as] = m[impor];				
+		// 			}
+		// 		}
+		// 	})
+		// }
+
+		// console.log('start importing')
+		// Promise.all([
+		// {from: './Base64.js', import: 'Base64',},
+		// {from: './PNG.js', import: 'PNG',},
+
+		// {import: 'Vector2',                 as: 'v2',        from: 'https://esm.sh/three'}, // import { Vector2 as v2 } from 'https://esm.sh/three'
+		// {import: 'Vector3',                                  from: 'https://esm.sh/three'}, // import { Vector3 } from 'https://esm.sh/three'
+		// {import: ['Matrix3', 'Matrix4'],    as: ['m3','m4'], from: 'https://esm.sh/three'}, // import { Matrix3 as m3, Matrix4 as m4 } from 'https://esm.sh/three'
+		// {import: ['SpotLight', 'Object3D'],                  from: 'https://esm.sh/three'}, // import { SpotLight, Object3D } from 'https://esm.sh/three'
+		// {import: '*',                       as: 'THREE',     from: 'https://esm.sh/three'}, // import * as THREE from 'https://esm.sh/three'
+
+		// ].map(a=>import_(a.from, a.import, a.as))).then(()=>{
+		// 	console.log('imported')
+			
+		// 	const initScript = document.createElement('script')
+		// 	initScript.src = 'init.js'
+		// 	document.body.appendChild(initScript)
+		// })
+
+
+		Promise.all([
+			import('./Base64.js').then(m=>{window.Base64 = m.Base64}),
+			import('./PNG.js').then(m=>{window.PNG = m.PNG}),
+		]).then(()=>{
+			const initScript = document.createElement('script')
+			initScript.src = 'init.js'
+			document.body.appendChild(initScript)
+		})
+	</script>
+
+</body>
+</html>

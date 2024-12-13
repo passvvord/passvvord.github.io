@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script type="importmap">
+	{
+		"imports": {
+			"hljs/": "https://unpkg.com/@highlightjs/cdn-assets@11.10.0/es/"
+		}
+	}
+	</script>
+<!-- 	<script type="importmap">
+	{
+		"imports": {
+			"three": "./v0.170.0/build/three.module.js",
+			"three/addons/": "./v0.170.0/examples/jsm/"
+		}
+	}
+	</script> -->
+	<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/default.min.css"> -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark-dimmed.min.css">
+	
+	<script type="text/javascript">
+		function loadScript(name, defer = false, async = false) {
+			const script = document.createElement('script')
+			script.defer = defer
+			script.async = async
+			script.src = name
+			document.body.appendChild(script)
+		}
+
+		function loadScriptWhenThisDOMloaded(name) {
+			//https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState
+			if (document.readyState == 'loading') {
+				document.addEventListener('DOMContentLoaded', ()=>{
+					loadScript(name)
+				})
+			} else { // document.readyState == 'interactive' || document.readyState == 'complete'
+				loadScript(name)
+			}
+		}
+
+		Promise.all([
+			import('hljs/highlight.min.js').then(m=>{window.hljs = m.default}),
+			import('hljs/languages/glsl.min.js').then(m=>{window.glsl = m.default}),
+		]).then(()=>{
+			// loadScriptWhenThisDOMloaded('script.js')
+			hljs.registerLanguage('glsl', glsl)
+			hljs.highlightAll()
+		})
+	</script>
+	<style type="text/css">
+/*		body { 
+			margin: 0;
+			overflow: hidden;
+		}*/
+
+		pre {
+			-moz-tab-size: 4;
+			-o-tab-size:   4;
+			tab-size:      4;
+		}
+	</style>
+
+</head>
+<body>
+	<pre><code class="language-glsl">
+varying vec2 vUV;
+
+uniform sampler2D u_tex;
+
+uniform vec3 u_color0;
+uniform vec3 u_color1;
+
+uniform float u_usePixels;
+
+uniform float u_step;
+uniform bool u_onlyColor;
+uniform bool u_stepAsGrad;
+uniform bool u_gridDots;
+uniform bool u_showRealTexColor;
+uniform float u_color0modifier;
+uniform float u_color1modifier;
+uniform bool u_showDiffWithRealColor;
+
+
+// vec4 getPx(sampler2D tex, vec2 pos, vec4 background) {
+// 	if (pos.x < 0.0 || pos.x > 1.0 || pos.y < 0.0 || pos.y > 1.0) {
+// 		return background;
+// 	} else {
+// 		return texture2D( tex, pos );
+// 	}
+// }
+
+const highp float PI = 3.141592653589793;
+vec3 getColor(sampler2D tex, vec2 pos, vec3 col0, vec3 col1) {
+
+	ivec2 iTextureSize = textureSize(tex,0);
+	vec2 fTextureSize = vec2( float(iTextureSize.x) , float(iTextureSize.y) );
+	vec2 fTexelSize = 1.0/fTextureSize;
+
+	vec2 texelCenterPos = (floor(pos*fTextureSize)+0.5)/fTextureSize;
+
+	ivec2 pxLimit = ivec2( ceil(u_usePixels), ceil(u_usePixels) );
+	// float pixelsCount = (float(pxLimit.x)*2.0+1.0)*(float(pxLimit.y)*2.0+1.0);
+	vec2 limiter = 9.0/2.0/vec2(pow(u_usePixels*fTexelSize.x,2.0),pow(u_usePixels*fTexelSize.y,2.0));
+	vec2 limiter2 = u_usePixels*fTexelSize;
+	highp float boundVal = exp(-9.0/2.0);
+
+	highp float col0sum = 0.0;
+	highp float col1sum = 0.0;
+	
+	for (int y = -pxLimit.y; y <= pxLimit.y; y++) {
+		for (int x = -pxLimit.x; x <= pxLimit.x; x++) {
+			// if ( length(vec2(float(x), float(y))) > u_usePixels ) { continue; }
+
+			vec2 newPos = texelCenterPos + fTexelSize*vec2( float(x), float(y) );
+			vec4 texel = texture2D( tex, newPos );
+
+			// float xComponent = exp(-limiter.x*pow(pos.x-newPos.x,2.0));
+			// float yComponent = exp(-limiter.y*pow(pos.y-newPos.y,2.0));
+
+			// if (xComponent < boundVal || yComponent < boundVal) {continue;}
+			// // // highp float h = xComponent*yComponent;
+			// highp float h = (xComponent-boundVal)*(yComponent-boundVal);
+
+
+			float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow( (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0, 1.6455) : 0.0;
+			float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow( (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0, 1.6455) : 0.0;
+
+			// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0 : 0.0;
+			// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0 : 0.0;
+			highp float h = xComponent*yComponent;
+
+			if (all(equal(texel.rgb,col0))) {
+				col0sum+=h;
+			} else if (all(equal(texel.rgb,col1))) {
+				col1sum+=h;
+			} else {
+				return vec3(0.0, 1.0, 0.0); // idk why, maybe strange compilation but this makes random wrong pixels disappear 
+			}
+		}
+	}
+
+	col0sum*=u_color0modifier;
+	col1sum*=u_color1modifier;
+
+	if (u_onlyColor) {
+		if (col0sum > col1sum) {
+			return col0;
+		} else {
+			return col1;
+		}
+	} else {
+		if (u_stepAsGrad) {
+			if (col0sum > col1sum) {
+				return col0*(1.0-mod(col0sum, u_step)/u_step);
+			} else {
+				return col1*(1.0-mod(col1sum, u_step)/u_step);
+			}					
+		} else {
+			if (col0sum > col1sum) {
+				return mod(col0sum, u_step)/u_step <= 0.5 ? col0 : vec3(0.0);
+			} else {
+				return mod(col1sum, u_step)/u_step <= 0.5 ? col1 : vec3(0.0);
+			}
+		}
+	}
+}		
+
+void main() {
+	vec4 thisColor = texture2D( u_tex, vUV);
+
+	ivec2 iTextureSize = textureSize(u_tex,0);
+	vec2 fTextureSize = vec2( float(iTextureSize.x) , float(iTextureSize.y) );
+	vec2 fTexelSize = 1.0/fTextureSize;
+	vec2 texelCenterPos = (floor(vUV*fTextureSize)+0.5)/fTextureSize;
+
+	vec3 color = getColor(u_tex, vUV, u_color0, u_color1);;
+
+	if ( u_showDiffWithRealColor ) {
+		if (any(notEqual(color,thisColor.rgb))) {
+			float tempSize = (fTexelSize.x+fTexelSize.y)/20.0;
+			if ( mod(vUV.x+vUV.y,tempSize)/tempSize < 0.33 || mod(vUV.x-vUV.y,tempSize)/tempSize < 0.33 ) {
+				color = vec3(1.0, 0.0, 0.0);
+			}
+		}
+	}
+	if ( u_gridDots && all(greaterThan(abs(texelCenterPos-vUV), fTexelSize*0.48)) ) {
+		if ( all(greaterThan(abs(texelCenterPos-vUV), fTexelSize*0.49)) ) {
+			color = vec3(1.0);
+		} else {
+			color = vec3(0.0);
+		}
+	} else if ( u_showRealTexColor && length((texelCenterPos - vUV)/fTexelSize) < 0.08 ) {
+		if ( length((texelCenterPos - vUV)/fTexelSize) < 0.065 ) {
+			color = thisColor.rgb;
+		} else {
+			color = vec3(0.0);
+		}
+	}
+
+	// color = thisColor.rgb;
+
+
+
+	gl_FragColor = vec4(color, 1.0);
+}
+	</code></pre>
+</body>
+</html>

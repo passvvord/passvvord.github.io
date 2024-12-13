@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>simple excel fetch</title>
+	<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+		async function loadXLSX(name) {
+			return XLSX.read( await fetch(name).then(r=>r.arrayBuffer()) )
+		}
+
+		loadXLSX('test file.xlsx').then(wb=>{
+			alert(`first sheet B3 value = ${wb.Sheets[wb.SheetNames[0]]['B3'].v}`)
+		})
+	</script>
+</body>
+</html>

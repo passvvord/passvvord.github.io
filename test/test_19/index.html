@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+		}
+	}
+	</script>
+</head>
+<body>
+	<script type="module">
+		//for https://stackoverflow.com/questions/79146232/how-to-import-three-infinitegridhelper/79234225
+		const THREE = await import('three').then(m=>({...m})) // import THREE and return it as object, not module (you cant defineProperty on module)
+		window.THREE = THREE                                  // make THREE visible for all scripts
+
+		await new Promise((resolve, reject)=>{                // wait till script is loaded
+			const script = document.createElement('script')
+			document.body.appendChild(script)
+			script.onload = ()=>{resolve('loaded')}
+			script.src = 'https://mevedia.com/share/InfiniteGridHelper.js?c'
+		})
+
+		console.log(THREE.InfiniteGridHelper)
+	</script>
+</body>
+</html>
