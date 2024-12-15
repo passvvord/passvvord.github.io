@@ -1,7 +1,24 @@
 # test_01
+https://passvvord.github.io/test/test_01/test_01.html<br>
+just 400 horisontal centerd by height lines with self height and color random changes 
+
 # test_02
+https://passvvord.github.io/test/test_02/test_02.html<br>
+cursor changed with css and small box following cursor<br>
+idea was to make box become border for some elements when cursor hover them 
+
 # test_03
+https://passvvord.github.io/test/test_03/test_03.html<br>
+some cool css animation based on 
+```css
+filter: blur(...) contrast(...)
+```
+need to be updated cuz css now support cos() and sin() and code will be better with those
+
 # test_04
+https://passvvord.github.io/test/test_04/test_04.html<br>
+some cool css animation based on css in [test_03](#test_03)
+
 # test_05
 # test_06
 # test_07
