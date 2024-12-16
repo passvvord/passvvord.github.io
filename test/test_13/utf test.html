@@ -7,46 +7,168 @@
 </head>
 <body>
 
-<div></div>
+<div id="text">
+	
+	<a href="?x0-ff">to display all unicode symbols by it's code from 0 to ff (or 255) press this or add "?x0-ff" after curent url</a><br><br>
+	<a href="?a0-nvnj">to display all unicode symbols press this or add "?a0-nvnj" (nvnj is 0x10FFFF in base36) after curent url</a><br><br>
+
+</div>
+<style type="text/css">
+	table {
+		border-collapse: collapse;
+		font-family: monospace;
+	}
+
+	table td, table th {
+		border: 0.1em solid #a2a9b1;
+		padding: 0.2em;
+		text-align: center;
+	}
+
+	thead th {
+		position: sticky;
+		top: 0;		
+	}
+
+	tbody th {
+		position: sticky;
+		left: 0;		
+	}
+
+	table th {
+		background-color: #f8f9fa;
+	}
+
+
+	.outOfBounds {
+		background-color: #dadde3;
+	}
+</style>
 
 <script type="text/javascript">
 
-let start = 0
-let end = 2_000
-let symbol = ''
+// let start = 0
+// let end = 2_000
+// let symbol = ''
+
+function baseStr(int,base=10) {
+	return `${int.toString(base)}${String.fromCodePoint(...base.toString().split('').map(a=>0x2080+parseInt(a)))}`
+}
+
+
+function addSymbols(from, to, w = 64) {
+	const dce = s=>document.createElement(s);
+
+	const table = dce('table')
+	const caption = table.appendChild(dce('caption'))
+	caption.textContent = `unicode symbols by codePoint in range ${baseStr(from,16)}-${baseStr(to,16)} or ${baseStr(from)}-${baseStr(to)}`
+
+	const thead = table.appendChild(dce('thead'))
+	thead.appendChild(dce('th'))
+	for (let i = 0; i < w; i++) {
+		thead.appendChild(dce('th')).textContent = `${i.toString(16).padStart(Math.ceil(Math.log10(w)),'0')}`
+	}
+
+	const tbody = table.appendChild(dce('tbody'))
+	for (let i = Math.floor(from/w)*w; i < Math.ceil(to/w)*w; i+=w) {
+		const tr = tbody.appendChild(dce('tr'))
+		const th = tr.appendChild(dce('th'))
+		th.textContent = `0x${i.toString(16).padStart(6,'0')}+..`
+
+		for (let j = i; j < i+w; j++) {
+			const td = tr.appendChild(dce('td'))
+			td.textContent = String.fromCodePoint(j)
+			if (j < from || j > to) {
+				td.classList.add('outOfBounds')
+			}
+		}
+	}
+
+	return table
+}
+
+// function getSearchParams(regDict) {
+
+// }
+
+
+// [{
+// 	type: 'optonal',
+
+
+// 	get reg(){return `^\\?(?:${regBin}|${regDec}|${regHex}|${regBase36})$`},
+
+
+// 	parceNames: ['base','n0','n1'],
+// 	parceSteps: [{
+// 		base: v=>({'b':2,'d':10,'x':16,'a':36})[v],
+// 	},{
+// 		n0(v){return parseInt(v,this.base)},
+// 		n1(v){return parseInt(v,this.base)},
+// 	},{
+// 		n0(v){return Math.min(this.n1, 0x10FFFF)}
+// 	}]
+
+
+
+// },]
+
+
 
 if (window.location.search.length > 1) {
-	let system;
-	switch (window.location.search.slice(1,2)) {
-		case 'b': system =  2; break;
-		case 'd': system = 10; break;
-		case 'x': system = 16; break;
-		default:  system = 16; break;
-	}
+	// limits for symbols per number set by max supported utf symbol code (0x10FFFF)
+	const regBin    = '(?<base>b)(?<n0>[01]{1,21})-(?<n1>[01]{1,21})'
+	const regDec    = '(?<base>d)(?<n0>[0-9]{1,7})-(?<n1>[0-9]{1,7})'
+	const regHex    = '(?<base>x)(?<n0>[0-9a-f]{1,6})-(?<n1>[0-9a-f]{1,6})'
+	const regBase36 = '(?<base>a)(?<n0>[0-9a-z]{1,4})-(?<n1>[0-9a-z]{1,4})'
+	var fullReg   = `^\\?(?:${regBin}|${regDec}|${regHex}|${regBase36})$`
 
-	let temp = window.location.search.slice(2).split('-').map(a=>parseInt(a,system)||(a==='0'?0:a)).filter(a=>a!=='')
-	console.log(temp,system)
-	start = temp[0]
-	end = temp[1]
-	symbol = temp[2] || symbol
+	if ( new RegExp(fullReg).test(window.location.search) ) {
+		const props = window.location.search.replaceAll(new RegExp(fullReg,'g'),'$<base> $<n0> $<n1>').split(' ')
+		const base = ({'b':2,'d':10,'x':16,'a':36})[props[0]]
+		var n0 = parseInt(props[1],base)
+		var n1 = parseInt(props[2],base)
+		n1 = Math.min(n1, 0x10FFFF)
+		n0 = Math.min(n0, n1)
+		console.log(props,[base,n0,n1])
+
+		const symbolsPerTable = 256
+		for (let i = Math.floor(n0/symbolsPerTable)*symbolsPerTable; i < Math.ceil(n1/symbolsPerTable)*symbolsPerTable; i+=symbolsPerTable) {
+			document.querySelector('#text').appendChild(addSymbols( Math.max(i,n0), Math.min(i+symbolsPerTable,n1) ))
+		}
+		
+	} else {
+		alert(`${window.location.search} must be in format:\n ?{b or d or x or a}{start}-{end}\n\nfull regExp which is testing string: ${fullReg}`)
+		console.error()
+	}
 }
 
-let line = ''
+// let line = ''
 
-for (let i = start; i < end; i+=1) {
-	if (i%64 === 0) {
-		line+=' <br>'
-	}
-
-	if (i%256 === 0) {
-		line+=` <br>${i}\u2081\u2080 u${i.toString(16)}\u2081\u2086<br>`
-	}
-
-	line+=`${symbol}&#${i};`
-}
+// for (let i = n0; i < n1;) {
 
 
-document.querySelector('div').innerHTML = line
+
+// 	for (let j = 0;j < 256;j++,i++)
+
+// 	if (i%64 === 0) {
+// 		line+=' <br>'
+// 	}
+
+// 	if (i%256 === 0) {
+// 		line+=` \n${i}\u2081\u2080 u${i.toString(16)}\u2081\u2086\n`
+// 	}
+
+// 	line+=`${symbol}&#${i};`
+// }
+
+// for (let i; i < 5;) {
+// 	i+=1;
+// 	console.log(i++)
+// }
+
+
+// document.querySelector('#text').innerHTML = line
 
 </script>	
 </body>
