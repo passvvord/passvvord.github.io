@@ -7,11 +7,11 @@
 </head>
 <body>
 
-<div id="text">
-	
 	<a href="?x0-ff">to display all unicode symbols by it's code from 0 to ff (or 255) press this or add "?x0-ff" after curent url</a><br><br>
-	<a href="?a0-nvnj">to display all unicode symbols press this or add "?a0-nvnj" (nvnj is 0x10FFFF in base36) after curent url</a><br><br>
+	<!-- <a href="?a0-nvnj">to display all unicode symbols press this or add "?a0-nvnj" (nvnj is 0x10FFFF in base36) after curent url</a><br><br> -->
 
+
+<div id="text">
 </div>
 <style type="text/css">
 	table {
@@ -25,13 +25,16 @@
 		text-align: center;
 	}
 
-	thead th {
+	thead th, tbody th {
 		position: sticky;
-		top: 0;		
+		position: -webkit-sticky;
+	}
+
+	thead th {
+		top: 0;
 	}
 
 	tbody th {
-		position: sticky;
 		left: 0;		
 	}
 
@@ -56,7 +59,7 @@ function baseStr(int,base=10) {
 }
 
 
-function addSymbols(from, to, w = 64) {
+function addSymbols(from, to, w = 64,) {
 	const dce = s=>document.createElement(s);
 
 	const table = dce('table')
@@ -66,14 +69,14 @@ function addSymbols(from, to, w = 64) {
 	const thead = table.appendChild(dce('thead'))
 	thead.appendChild(dce('th'))
 	for (let i = 0; i < w; i++) {
-		thead.appendChild(dce('th')).textContent = `${i.toString(16).padStart(Math.ceil(Math.log10(w)),'0')}`
+		thead.appendChild(dce('th')).textContent = `${i.toString(16).padStart(Math.ceil(Math.log2(w)/4),'0')}`
 	}
 
 	const tbody = table.appendChild(dce('tbody'))
 	for (let i = Math.floor(from/w)*w; i < Math.ceil(to/w)*w; i+=w) {
 		const tr = tbody.appendChild(dce('tr'))
 		const th = tr.appendChild(dce('th'))
-		th.textContent = `0x${i.toString(16).padStart(6,'0')}+..`
+		th.textContent = `0x${i.toString(16).padStart(Math.ceil(Math.log2(to)/4),'0')}+${'.'.repeat(Math.ceil(Math.log2(w)/4))}`
 
 		for (let j = i; j < i+w; j++) {
 			const td = tr.appendChild(dce('td'))
@@ -87,88 +90,152 @@ function addSymbols(from, to, w = 64) {
 	return table
 }
 
-// function getSearchParams(regDict) {
+const searchCheckParse = {
+	codePointBounds: {
+		// ...x0-56f...
+		default: undefined,
 
-// }
+		// limits for symbols per number set by max supported utf symbol code (0x10FFFF)
+		regBin   :'(?<base>b)(?<n0>[01]{1,21})(?<type>\\+-|-)(?<n1>[01]{1,21})',
+		regDec   :'(?<base>d)(?<n0>[0-9]{1,7})(?<type>\\+-|-)(?<n1>[0-9]{1,7})',
+		regHex   :'(?<base>x)(?<n0>[0-9a-f]{1,6})(?<type>\\+-|-)(?<n1>[0-9a-f]{1,6})',
+		regBase36:'(?<base>a)(?<n0>[0-9a-z]{1,4})(?<type>\\+-|-)(?<n1>[0-9a-z]{1,4})',
+		get reg(){return `${this.regBin}|${this.regDec}|${this.regHex}|${this.regBase36}`},
 
+		parseNames: ['base','type','n0','n1'],
+		parseSteps: [{
+			base: o=>({'b':2,'d':10,'x':16,'a':36})[o.base],
+		},{
+			n0: o=>parseInt(o.n0,o.base),
+			n1: o=>parseInt(o.n1,o.base),
+		},{
+			n0: o=>o.type==='+-' ? Math.max(o.n0-o.n1,0) : o.n0,
+			n1: o=>o.type==='+-' ?          o.n0+o.n1    : o.n1,
+		},{
+			n1: o=>Math.min(o.n1, 0x10FFFF)
+		},{
+			n0: o=>Math.min(o.n0, o.n1)
+		}],
+		toUrlPart: o=>`x${o.n0.toString(16)}-${o.n1.toString(16)}`
+	},
+	linesPerTable: {
+		// ...l4...
+		default: {count: 4},
 
-// [{
-// 	type: 'optonal',
+		reg: 'L(?<count>[0-9]{1,3})', //max: 999
+		parseNames: ['count'],
+		parseSteps: [{
+			count: o=>parseInt(o.count),
+		}],
+		toUrlPart(o) {return o.count === this.default.count ? '' : `L${o.count}`}
+	},
+	symbolsPerLine: {
+		// ...s64...
+		default: {count: 64},
 
-
-// 	get reg(){return `^\\?(?:${regBin}|${regDec}|${regHex}|${regBase36})$`},
-
-
-// 	parceNames: ['base','n0','n1'],
-// 	parceSteps: [{
-// 		base: v=>({'b':2,'d':10,'x':16,'a':36})[v],
-// 	},{
-// 		n0(v){return parseInt(v,this.base)},
-// 		n1(v){return parseInt(v,this.base)},
-// 	},{
-// 		n0(v){return Math.min(this.n1, 0x10FFFF)}
-// 	}]
-
-
-
-// },]
-
-
-
-if (window.location.search.length > 1) {
-	// limits for symbols per number set by max supported utf symbol code (0x10FFFF)
-	const regBin    = '(?<base>b)(?<n0>[01]{1,21})-(?<n1>[01]{1,21})'
-	const regDec    = '(?<base>d)(?<n0>[0-9]{1,7})-(?<n1>[0-9]{1,7})'
-	const regHex    = '(?<base>x)(?<n0>[0-9a-f]{1,6})-(?<n1>[0-9a-f]{1,6})'
-	const regBase36 = '(?<base>a)(?<n0>[0-9a-z]{1,4})-(?<n1>[0-9a-z]{1,4})'
-	var fullReg   = `^\\?(?:${regBin}|${regDec}|${regHex}|${regBase36})$`
-
-	if ( new RegExp(fullReg).test(window.location.search) ) {
-		const props = window.location.search.replaceAll(new RegExp(fullReg,'g'),'$<base> $<n0> $<n1>').split(' ')
-		const base = ({'b':2,'d':10,'x':16,'a':36})[props[0]]
-		var n0 = parseInt(props[1],base)
-		var n1 = parseInt(props[2],base)
-		n1 = Math.min(n1, 0x10FFFF)
-		n0 = Math.min(n0, n1)
-		console.log(props,[base,n0,n1])
-
-		const symbolsPerTable = 256
-		for (let i = Math.floor(n0/symbolsPerTable)*symbolsPerTable; i < Math.ceil(n1/symbolsPerTable)*symbolsPerTable; i+=symbolsPerTable) {
-			document.querySelector('#text').appendChild(addSymbols( Math.max(i,n0), Math.min(i+symbolsPerTable,n1) ))
-		}
-		
-	} else {
-		alert(`${window.location.search} must be in format:\n ?{b or d or x or a}{start}-{end}\n\nfull regExp which is testing string: ${fullReg}`)
-		console.error()
+		reg: 'S(?<count>[0-9]{1,3})', //max: 999
+		parseNames: ['count'],
+		parseSteps: [{
+			count: o=>parseInt(o.count),
+		}],
+		toUrlPart(o) {return o.count === this.default.count ? '' : `S${o.count}`}
 	}
 }
 
-// let line = ''
+function getSearchParams(search,regDict = searchCheckParse) {
+	const requiredCount = Object.keys(regDict).reduce((ac,key)=>ac+(regDict[key].default===undefined),0)
+	const allCount = Object.keys(regDict).length
+	const fullReg = `(?:${Object.values(regDict).map(v=>v.reg).join('|')})`
 
-// for (let i = n0; i < n1;) {
+	if ( new RegExp(`(?<=^\\?)${fullReg}{${requiredCount},${allCount}}$`).test(search) ) {
+		const matched = {}
+		for (key in regDict) {
+			if ( new RegExp(regDict[key].reg).test(search) ) {
+				const match = search.match(new RegExp(regDict[key].reg, 'g'))
+				if (match.length > 1) {
+					console.error(`structure ${key} appeats twice or more`,match)
+				}
+				const preRarsedResult = Object.fromEntries(match[0].replaceAll(
+					 new RegExp(regDict[key].reg, 'g')
+					,regDict[key].parseNames.map(a=>`$<${a}>`
+				).join(' ')).split(' ').map((a,i)=>[regDict[key].parseNames[i],a]))
+				// console.log(key,'preParsed',preRarsedResult)
+
+				for (step of regDict[key].parseSteps) {
+					let temp = {}
+					for (variable in step) {
+						temp[variable] = step[variable](preRarsedResult)
+					}
+					Object.assign(preRarsedResult, temp)
+				}
+				// console.log(key,'parsed',preRarsedResult)
+				matched[key] = preRarsedResult
+			} else {
+				if (regDict[key].default === undefined) {
+					console.error(`${key} must be in search string, but regExp can't find ${key} in it, looks like other structure appeats twice or more`)
+				} else {
+					matched[key] = regDict[key].default;
+				}
+			}
+		}
+		return matched
+	} else {
+		console.error('search don`t match regDict')
+	}
+}
+
+function urlByParams(params,regDict = searchCheckParse) {
+	let result = '?'
+	for (key in params) {
+		result+=regDict[key].toUrlPart(params[key])
+	}
+	return result
+}
 
 
+// if (window.location.search.length > 1) {
+// 	// limits for symbols per number set by max supported utf symbol code (0x10FFFF)
+// 	const regBin    = '(?<base>b)(?<n0>[01]{1,21})-(?<n1>[01]{1,21})'
+// 	const regDec    = '(?<base>d)(?<n0>[0-9]{1,7})-(?<n1>[0-9]{1,7})'
+// 	const regHex    = '(?<base>x)(?<n0>[0-9a-f]{1,6})-(?<n1>[0-9a-f]{1,6})'
+// 	const regBase36 = '(?<base>a)(?<n0>[0-9a-z]{1,4})-(?<n1>[0-9a-z]{1,4})'
+// 	var fullReg   = `^\\?(?:${regBin}|${regDec}|${regHex}|${regBase36})$`
 
-// 	for (let j = 0;j < 256;j++,i++)
+// 	if ( new RegExp(fullReg).test(window.location.search) ) {
+// 		const props = window.location.search.replaceAll(new RegExp(fullReg,'g'),'$<base> $<n0> $<n1>').split(' ')
+// 		const base = ({'b':2,'d':10,'x':16,'a':36})[props[0]]
+// 		var n0 = parseInt(props[1],base)
+// 		var n1 = parseInt(props[2],base)
+// 		n1 = Math.min(n1, 0x10FFFF)
+// 		n0 = Math.min(n0, n1)
+// 		console.log(props,[base,n0,n1])
 
-// 	if (i%64 === 0) {
-// 		line+=' <br>'
+// 		const symbolsPerTable = 256
+// 		for (let i = Math.floor(n0/symbolsPerTable)*symbolsPerTable; i < Math.ceil(n1/symbolsPerTable)*symbolsPerTable; i+=symbolsPerTable) {
+// 			document.querySelector('#text').appendChild(addSymbols( Math.max(i,n0), Math.min(i+symbolsPerTable,n1) ))
+// 		}
+		
+// 	} else {
+// 		alert(`${window.location.search} must be in format:\n ?{b or d or x or a}{start}-{end}\n\nfull regExp which is testing string: ${fullReg}`)
+// 		console.error()
 // 	}
-
-// 	if (i%256 === 0) {
-// 		line+=` \n${i}\u2081\u2080 u${i.toString(16)}\u2081\u2086\n`
-// 	}
-
-// 	line+=`${symbol}&#${i};`
 // }
 
-// for (let i; i < 5;) {
-// 	i+=1;
-// 	console.log(i++)
-// }
+if (window.location.search.length > 1) {
+	const params = getSearchParams(window.location.search)
+	console.log(window.location.search, urlByParams(params))
 
-
-// document.querySelector('#text').innerHTML = line
+	const symbolsPerTable = params.linesPerTable.count*params.symbolsPerLine.count
+	const tableStart = Math.floor(params.codePointBounds.n0/symbolsPerTable)*symbolsPerTable
+	const tableEnd   = Math.ceil (params.codePointBounds.n1/symbolsPerTable)*symbolsPerTable
+	for (let i = tableStart; i < tableEnd; i+=symbolsPerTable) {
+		document.querySelector('#text').appendChild(addSymbols(
+			 Math.max(i                ,params.codePointBounds.n0)
+			,Math.min(i+symbolsPerTable,params.codePointBounds.n1)
+			,params.symbolsPerLine.count
+		))
+	}
+}
 
 </script>	
 </body>
