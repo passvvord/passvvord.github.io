@@ -109,8 +109,8 @@
 			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
 			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
 			import('three/addons/helpers/VertexNormalsHelper.js').then(m=>{window.VertexNormalsHelper = m.VertexNormalsHelper}),
-			loadImage('8k_earth_daymap.jpg').then(i=>{window.dayImage=i}),
-			loadImage('8k_earth_nightmap.jpg').then(i=>{window.nightImage=i}),
+			loadImage('2k_earth_daymap.jpg').then(i=>{window.dayImage=i}),
+			loadImage('2k_earth_nightmap.jpg').then(i=>{window.nightImage=i}),
 		].map((a,i,A)=>a.then(()=>{
 			console.log(`promise index: ${i}, ${++loadedCounter}/${resToLoad.length} loaded, time from satrt: ${(performance.now()-start).toFixed(2)}ms`)
 			// document.querySelector(`div#preloader > div#i${i}`).className = 'loaded'
