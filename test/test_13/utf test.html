@@ -75,51 +75,9 @@
 
 <script type="text/javascript">
 
-// let start = 0
-// let end = 2_000
-// let symbol = ''
-
-function display(obj,norec,tab='') {
-  let result = '';
-    if (typeof obj === 'object') {
-        norec.push(obj)
-    }
-    
-  let keys = Object.keys(obj).slice(0,100)
-    if (keys.length === 0) {
-        keys = Object.keys(Object.getOwnPropertyDescriptors(obj.constructor.prototype)).slice(0,100)
-    }
-    
-  for (let i = 0; i<keys.length; i++) {
-    const thisTab = (i==keys.length-1?' \u2514\u2500 ':' \u251c\u2500 ')
-    if (typeof obj[keys[i]] === 'object' && obj[keys[i]] != null) {
-            if ( norec.includes(obj[keys[i]]) ) {
-                result += `${tab + thisTab}${keys[i]}: ... (was loged higher)\n`
-            } else {
-                const line = `${tab + thisTab}${keys[i]}: (${obj[keys[i]]?.constructor.name})\n`
-                result += line + display(obj[keys[i]], norec, tab+(i==keys.length-1?'    ':' \u2502  '))
-            }
-      
-    } else {
-      switch (obj[keys[i]]?.constructor.name) {
-        case 'String'  : var textCol = '\x1b[38;2;92;213;251m';  break;
-        case 'Number'  : var textCol = '\x1b[38;2;153;128;255m'; break;
-        case 'Boolean' : var textCol = '\x1b[38;2;236;96;102m';  break;
-        case 'Function': var textCol = '\x1b[38;2;250;201;24m';  break;
-        default:         var textCol = ''; break;
-      }
-      result += `${tab + thisTab}${keys[i]}: ${textCol}${obj[keys[i]]}\x1b[0m (${obj[keys[i]]?.constructor.name})\n` //
-    }
-  }
-  return result
-}
-
-
-
 function baseStr(int,base=10) {
 	return `${int.toString(base)}${String.fromCodePoint(...base.toString().split('').map(a=>0x2080+parseInt(a)))}`
 }
-
 
 function addSymbols(from, to, w, link) {
 	const dce = s=>document.createElement(s);
@@ -132,7 +90,7 @@ function addSymbols(from, to, w, link) {
 	const span = caption.appendChild(dce('span'))
 	span.textContent = 'copy link on table below'
 	span.addEventListener('click',c=>{
-		navigator.clipboard.writeText(link)
+		navigator.clipboard.writeText(window.location.pathname + link)
 		
 		if (span.getAttribute('timeoutID') != undefined) {
 			span.classList.remove('copied')
@@ -150,9 +108,6 @@ function addSymbols(from, to, w, link) {
 	const a = caption.appendChild(dce('a'))
 	a.setAttribute('href', link)
 	a.textContent = 'open only table below'
-
-
-// navigator.clipboard.writeText('hello here')
 
 	const thead = table.appendChild(dce('thead'))
 	thead.appendChild(dce('th'))
@@ -281,8 +236,6 @@ function urlByParams(params,regDict = searchCheckParse) {
 	return result
 }
 
-// structuredClone(getSearchParams(window.location.search))
-
 /* // old version of code below
 if (window.location.search.length > 1) {
 	// limits for symbols per number set by max supported utf symbol code (0x10FFFF)
@@ -321,12 +274,18 @@ if (window.location.search.length > 1) {
 	const tableStart = Math.floor(params.codePointBounds.n0/symbolsPerTable)*symbolsPerTable
 	const tableEnd   = Math.ceil (params.codePointBounds.n1/symbolsPerTable)*symbolsPerTable
 
+	const tableParams = structuredClone(params)
 	for (let i = tableStart; i < tableEnd; i+=symbolsPerTable) {
+		const start = Math.max(i                ,params.codePointBounds.n0)
+		const end   = Math.min(i+symbolsPerTable,params.codePointBounds.n1)
+		tableParams.codePointBounds.n0 = start
+		tableParams.codePointBounds.n1 = end
+
 		document.querySelector('#text').appendChild(addSymbols(
-			 Math.max(i                ,params.codePointBounds.n0)
-			,Math.min(i+symbolsPerTable,params.codePointBounds.n1)
+			 start
+			,end
 			,params.symbolsPerLine.count
-			,'test link'
+			,urlByParams(tableParams)
 		))
 	}
 }
