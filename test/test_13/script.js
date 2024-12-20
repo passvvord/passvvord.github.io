@@ -94,7 +94,7 @@ const searchCheckParse = {
 		reg: 'L(?<count>[0-9]{1,3})', //max: 999
 		parseNames: ['count'],
 		parseSteps: [{
-			count: o=>parseInt(o.count),
+			count: o=>Math.max(parseInt(o.count),1),
 		}],
 		toUrlPart(o) {return o.count === this.default.count ? '' : `L${o.count}`}
 	},
@@ -105,7 +105,7 @@ const searchCheckParse = {
 		reg: 'S(?<count>[0-9]{1,3})', //max: 999
 		parseNames: ['count'],
 		parseSteps: [{
-			count: o=>parseInt(o.count),
+			count: o=>Math.max(parseInt(o.count),1),
 		}],
 		toUrlPart(o) {return o.count === this.default.count ? '' : `S${o.count}`}
 	}
