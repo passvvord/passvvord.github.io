@@ -87,13 +87,40 @@ auto load data and add animation or not:
 - [```url + ?1a```](https://passvvord.github.io/test/test_12/index.html?1a) auto load data 1 + animation
 
 # test_13
-https://passvvord.github.io/test/test_13/utf%20test.html
-very simple page to display utf symbols in range given in URL:<br>
-- ```url + ?{b or d or x}```
-- [```url + ?b0-01111111```](https://passvvord.github.io/test/test_13/utf%20test.html?b0-01111111) "b": binary numbers, an
-?b0-01111111
+https://passvvord.github.io/test/test_13/utf%20test.html<br>
+simple page to display utf symbols in range given in URL:<br>
+## url search part structure:
+- ```url + ?{part 1}{part 2}{part 3}``` example: [```?x2000-3000L8S32```](https://passvvord.github.io/test/test_13/utf%20test.html?x2000-3000L8S32)
+- parts can be in any order like: ```url + ?{part 1}{part 2}{part 3}```
+- if part has defaut value it can be removed and will be replaced with default ```url + ?{part 1}```
+### part 1:
+defines range of utf codePoints which must be displayed<br>
+```{part 1} = {part 1.1}{sub part 1.2}{sub part 1.3}{sub part 1.4}``` example: ```?x2000-3000```<br>
+***this part has no default value and must be defined***
+1. ```{part 1.1}``` can be:
+   - ```b``` - binary
+   - ```d``` - decimal
+   - ```x``` - hexidecimal
+   - ```a``` - base36 (to base36: ```({number}).toString(36)``` from base36: ```parseInt({base36string},36)```)
+2. ```{part 1.2}``` is a number in base defined in ```{part 1.1}``` ***only uint, (has limits)***
+3. ```{part 1.3}``` can be:
+   - ```-``` means that it will display symbols from ```{part 1.2}``` to ```{part 1.4}```
+   - ```+-``` means that it will display symbols from ```{part 1.2} - {part 1.4}``` to ```{part 1.2} + {part 1.4}```
+4. ```{part 1.4}``` is a number in base defined in ```{part 1.1}``` ***only uint, (has limits)***
 
-url + ?x1f300-1f800
+### part 2:
+defines count of lines of symbols per one table<br>
+```{part 2} = {part 2.1}{sub part 2.2}``` example ```L16```<br>
+***default value: 4***
+1. ```{part 2.1}``` letter ```L```
+2. ```{part 2.2}``` number of lines of symbols per one table ***only decimal uint in bounds: [1; 999]*** (you also can enter 0 here but it will be replaced with 1)
+
+### part 3:
+defines count of symbols per one line of table<br>
+```{part 3} = {part 3.1}{sub part 3.2}``` example ```S16```<br>
+***default value: 64***
+1. ```{part 3.1}``` letter ```S```
+2. ```{part 3.2}``` number of symbols per one line of table ***only decimal uint in bounds: [1; 999]*** (you also can enter 0 here but it will be replaced with 1)
 
 # test_14
 https://passvvord.github.io/
