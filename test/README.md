@@ -123,37 +123,82 @@ defines count of symbols per one line of table<br>
 2. ```{part 3.2}``` number of symbols per one line of table ***only decimal uint in bounds: [1; 999]*** (you also can enter 0 here but it will be replaced with 1)
 
 # test_14
-https://passvvord.github.io/
+https://passvvord.github.io/<br>
+...
 
 # test_15
-https://passvvord.github.io/
+no url<br>
+here is some dicom data which can be loaded using fetch
+
+| №|name                  |modality|part          |orientation|images count|
+|--|---                   |---     |---           |---        |---         |
+| 1|V-01-CT-BRAIN         |CT      |BRAIN         |SAG        |174         |
+| 2|V-02-MR-BRAIN         |MR      |BRAIN         |COR        |200         |
+| 3|V-03-CT-CHESTABDPELVIS|CT      |CHESTABDPELVIS|TRA        |101         |
+| 4|V-04-MR-BRAIN         |MR      |BRAIN         |SAG        |180         |
+| 5|V-05-CT-CHEST         |CT      |CHEST         |TRA        |115         |
+| 6|V-06-MR-LEG           |MR      |LEG           |TRA        |46          |
+| 7|V-07-CT-KIDNEY        |CT      |KIDNEY        |COR        |78          |
+| 8|V-08-MR-BRAIN         |MR      |BRAIN         |TRA        |140         |
+| 9|V-09-CT-LIVER         |CT      |LIVER         |TRA        |154         |
+|10|V-10-CT-HEADNECK      |CT      |HEADNECK      |COR        |172         |
+
+**how to load data**:
+```js
+const baseLink = 'https://passvvord.github.io/test/test_15'
+// data 0 (4D data 40 3D frames with time position each frame is 256*256*17 voxels )
+Promise.all( new Array(680).fill().map((a,i)=>fetch(`${baseLink}/PWI_680_slices_256x256/Stroke MR${(i+389).toString().padStart(5,'0')}.dcm`)) ).then(F=>{...})
+
+// data 1
+Promise.all( new Array(174).fill().map((_,i)=>fetch(`${baseLink}/V-01-CT-BRAIN/${i.toString().padStart(6,'0')}.dcm`)) ).then(F=>{...})
+```
 
 # test_16
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_16/clock%20test.html<br>
+small page with clock made with css and as small as possible amount of js 
 
 # test_17
-https://passvvord.github.io/
+https://passvvord.github.io/<br>
+in procces (PNG reader and fast base64 encoder deoder)
 
 # test_18
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_18/index.html<br>
+generate texture with border for TextGeometry in THREE js using shader
 
 # test_19
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_19/index.html<br>
+just interesting way to import some code (no visual) 
 
 # test_20
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_20/index.html<br>
+just small simple 3D model of Earth with day and night textures
 
 # test_21
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_21/index.html<br>
+infinite scrool example, using some new css functionality (but better to use more js instead of css here)
 
 # test_22
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_22/index.html<br>
+interpolating textures and making smooth not blured edges beetween pixels<br>
+now works only with 2 colors but expected to work with any amount
 
 # test_23
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_23/index.html<br>
+small test of js lib which highlights code blocks with color
 
 # test_24
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_24/index.html<br>
+small test to load excel file
 
 # test_25
-https://passvvord.github.io/
+https://passvvord.github.io/test/test_25/index.html<br>
+convert [8bit ANSI color code](https://en.wikipedia.org/wiki/ANSI_escape_code#8-bit) to rgb chanels not just storing array but using small function<br>
+smallest possible function: 
+```js
+function ff1(i){let f=Math.floor,j=i-16,v=(i-232)*10+8,a=128+127*f(i/8),b=i%3*f(i%9/7)*64,c=(a,b)=>a?f(b)*40+55:0;if(i<16){return[i%2*a+b,f(i/2%2)*a+b,f(i/4%2)*a+b]}else if(i<232){return[c(j>35,j/36),c(j%36>5,j%36/6),c(j%6>0,j%6)]}else{return[v,v,v]}}
+```
+(version which is readable is in [code](https://passvvord.github.io/test/test_25/index.html))
+
+# test_26
+https://passvvord.github.io/test/test_26/premissions_test.html
+https://passvvord.github.io/test/test_26/index.html
