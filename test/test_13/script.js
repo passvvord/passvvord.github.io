@@ -9,9 +9,11 @@ function addSymbols(from, to, w, link) {
 	const table = dce('table')
 	const caption = table.appendChild(dce('caption'))
 	caption.textContent = `unicode symbols by codePoint in range ${baseStr(from,16)}-${baseStr(to,16)} or ${baseStr(from)}-${baseStr(to)} `
+	caption.appendChild(dce('br'))
 
 	const span = caption.appendChild(dce('span'))
 	span.textContent = 'copy link on table below'
+	span.classList.add('noselect')
 	span.addEventListener('click',c=>{
 		navigator.clipboard.writeText(window.location.origin + window.location.pathname + link)
 		
@@ -29,6 +31,7 @@ function addSymbols(from, to, w, link) {
 	})
 
 	const a = caption.appendChild(dce('a'))
+	a.classList.add('noselect')
 	a.setAttribute('href', link)
 	a.textContent = 'open only table below'
 

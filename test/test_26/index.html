@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sensors test</title>
+</head>
+<body>
+	
+<div>
+	x: <span id="acceleration_x"></span><br>
+	y: <span id="acceleration_y"></span><br>
+	z: <span id="acceleration_z"></span><br>
+</div>
+
+<pre id="acl_obj">
+	
+</pre>
+
+<div id="msg"></div>
+
+
+<pre id="permissions"></pre>
+
+<script type="text/javascript">
+
+	function toInterface(id, value, operation = '=') {
+		document.querySelectorAll(`#${id}`).forEach(el=>{
+			if (operation === '+=') {
+				el.textContent += value
+			} else {
+				el.textContent = value
+			}
+			
+		})
+	}
+
+	toInterface('acceleration_x', 'wating for data')
+	toInterface('acceleration_y', 'wating for data')
+	toInterface('acceleration_z', 'wating for data')
+
+
+
+
+// const sensor = new AbsoluteOrientationSensor();
+// Promise.all(['accelerometer','magnetometer','gyroscope'].map(name=>navigator.permissions.query({name: name}))).then(results=>{
+// 	if (results.every(result=>result.state==="granted")) {
+// 		sensor.start();
+// 		console.log(sensor)
+// 	} else {
+// 		console.log("No permissions to use AbsoluteOrientationSensor.");
+// 	}
+// });
+
+// if (navigator.permissions) {
+// // https://w3c.github.io/orientation-sensor/#model
+// 	Promise.all([navigator.permissions.query({ name: "accelerometer" }),
+// 			 navigator.permissions.query({ name: "magnetometer" }),
+// 			 navigator.permissions.query({ name: "gyroscope" })])
+// 	   .then(results => {
+// 			if (results.every(result => result.state === "granted")) {
+// 				initSensor();
+// 			} else {
+// 				console.log("Permission to use sensor was denied.");
+// 			}
+// 		}).catch(err => {
+// 			console.log("Integration with Permissions API is not enabled, still try to start app.");
+// 			initSensor();
+// 		});
+// } else {
+// 	console.log("No Permissions API, still try to start app.");
+// 	initSensor();
+// }
+
+	const aclKeys = ['activated','hasReading','onactivate','onerror','onreading','timestamp','x','y','z'] //Object.keys or Object.getOwnPropertyDescriptors cant do that so just as array
+
+	Promise.all(['accelerometer'].map(name=>navigator.permissions.query({name: name}))).then(results=>{
+
+		if (results.every(result=>result.state==="granted")) {
+			window.acl = new Accelerometer({frequency: 60});
+
+			// ehh it dont work
+			// acl.addEventListener("reading", () => {
+			// 	toInterface('acceleration_x', acl.x)
+			// 	toInterface('acceleration_y', acl.y)
+			// 	toInterface('acceleration_z', acl.z)
+			// });
+
+			acl.onreading = ()=>{
+				toInterface('acceleration_x', acl.x)
+				toInterface('acceleration_y', acl.y)
+				toInterface('acceleration_z', acl.z)
+			}
+			acl.onerror = (event) => {
+				console.log(event)
+				toInterface('msg', event.error.name + ' ' + event.error.message)
+				if (event.error.name == 'NotReadableError') {
+					// toInterface('msg', 'Sensor is not available')
+				}
+			}
+
+			acl.start();
+
+			console.log(acl)
+
+			toInterface('acl_obj',aclKeys.map(a=>`${a}: ${acl[a]},`).join('\n'))
+		} else {
+			toInterface('msg',"No permissions to use Accelerometer");
+		}
+	});
+
+
+
+
+
+const permissions = [
+  "accelerometer",
+  "accessibility-events",
+  "ambient-light-sensor",
+  "background-sync",
+  "camera",
+  "clipboard-read",
+  "clipboard-write",
+  "geolocation",
+  "gyroscope",
+  "local-fonts",
+  "magnetometer",
+  "microphone",
+  "midi",
+  "notifications",
+  "payment-handler",
+  "persistent-storage",
+  "push",
+  "screen-wake-lock",
+  "storage-access",
+  "top-level-storage-access",
+  "window-management",
+];
+
+processPermissions();
+
+// Iterate through the permissions and log the result
+async function processPermissions() {
+  for (const permission of permissions) {
+    const result = await getPermission(permission);
+    
+    toInterface('permissions',result+'\n','+=')
+  }
+}
+
+// Query a single permission in a try...catch block and return result
+async function getPermission(permission) {
+  try {
+    const result = await navigator.permissions.query({ name: permission });
+    return `${permission}: ${result.state}`;
+  } catch (error) {
+    return `${permission} (not supported)`;
+  }
+}
+
+
+</script>
+
+</body>
+</html>
