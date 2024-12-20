@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>premissions test</title>
+</head>
+<body>
+	
+	<pre id="premissions"></pre>
+
+	<style type="text/css">
+		#premissions {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1px;
+		}
+
+		span[style] {
+/*			--c-pos: 120;*/
+			background: hsl(var(--c-pos) 100% 75%);
+			color: hsl(var(--c-pos) 100% 25%);
+			display: inline-block;
+			padding: 0 0.5em;
+			border-radius: 0.5em;
+		}
+	</style>
+	<script type="text/javascript">
+
+		function addSpanWithText(text, cpos, to = document.querySelector('#premissions')) {
+			const span = to.appendChild(document.createElement('span'))
+			span.style.setProperty('--c-pos', cpos)
+			span.textContent = text
+		}
+		
+		const permissions = [
+			"accelerometer",
+			"accessibility-events",
+			"ambient-light-sensor",
+			"background-sync",
+			"camera",
+			"clipboard-read",
+			"clipboard-write",
+			"geolocation",
+			"gyroscope",
+			"local-fonts",
+			"magnetometer",
+			"microphone",
+			"midi",
+			"notifications",
+			"payment-handler",
+			"persistent-storage",
+			"push",
+			"screen-wake-lock",
+			"storage-access",
+			"top-level-storage-access",
+			"window-management",
+		];
+
+		Promise.all(permissions.map(
+			permission=>navigator.permissions.query({ name: permission })
+			.then(result=>{addSpanWithText( `${permission}: ${result.state}`,({granted: 120, prompt: 50, denied: 0})[result.state] )})
+			.catch(error=>{addSpanWithText( `${permission}: not supported `, -50 )})
+		)).then(all=>{
+			console.log('checked')
+			// console.log(all.join('\n'))
+			// toInterface('permissions',all.join('\n'))
+		})
+
+	</script>
+</body>
+</html>
