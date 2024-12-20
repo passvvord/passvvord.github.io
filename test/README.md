@@ -176,7 +176,7 @@ just small simple 3D model of Earth with day and night textures
 
 # test_21
 https://passvvord.github.io/test/test_21/index.html<br>
-infinite scrool example, using some new css functionality (but better to use more js instead of css here)
+infinite scroll example, using some new css functionality (but better to use more js instead of css here)
 
 # test_22
 https://passvvord.github.io/test/test_22/index.html<br>
@@ -201,5 +201,5 @@ function ff1(i){let f=Math.floor,j=i-16,v=(i-232)*10+8,a=128+127*f(i/8),b=i%3*f(
 (version which is readable is in [code](https://passvvord.github.io/test/test_25/index.html))
 
 # test_26
-https://passvvord.github.io/test/test_26/premissions_test.html
+https://passvvord.github.io/test/test_26/premissions_test.html<br>
 https://passvvord.github.io/test/test_26/index.html
