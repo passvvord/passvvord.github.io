@@ -3,14 +3,14 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>premissions test</title>
+	<title>permission test</title>
 </head>
 <body>
 	
-	<pre id="premissions"></pre>
+	<pre id="permission"></pre>
 
 	<style type="text/css">
-		#premissions {
+		#permission {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
@@ -28,12 +28,13 @@
 	</style>
 	<script type="text/javascript">
 
-		function addSpanWithText(text, cpos, to = document.querySelector('#premissions')) {
+		function addSpanWithText(text, cpos, to = document.querySelector('#permission')) {
 			const span = to.appendChild(document.createElement('span'))
 			span.style.setProperty('--c-pos', cpos)
 			span.textContent = text
 		}
-		
+
+		// https://developer.mozilla.org/en-US/docs/Web/API/Permissions/query#test_support_for_various_permissions
 		const permissions = [
 			"accelerometer",
 			"accessibility-events",
