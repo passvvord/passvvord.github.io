@@ -4,10 +4,23 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sensors test</title>
+	<style type="text/css">
+		
+
+		span[style] {
+/*			--c-pos: 120;*/
+			background: hsl(var(--c-pos) 100% 75%);
+			color: hsl(var(--c-pos) 100% 25%);
+			display: inline-block;
+			padding: 0 0.5em;
+			border-radius: 0.5em;
+		}
+
+	</style>
 </head>
 <body>
 	
-<div>
+<!-- <div>
 	x: <span id="acceleration_x"></span><br>
 	y: <span id="acceleration_y"></span><br>
 	z: <span id="acceleration_z"></span><br>
@@ -20,7 +33,7 @@
 <div id="msg"></div>
 
 
-<pre id="permissions"></pre>
+<pre id="permissions"></pre> -->
 
 <script type="text/javascript">
 
@@ -114,50 +127,37 @@
 
 
 const permissions = [
-  "accelerometer",
-  "accessibility-events",
-  "ambient-light-sensor",
-  "background-sync",
-  "camera",
-  "clipboard-read",
-  "clipboard-write",
-  "geolocation",
-  "gyroscope",
-  "local-fonts",
-  "magnetometer",
-  "microphone",
-  "midi",
-  "notifications",
-  "payment-handler",
-  "persistent-storage",
-  "push",
-  "screen-wake-lock",
-  "storage-access",
-  "top-level-storage-access",
-  "window-management",
+	"accelerometer",
+	"accessibility-events",
+	"ambient-light-sensor",
+	"background-sync",
+	"camera",
+	"clipboard-read",
+	"clipboard-write",
+	"geolocation",
+	"gyroscope",
+	"local-fonts",
+	"magnetometer",
+	"microphone",
+	"midi",
+	"notifications",
+	"payment-handler",
+	"persistent-storage",
+	"push",
+	"screen-wake-lock",
+	"storage-access",
+	"top-level-storage-access",
+	"window-management",
 ];
 
-processPermissions();
-
-// Iterate through the permissions and log the result
-async function processPermissions() {
-  for (const permission of permissions) {
-    const result = await getPermission(permission);
-    
-    toInterface('permissions',result+'\n','+=')
-  }
-}
-
-// Query a single permission in a try...catch block and return result
-async function getPermission(permission) {
-  try {
-    const result = await navigator.permissions.query({ name: permission });
-    return `${permission}: ${result.state}`;
-  } catch (error) {
-    return `${permission} (not supported)`;
-  }
-}
-
+Promise.all(permissions.map(
+	permission=>navigator.permissions.query({ name: permission })
+	.then(result=>`${permission}: ${result.state}`)
+	.catch(error=>`${permission}: not supported `)
+)).then(all=>{
+	console.log(all.join('\n'))
+	toInterface('permissions',all.join('\n'))
+})
 
 </script>
 

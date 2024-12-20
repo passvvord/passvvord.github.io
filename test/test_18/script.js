@@ -76,7 +76,7 @@ function makeFlatBorder(geometry,borderWidth=5,fontColor=0x0000ff,borderColor=0x
 
 
 	const renderedFrameAsTexture = rgbaTextureFromCanvas(canvas)
-	calcPixelsHistRGBA(renderedFrameAsTexture, true)
+	// calcPixelsHistRGBA(renderedFrameAsTexture, true)
 
 	const addBorderInside = new THREE.ShaderMaterial({
 		uniforms: {
@@ -171,7 +171,7 @@ function makeFlatBorder(geometry,borderWidth=5,fontColor=0x0000ff,borderColor=0x
 	scene1.add(plane)
 	renderer.render( scene1, ortCam );
 	const resTexture = rgbaTextureFromCanvas(canvas) // result of applying shader on texture to add borders
-	calcPixelsHistRGBA(resTexture, true)
+	// calcPixelsHistRGBA(resTexture, true)
 
 	resTexture.newBorder = function (borderWidth) {
 		console.time('update')
