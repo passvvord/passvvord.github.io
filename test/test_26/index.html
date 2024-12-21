@@ -27,13 +27,13 @@
 	length: <span id="acceleration_m"></span>
 </div>
 
-<div>
+<!-- <div>
 	acceleration:<br>
 	x: <span id="acceleration_x"></span><br>
 	y: <span id="acceleration_y"></span><br>
 	z: <span id="acceleration_z"></span><br>
 	length: <span id="acceleration_m"></span>
-</div>
+</div> -->
 
 
 
@@ -92,21 +92,7 @@
 	//const aclKeys = ['activated','hasReading','onactivate','onerror','onreading','timestamp','x','y','z'] //Object.keys or Object.getOwnPropertyDescriptors cant do that so just as array
 
 
-const acl = new Accelerometer({frequency: 60});
 
-acl.onreading = ()=>{
-	toInterface('acceleration_x', acl.x)
-	toInterface('acceleration_y', acl.y)
-	toInterface('acceleration_z', acl.z)
-	toInterface('acceleration_m', vLen(acl.x,acl.y,acl.z).toFixed(3) )
-}
-// acl.onerror = (event) => {
-// 	console.log(event)
-// 	toInterface('msg', event.error.name + ' ' + event.error.message)
-// 	if (event.error.name == 'NotReadableError') {
-// 		// toInterface('msg', 'Sensor is not available')
-// 	}
-// }
 
 
 const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
@@ -114,6 +100,22 @@ const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 	Promise.all(['accelerometer'].map(name=>navigator.permissions.query({name: name}))).then(results=>{
 
 		if (results.every(result=>result.state==="granted")) {
+
+	const acl = new Accelerometer({frequency: 60});
+
+acl.onreading = ()=>{
+	toInterface('acceleration_x', acl.x)
+	toInterface('acceleration_y', acl.y)
+	toInterface('acceleration_z', acl.z)
+	toInterface('acceleration_m', vLen(acl.x,acl.y,acl.z).toFixed(3) )
+}
+acl.onerror = (event) => {
+	console.log(event)
+	toInterface('msg', event.error.name + ' ' + event.error.message)
+	if (event.error.name == 'NotReadableError') {
+		// toInterface('msg', 'Sensor is not available')
+	}
+}		
 
 			acl.start();
 
