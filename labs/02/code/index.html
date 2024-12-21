@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>lab_02</title>
+		<style type="text/css">
+			
+
+		@import url(../../../for_menu/global.css);
+	
+	.to_labs {
+	color: #576e7a;
+}
+
+			body {
+				background: #dce3e6;
+				color: #576e7a;
+				font-family: blogger;
+			}
+			
+			
+
+			.bodyin {
+				margin-left: 2vw;
+				margin-top: 5vh;
+			}
+
+			img {width: calc(10vh + 10vw);}
+
+			.circ1 {
+				animation: linear circ1 1s infinite;
+				position: fixed;
+				background: #576e7a;
+				border-radius: 50%;
+			}
+
+			@keyframes circ1 {
+				0%   {margin-left: 50vw; margin-top: 50vh; height: 0vh; width: 0vh;}
+				100% {margin-left: calc(50vw - 5vh); margin-top: 45vh; height: 10vh; width: 10vh;}
+			}
+
+			.circ2 {
+				animation: ease-in circ1 1s infinite;
+				position: fixed;
+				background: #dce3e6;
+				border-radius: 50%;
+			}
+
+			.circ3 {
+				animation: linear circ2 1s infinite;
+				position: fixed;
+				background: #576e7a;
+				border-radius: 50%;
+			}
+
+			@keyframes circ2 {
+				0%   {margin-left: 50vw; margin-top: 50vh; height: 0vh; width: 0vh;}
+				50%  {margin-left: calc(50vw - 2.5vh); margin-top: 47.5vh; height: 5vh; width: 5vh;}
+				100% {margin-left: 50vw; margin-top: 50vh; height: 0vh; width: 0vh;}
+			}
+
+		</style>
+	</head>
+	<body class="body-100-absolute">
+		<div class="circ1"></div>
+		<div class="circ2"></div>
+		<div class="circ3"></div>
+	
+	<a href="../../../index.html" class="to_labs"><</a>
+		<div class="bodyin">
+			<header><h1>Заголовокh1</h1><h2>Заголовокh2</h2></header>
+			<strong>strong</strong> 
+			<em>em em</em> <b>bbbbb</b> <mark>mark</mark> <i>iiiiii</i> <s>ssssss</s> <small>small</small> <br> <br>
+			<code>code code</code>
+			<pre>
+    pre pre
+    pre     pre
+    pre pre          pre      pre
+    pre          pre      pre pre pre
+    pre          pre          pre pre
+
+ _ _ 4 | 3 _ _ | 2 _ 9 
+ _ _ 5 | _ _ 9 | _ _ 1  
+ _ 7 _ | _ 6 _ | _ 4 3 
+-------+-------+-------
+ _ _ 6 | _ _ 2 | _ 8 7 
+ 1 9 _ | _ _ 7 | 4 _ _  
+ _ 5 _ | _ 8 3 | _ _ _ 
+-------+-------+-------
+ 6 _ _ | _ _ _ | 1 _ 5 
+ _ _ 3 | 5 _ 8 | 6 9 _ 
+ _ 4 2 | 9 1 _ | 3 _ _ 
+    
+	    	</pre>
+	    	<var>var var</var><br><br>
+	    	<time>time time</time><br><br>
+	    	<img src="svg.png" alt="error_no_img">
+			<footer><h4>Заголовокh4</h4></footer>
+		</div>
+	</body>
+</html>

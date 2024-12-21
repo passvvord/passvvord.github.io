@@ -1,0 +1,142 @@
+@import url(../../../for_menu/global.css);
+
+.to_labs {
+	color: #576ea7;
+}
+
+body {
+	margin: 0px;
+	background: url(bg.png);
+	background-size: 100vw;
+	font-family: blogger_m;
+	overflow-x: hidden;
+}
+
+.names, .animations, .links{
+	position: absolute;
+	height: 20vw;
+	width: 100vw;
+}
+
+.names > div, .animations > div , .links > a > div {
+	position: absolute;
+	height: 20vw;
+	width: 20vw;
+	font-size: 5vw;
+	text-align: center;
+	line-height: 20vw;
+	transition-duration: 0.3s;
+}
+
+.names > div {
+	top: 0vw;
+}
+
+.names > div:hover {
+	transform: scale(0.9);
+}
+
+.light {
+	color: #576e7a;
+}
+
+.names > .light:hover, .links > a > .light:hover {
+	color: #dce3e6;
+	background: #576e7a;
+}
+
+.dark {
+	color: #dce3e6;
+}
+
+.names > .dark:hover, .links > a > .dark:hover {
+	color: #576e7a;
+	background: #dce3e6;
+}
+
+#c01 {left:  0vw; font-size: 10vw;}
+#c02 {left: 20vw; font-size: 10vw;}
+#c03 {left: 40vw; font-size:  3vw;}
+#c04 {left: 60vw; font-size:  3vw;}
+#c05 {left: 80vw; font-size:  3vw;}
+
+.animations {
+	top: 20vw;
+}
+
+.trans2d {
+	position: absolute;
+	top: 5vw;
+	left: 5vw;
+	height: 10vw;
+	width: 10vw;
+	background: #dce3e6;
+	transition-timing-function: ease-in;
+	transition-duration: 3s;
+}
+
+.trans2d:hover {
+	left: 9vw;
+}
+
+.trans3d , .circle1 , .keyfra , .allanim {
+	position: absolute;
+	top: 5vw;
+	left: 5vw;
+	height: 10vw;
+	width: 10vw;
+}
+
+.trans3d {
+	background: #576e7a;
+	transition-duration: 3s;
+}
+
+.trans3d:hover {
+	transform: rotateY(45deg);
+}
+
+.circle1 {
+	background: #dce3e6;
+	border-radius: 50%;
+	transition-duration: 2s;
+}
+
+.circle1:hover {
+	transform: scale(0.1);
+}
+
+.keyfra {
+	background: #576e7a;
+}
+
+.keyfra:hover {
+	animation: linear changecolor 1s infinite;
+}
+
+@keyframes changecolor {
+	0%   { background: #f23f5e; }
+	1%   { background: #f2bd5e; }
+	50%  { background: #8ebd5e; }
+	99%  { background: #8eb3e4; }
+	100% { background: #b870e4; }
+}
+
+.allanim {
+	background: #dce3e6;
+	transition-duration: 2s;
+}
+
+.allanim:hover {
+	left: calc(12vw - 50px);
+	transform: rotateZ(45deg);
+	animation: linear changecolor 2s infinite;
+}
+
+.links {
+	top: 40vw;
+}
+
+.links > a > div:hover {
+	transform: scale(0.9);
+}

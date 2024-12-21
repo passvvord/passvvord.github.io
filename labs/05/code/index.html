@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="../../../for_menu/global.css
+    ">
+    <title>lab_05</title>
+</head>
+
+<body class="body-100-absolute">
+    <a href="../../../index.html" class="to_labs"><</a>
+    <center>Фіскальний кодекс</center>
+    <div class="p_hist_row">
+        <div>
+            Ім'я<br>
+            <input type="text" onchange="person_name = this.value">
+        </div>
+        <div>
+            Прізвище<br>
+            <input type="text" onchange="person_surname = this.value">
+        </div>
+        <div>
+            Стать<br>
+            <input type="radio" name="gender" onchange="person_gender = true"> Чоловік;
+            <input type="radio" name="gender" onchange="person_gender = false"> Жінка;
+        </div>
+        <div>
+            Дата народження<br>
+            <input type="date" onchange="person_date = this.value">
+        </div>
+        <div>
+            Код<br>
+            <input type="button" value="додати" onclick="print_person_code()">
+        </div>
+    </div>
+    <div id="person_output">
+        <div class="p_hist_row0">
+            <div>Андрій</div>
+            <div>Алфьоров</div>
+            <div>чоловік</div>
+            <div>2001-06-26</div>
+            <div>ЛФРНРЙ01H26</div>
+        </div>
+        <div class="p_hist_row1">
+            <div>Samanta</div>
+            <div>Fox</div>
+            <div>жінка</div>
+            <div>1981-06-19</div>
+            <div>FXOSNT81H59</div>
+        </div>
+    </div>
+    <center>Найближча голосна</center>
+    <div class="v_hist_row">
+        <div>
+            Строка<br>
+            <input type="text" onchange="vowel_str = this.value">
+        </div>
+        <div>
+            Відстані до голосних<br>
+            <input type="button" value="розрахувати" onclick="print_neraest_vowel()">
+        </div>
+    </div>
+    <div id="vowel_output">
+        <div class="v_hist_row0">
+            <div>abcdabcd</div>
+            <div>0,1,2,1,0,1,2,3</div>
+        </div>
+        <div class="v_hist_row1">
+            <div>shopper</div>
+            <div>2,1,0,1,1,0,1</div>
+        </div>
+    </div>
+    <center>Симетричні візерунки</center>
+    <div class="c_hist_row">
+        <div>
+            Візерунок<br>
+            <input type="text" onchange="carpet_str = this.value">
+        </div>
+        <div>
+            Тип візерунку<br>
+            <input type="button" value="оцінити" onclick="print_carpet()">
+        </div>
+    </div>
+    <div id="carpet_output">
+        <div class="c_hist_row0">
+            <div> a a a a <br> a a a a <br> a a b b <br> </div>
+            <div>imperfect</div>
+        </div>
+        <div class="c_hist_row1">
+            <div> c a a a <br> b b b b <br> c a a a <br> </div>
+            <div>horizontally symmetric</div>
+        </div>
+        <div class="c_hist_row0">
+            <div> a b a <br> b b b <br> a b a <br> a b a <br> </div>
+            <div>vertically symetric</div>
+        </div>
+        <div class="c_hist_row1">
+            <div> a b b a <br> b b b b <br> a b b a <br> </div>
+            <div>perfect</div>
+        </div>
+    </div>
+        <br><br><br><br><br><br><br><br><br><br>
+    <script type="text/javascript" src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>lab_07</title>
+	<link rel="stylesheet" href="style.css">
+	<script type="text/javascript" src="script.js" defer></script>
+</head>
+<body class="body-classic">
+	<div class="header">
+		<div class="oud">OUD</div>
+		<a class="menu-link" href="#overview">OVERVIEW</a>
+		<a class="menu-link" href="#details">DETAILS</a>
+		<a class="menu-link" href="#price">PRICE</a>
+<!-- 		<div class="menu-button">≡</div> -->
+		<div class="h-text">	
+			<div class="h-text-1">ARE YOU READY FOR</div>
+			<div class="h-text-2">TEST DRIVE</div>
+			<a href="#comments"><div class="button">GO DRIVE</div></a>
+		</div>
+	</div>
+
+	<a name="overview"></a>
+
+	<div class="bg1">
+		<div class="z-t-block">
+			<div class="num">01</div>
+			<div class="zagolovok">OVERVIEW
+				<div class="z-line">_</div>
+			</div>
+			<div class="block-text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prant vehicula pharetra nunc, eget venenatis ex facilisis non. Sedae placerat molestie turpis ac pharetra. Phasellus in dui lobortis, dapibus nibh at, condimentum lorem. Sed leo tortor, convallis in tortor at, vestibulum malesuada ipsum. Nam sit amet is a cursus est, eu finibus dolor. Nullam gravida vel eros a viverra. Nam a sapien gravida, iaculis neque sit amet, dapibus nibh. Aliquam mollis faucibus viverra. Integer tempor aliquam risus condimentum dapibus. Nullam auctor risus in erat mattis, ac pretium sem euismod. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+			</div>
+		</div>
+	</div>
+	<div class="CTA">
+		<div class="h-text">	
+			<div class="h-text-1">ONLY THIS MONTH</div>
+			<div class="h-text-2">20% OFF</div>
+			<a href="#comments"><div class="button">BUY NOW</div></a>
+		</div>
+	</div>
+
+	<a name="details"></a>
+
+	<div class="bg2">
+		<div class="z-t-block">
+			<div class="num">02</div>
+			<div class="zagolovok">DETAILS
+				<div class="z-line">_</div>
+			</div>
+			<div class="block-text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Prant vehicula pharetra nunc, eget venenatis ex facilisis non. Sedae placerat molestie turpis ac pharetra. Phasellus in dui lobortis, dapibus nibh at, condimentum lorem.
+			</div>
+		</div>
+		<div class="car_img"><img src="imgs/02_car_front.png"></div>
+		<div class="car_img"><img src="imgs/02_car_back.png"></div>
+		<div class="bg2-last-text">CHECK OUD H7 <a href="#comments"><font color="#ea0d60"> FULL SPECIFICATIONS</font></a></div>
+	</div>
+
+	<a name="price"></a>
+
+	<div class="bg3">
+		<div class="z-t-block">
+			<div class="num">03</div>
+			<div class="zagolovok">PRICE
+				<div class="z-line">_</div>
+			</div>
+		
+		<div class="h-text">	
+			<div class="h-text-1">OUD H7</div>
+			<div class="h-text-2">STARTING FROM</div>
+			<div class="price">$11720</div>
+			<a href="#comments"><div class="button">REQUEST A CALL</div></a>
+		</div></div>
+	</div>
+	
+	<a name="comments"></a>
+
+	<div class="comment-out-div">
+		<div class="comments" id="comments"></div>
+	</div>
+
+	<div class="add-comment" id="add-comment">
+		<div class="form">
+			<textarea id="textarea" placeholder="Текст коментаря" onkeyup="add_text(); save_val(this.id,this.value)" ></textarea>
+			<div class="sumbit" id="sumbit" onclick="add_coment()">Надіслати</div>
+			<img src="avatars/DEFAULT.svg" id="chosed_ava">
+			<input type="text" id="us_name" placeholder="Ім'я" onkeyup ="us_name = this.value; save_val(this.id,this.value)" maxlength="40">
+			<div class="img-chose" id="img-chose"></div>
+		</div>
+	</div>
+	
+	<div class="footer">
+		<div class="fot-block">
+			<div class="f-b-zagolovok">SERVICES</div>
+			<div class="f-b-text">
+				My OUD<br>
+				Press<br>
+				Terms<br>
+				Contact
+			</div>
+		</div>
+		<div class="fot-block">
+			<div class="f-b-zagolovok">OUD AG</div>
+			<div class="f-b-text">
+				Company<br>
+				Corporate Strategy<br>
+				Innovations<br>
+				Careers<br>
+				History
+			</div>
+		</div>
+		<div class="fot-block">
+			<div class="f-b-zagolovok">EXPERINENCE</div>
+			<div class="f-b-text">
+				Investor Relations<br>
+				OUD City<br> 
+				OUD quattro<br> 
+				Sustainability
+			</div>
+		</div>
+		<div class="fot-block">
+			<div class="f-b-zagolovok">GET IN TOUCH</div>
+			<div class="f-b-text">
+				<font color="#ea0d60">info@owd.com</font> e-mail us<br>
+				<font color="#ea0d60">+1 441 544 656</font> Call us<br>
+				<font color="#ea0d60">+1441544 656</font> Fax us<br>
+				Find us via <font color="#ea0d60">Google Map</font>
+			</div>
+		</div>
+
+	</div>
+
+
+
+
+
+
+	<!-- The core Firebase JS SDK is always required and must be listed first -->
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-database.js"></script>
+
+	<!-- TODO: Add SDKs for Firebase products that you want to use
+	     https://firebase.google.com/docs/web/setup#available-libraries -->
+	<script src="https://www.gstatic.com/firebasejs/7.11.0/firebase-analytics.js"></script>
+
+	<script>
+	  // Your web app's Firebase configuration
+	  var firebaseConfig = {
+	    apiKey: "AIzaSyA5EtM_Fpt6RjIH2Py1wlFO2GJnSZFms4c",
+	    authDomain: "aai-database-01.firebaseapp.com",
+	    databaseURL: "https://aai-database-01.firebaseio.com",
+	    projectId: "aai-database-01",
+	    storageBucket: "aai-database-01.appspot.com",
+	    messagingSenderId: "81794330347",
+	    appId: "1:81794330347:web:36a965d9973f836c2458ae",
+	    measurementId: "G-EMTZ00K0W9"
+	  };
+	  // Initialize Firebase
+	  firebase.initializeApp(firebaseConfig);
+	  firebase.analytics();
+	</script>
+</body>
+</html>
