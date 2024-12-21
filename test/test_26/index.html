@@ -93,7 +93,21 @@
 
 
 
+			const acl = new Accelerometer({frequency: 60});
 
+			acl.onreading = ()=>{
+				toInterface('acceleration_x', acl.x)
+				toInterface('acceleration_y', acl.y)
+				toInterface('acceleration_z', acl.z)
+				toInterface('acceleration_m', vLen(acl.x,acl.y,acl.z).toFixed(3) )
+			}
+			acl.onerror = (event) => {
+				console.log(event)
+				toInterface('msg', event.error.name + ' ' + event.error.message)
+				if (event.error.name == 'NotReadableError') {
+					// toInterface('msg', 'Sensor is not available')
+				}
+			}	
 
 const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 
@@ -101,21 +115,7 @@ const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 
 		if (results.every(result=>result.state==="granted")) {
 
-	const acl = new Accelerometer({frequency: 60});
-
-acl.onreading = ()=>{
-	toInterface('acceleration_x', acl.x)
-	toInterface('acceleration_y', acl.y)
-	toInterface('acceleration_z', acl.z)
-	toInterface('acceleration_m', vLen(acl.x,acl.y,acl.z).toFixed(3) )
-}
-acl.onerror = (event) => {
-	console.log(event)
-	toInterface('msg', event.error.name + ' ' + event.error.message)
-	if (event.error.name == 'NotReadableError') {
-		// toInterface('msg', 'Sensor is not available')
-	}
-}		
+	
 
 			acl.start();
 
