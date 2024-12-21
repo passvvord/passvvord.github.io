@@ -41,6 +41,14 @@ length: <span id="gravitySensor_m"></span>
 </pre>
 
 <pre>
+linearAcceleration:
+x: <span id="linearAcceleration_x"></span>
+y: <span id="linearAcceleration_y"></span>
+z: <span id="linearAcceleration_z"></span>
+length: <span id="linearAcceleration_m"></span>
+</pre>
+
+<pre>
 gyroscope:
 x: <span id="gyroscope_x"></span>
 y: <span id="gyroscope_y"></span>
@@ -113,6 +121,14 @@ function error(text) {
 }
 
 
+
+// function initSensor(constructor, name) {
+// 	const pre = document.body.appendChild(document.createElement('pre'))
+
+
+// }
+
+
 const accelerometer = new Accelerometer({frequency: 60});
 accelerometer.onreading = ()=>{
 	toInterface('accelerometer_x', accelerometer.x.toFixed(3).padStart(7))
@@ -135,7 +151,6 @@ gyroscope.onreading = ()=>{
 gyroscope.onerror = (event)=>{
 	error(`gyroscope: ${event.error.name} ${event.error.message}`)
 }
-
 
 // const magnetometer = new Magnetometer({ frequency: 60 });
 
@@ -160,6 +175,17 @@ gravitySensor.onerror = (event)=>{
 	error(`gravitySensor: ${event.error.name} ${event.error.message}`)
 }
 
+const linearAcceleration = new LinearAccelerationSensor({ frequency: 60 });
+linearAcceleration.onreading = ()=>{
+	toInterface('linearAcceleration_x', linearAcceleration.x.toFixed(3).padStart(7))
+	toInterface('linearAcceleration_y', linearAcceleration.y.toFixed(3).padStart(7))
+	toInterface('linearAcceleration_z', linearAcceleration.z.toFixed(3).padStart(7))
+	toInterface('linearAcceleration_m', vLen(linearAcceleration.x,linearAcceleration.y,linearAcceleration.z).toFixed(3).padStart(7) )
+}
+linearAcceleration.onerror = (event)=>{
+	error(`linearAcceleration: ${event.error.name} ${event.error.message}`)
+}
+
 
 const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 
@@ -173,6 +199,7 @@ const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 			gyroscope.start()
 			// magnetometer.start()
 			gravitySensor.start()
+			linearAcceleration.start()
 		} else {
 			error('Permissions denied');
 		}
