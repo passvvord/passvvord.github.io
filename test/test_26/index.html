@@ -33,6 +33,14 @@ length: <span id="accelerometer_m"></span>
 </pre>
 
 <pre>
+gravitySensor:
+x: <span id="gravitySensor_x"></span>
+y: <span id="gravitySensor_y"></span>
+z: <span id="gravitySensor_z"></span>
+length: <span id="gravitySensor_m"></span>
+</pre>
+
+<pre>
 gyroscope:
 x: <span id="gyroscope_x"></span>
 y: <span id="gyroscope_y"></span>
@@ -141,6 +149,16 @@ gyroscope.onerror = (event)=>{
 // 	error(`magnetometer: ${event.error.name} ${event.error.message}`)
 // }
 
+let gravitySensor = new GravitySensor({ frequency: 60 });
+gravitySensor.onreading = ()=>{
+	toInterface('gravitySensor_x', gravitySensor.x.toFixed(3).padStart(7))
+	toInterface('gravitySensor_y', gravitySensor.y.toFixed(3).padStart(7))
+	toInterface('gravitySensor_z', gravitySensor.z.toFixed(3).padStart(7))
+	toInterface('gravitySensor_m', vLen(gravitySensor.x,gravitySensor.y,gravitySensor.z).toFixed(3).padStart(7) )
+}
+gravitySensor.onerror = (event)=>{
+	error(`gravitySensor: ${event.error.name} ${event.error.message}`)
+}
 
 
 const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
@@ -154,6 +172,7 @@ const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 			accelerometer.start()
 			gyroscope.start()
 			// magnetometer.start()
+			gravitySensor.start()
 		} else {
 			error('Permissions denied');
 		}
