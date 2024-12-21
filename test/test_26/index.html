@@ -5,13 +5,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Sensors test</title>
 	<style type="text/css">
-		span[style] {
+		span[style], div[style] {
 /*			--c-pos: 120;*/
 			background: hsl(var(--c-pos) 100% 75%);
 			color: hsl(var(--c-pos) 100% 25%);
-			display: inline-block;
 			padding: 0 0.5em;
 			border-radius: 0.5em;
+			width: max-content;
+			margin: 0.25em;
+		}
+
+		span[style] {
+			display: inline-block;
 		}
 	</style>
 </head>
@@ -19,21 +24,22 @@
 
 <div id="msg"></div>
 	
-<div>
-	acceleration:<br>
-	x: <span id="acceleration_x"></span><br>
-	y: <span id="acceleration_y"></span><br>
-	z: <span id="acceleration_z"></span><br>
-	length: <span id="acceleration_m"></span>
-</div>
+<pre>
+accelerometer:
+x: <span id="accelerometer_x"></span>
+y: <span id="accelerometer_y"></span>
+z: <span id="accelerometer_z"></span>
+length: <span id="accelerometer_m"></span>
+</pre>
 
-<!-- <div>
-	acceleration:<br>
-	x: <span id="acceleration_x"></span><br>
-	y: <span id="acceleration_y"></span><br>
-	z: <span id="acceleration_z"></span><br>
-	length: <span id="acceleration_m"></span>
-</div> -->
+<pre>
+gyroscope:
+x: <span id="gyroscope_x"></span>
+y: <span id="gyroscope_y"></span>
+z: <span id="gyroscope_z"></span>
+length: <span id="gyroscope_m"></span>
+</pre>
+
 
 
 
@@ -45,6 +51,8 @@
 		document.querySelectorAll(`#${id}`).forEach(el=>{
 			if (operation === '+=') {
 				el.textContent += value
+			} else if (operation === 'html+=') {
+				el.innerHTML += value
 			} else {
 				el.textContent = value
 			}
@@ -52,9 +60,9 @@
 		})
 	}
 
-	toInterface('acceleration_x', 'wating for data')
-	toInterface('acceleration_y', 'wating for data')
-	toInterface('acceleration_z', 'wating for data')
+	// toInterface('acceleration_x', 'wating for data')
+	// toInterface('acceleration_y', 'wating for data')
+	// toInterface('acceleration_z', 'wating for data')
 
 
 
@@ -89,41 +97,67 @@
 // 	initSensor();
 // }
 
-	//const aclKeys = ['activated','hasReading','onactivate','onerror','onreading','timestamp','x','y','z'] //Object.keys or Object.getOwnPropertyDescriptors cant do that so just as array
+	//const accelerometerKeys = ['activated','hasReading','onactivate','onerror','onreading','timestamp','x','y','z'] //Object.keys or Object.getOwnPropertyDescriptors cant do that so just as array
 
 
+function error(text) {
+	toInterface('msg', `<div style="--c-pos:0">${text}</div>`, 'html+=') 
+}
 
-			const acl = new Accelerometer({frequency: 60});
 
-			acl.onreading = ()=>{
-				toInterface('acceleration_x', acl.x)
-				toInterface('acceleration_y', acl.y)
-				toInterface('acceleration_z', acl.z)
-				toInterface('acceleration_m', vLen(acl.x,acl.y,acl.z).toFixed(3) )
-			}
-			acl.onerror = (event) => {
-				console.log(event)
-				toInterface('msg', event.error.name + ' ' + event.error.message)
-				if (event.error.name == 'NotReadableError') {
-					// toInterface('msg', 'Sensor is not available')
-				}
-			}	
+const accelerometer = new Accelerometer({frequency: 60});
+accelerometer.onreading = ()=>{
+	toInterface('accelerometer_x', accelerometer.x.toFixed(3).padStart(7))
+	toInterface('accelerometer_y', accelerometer.y.toFixed(3).padStart(7))
+	toInterface('accelerometer_z', accelerometer.z.toFixed(3).padStart(7))
+	toInterface('accelerometer_m', vLen(accelerometer.x,accelerometer.y,accelerometer.z).toFixed(3).padStart(7) )
+}
+accelerometer.onerror = (event)=>{
+	error(`accelerometer: ${event.error.name} ${event.error.message}`)
+}
+
+
+const gyroscope = new Gyroscope({ frequency: 60 });
+gyroscope.onreading = ()=>{
+	toInterface('gyroscope_x', gyroscope.x.toFixed(3).padStart(7))
+	toInterface('gyroscope_y', gyroscope.y.toFixed(3).padStart(7))
+	toInterface('gyroscope_z', gyroscope.z.toFixed(3).padStart(7))
+	toInterface('gyroscope_m', vLen(gyroscope.x,gyroscope.y,gyroscope.z).toFixed(3).padStart(7) )
+}
+gyroscope.onerror = (event)=>{
+	error(`gyroscope: ${event.error.name} ${event.error.message}`)
+}
+
+
+// const magnetometer = new Magnetometer({ frequency: 60 });
+
+// magnetometer.onreading = ()=>{
+// 	toInterface('magnetometer_x', magnetometer.x.toFixed(3).padStart(7))
+// 	toInterface('magnetometer_y', magnetometer.y.toFixed(3).padStart(7))
+// 	toInterface('magnetometer_z', magnetometer.z.toFixed(3).padStart(7))
+// 	toInterface('magnetometer_m', vLen(magnetometer.x,magnetometer.y,magnetometer.z).toFixed(3).padStart(7) )
+// }
+// magnetometer.onerror = (event)=>{
+// 	error(`magnetometer: ${event.error.name} ${event.error.message}`)
+// }
+
+
 
 const vLen = (...v)=>Math.sqrt(v.reduce((ac,a)=>ac+a*a,0))
 
-	Promise.all(['accelerometer'].map(name=>navigator.permissions.query({name: name}))).then(results=>{
+	Promise.all(
+		['accelerometer','gyroscope','magnetometer']
+		.map(name=>navigator.permissions.query({name: name}))
+	).then(results=>{
 
 		if (results.every(result=>result.state==="granted")) {
-
-	
-
-			acl.start();
-
-			// console.log(acl)
-
+			accelerometer.start()
+			gyroscope.start()
+			// magnetometer.start()
 		} else {
-			toInterface('msg','No permissions to use Accelerometer','+=');
+			error('Permissions denied');
 		}
+
 	});
 
 
