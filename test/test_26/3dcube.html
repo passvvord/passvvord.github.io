@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<script type="importmap">
+	{
+		"imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+		}
+	}
+	</script>
+	<style type="text/css">
+		body {
+			margin: 0;
+			padding: 0;
+		}
+	</style>
+</head>
+<body>
+	
+
+	<script type="text/javascript">
+		Promise.all([
+			import('three').then(m=>{window.THREE = m}),
+			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
+		]).then(()=>{
+			// const initScript = document.createElement('script')
+			// initScript.src = 'script.js'
+			// document.body.appendChild(initScript)
+
+			const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 10000 );
+			camera.position.set(0,0,2)
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			const canvas = document.body.appendChild( renderer.domElement )
+
+			const controls = new OrbitControls( camera, renderer.domElement );
+
+			const scene = new THREE.Scene();
+			window.scene = scene
+			
+
+
+			// const geometry = new THREE.PlaneGeometry(1, 1, 2, 2);
+			const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
+			const material = new THREE.MeshBasicMaterial( { map: new THREE.DataTexture()} );
+			const wMaterial = new THREE.MeshBasicMaterial( { wireframe: true, color: 0x20_20_20 } );
+
+			const cubeTex = new THREE.ShaderMaterial({
+				uniforms: {
+					u_tex: {value: new THREE.DataTexture()},
+					u_widthSegments: {value: 2+1},
+					u_heightSegments: {value: 2+1},
+				},
+				vertexShader:`
+					varying vec2 vUV;
+					varying float vSid;
+					varying vec2 vxyi;
+
+					uniform int u_widthSegments;
+					uniform int u_heightSegments;
+
+					void main() {
+						vUV = uv;
+						// vSid = floor(float(gl_VertexID)/6.0);
+						vSid = float(gl_VertexID);
+						// vSid = float(gl_InstanceID);
+						vxyi = vec2(float( gl_VertexID - (gl_VertexID/u_widthSegments)*u_widthSegments ), float( gl_VertexID/u_widthSegments ));
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+					}`,
+				fragmentShader:`
+					varying vec2 vUV;
+					varying float vSid;
+					varying vec2 vxyi;
+
+					uniform sampler2D u_tex;
+					uniform int u_widthSegments;
+					
+					void main() {
+
+						vec4 color = vec4(0.0,0.0,0.0,1.0);
+						// color = texture2D( u_tex, vUV );
+
+						int id = int(vxyi.y)*(u_widthSegments-1)+int(vxyi.x);
+
+						     if ( int(vSid/4.0) == 0 ) {color = vec4(1.0, 0.0, 0.0, 1.0);}
+						else if ( int(vSid/4.0) == 1 ) {color = vec4(1.0, 1.0, 0.0, 1.0);} 
+						else if ( int(vSid/4.0) == 2 ) {color = vec4(0.0, 1.0, 0.0, 1.0);} 
+						else if ( int(vSid/4.0) == 3 ) {color = vec4(0.0, 1.0, 1.0, 1.0);} 
+						else if ( int(vSid/4.0) == 4 ) {color = vec4(0.0, 0.0, 1.0, 1.0);} 
+						else if ( int(vSid/4.0) == 5 ) {color = vec4(1.0, 0.0, 1.0, 1.0);}
+
+						vec2 newUV = ( vUV + vec2( floor(floor(vSid/4.0)/2.0), 1.0-mod(floor(vSid/4.0),2.0) ) )/vec2(3.0, 2.0);
+						color = texture2D( u_tex, newUV );
+
+
+
+						// color = vec4( 0.0 , vSid/(24.0 - 1.0), 0.0, 1.0);
+						// color = vec4( mod(vxyi.x, 1.0), mod(vxyi.y, 1.0), 0.0, 1.0);
+
+						gl_FragColor = color;
+					}`
+			});
+
+
+			const specialCube = new THREE.ShaderMaterial({
+				uniforms: {
+
+				},
+				vertexShader:`
+					void main() {
+						gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+					}`,
+				fragmentShader:`
+					void main() {
+
+						vec4 color = vec4(1.0,0.0,0.0,0.0);
+
+						// color = gl_FragColor;
+
+						//      if ( int(vSid/4.0) == 0 ) {color = vec4(1.0, 0.0, 0.0, 1.0);}
+						// else if ( int(vSid/4.0) == 1 ) {color = vec4(1.0, 1.0, 0.0, 1.0);} 
+						// else if ( int(vSid/4.0) == 2 ) {color = vec4(0.0, 1.0, 0.0, 1.0);} 
+						// else if ( int(vSid/4.0) == 3 ) {color = vec4(0.0, 1.0, 1.0, 1.0);} 
+						// else if ( int(vSid/4.0) == 4 ) {color = vec4(0.0, 0.0, 1.0, 1.0);} 
+						// else if ( int(vSid/4.0) == 5 ) {color = vec4(1.0, 0.0, 1.0, 1.0);}
+
+						gl_FragColor = color;
+					}`
+			});
+
+			const cube = new THREE.Mesh( geometry, cubeTex );
+			const wire = new THREE.Mesh( geometry, wMaterial )
+			// camera.layers.enable(1)
+			wire.material.depthTest = false
+			wire.layers.set(1)
+
+			// const cube1 = new THREE.Mesh( geometry, specialCube );
+			// cube1.position.set(2,2,2)
+			// cube1.material.depthTest = false
+			// cube1.layers.set(1)
+
+			const texture = new THREE.TextureLoader().load('xyzCube2.png',tex=>{
+				// plane.geometry.scale(
+				// 	 tex.source.data.width
+				// 	,tex.source.data.height
+				// 	,1
+				// )
+
+				tex.magFilter = THREE.NearestFilter
+				// tex.needsUpdate = true
+				cubeTex.uniforms.u_tex.value = tex;
+				material.map = tex
+			});
+
+
+
+			scene.add(
+				cube
+				,wire
+				// ,cube1
+				,new THREE.AxesHelper( 5 )
+			)
+			window.camera = camera
+
+			// renderer.setClearColor ( 0xff_00_00, 0.5 )
+			function animate() {
+				requestAnimationFrame( animate );
+				// controls.update();
+				renderer.autoClear = true;
+				camera.layers.set(0)
+				renderer.render( scene, camera );
+				renderer.autoClear = false;
+				camera.layers.set(1)
+				renderer.render( scene, camera );
+			};
+			animate();
+
+		})
+	</script>
+
+
+</body>
+</html>

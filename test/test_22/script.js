@@ -238,8 +238,14 @@ smooth2colorTexture.needsUpdate = true;
 
 const plane = new THREE.Mesh(new THREE.PlaneGeometry( 1, 1), smooth2colorTexture)
 
-const texture = new THREE.TextureLoader().load('testTex2.png',tex=>{
-	plane.geometry.scale(
+function updateTex(tex) {
+	// plane.geometry.scale(
+	// 	 tex.source.data.width
+	// 	,tex.source.data.height
+	// 	,1
+	// )
+
+	plane.scale.set(
 		 tex.source.data.width
 		,tex.source.data.height
 		,1
@@ -248,7 +254,19 @@ const texture = new THREE.TextureLoader().load('testTex2.png',tex=>{
 	tex.magFilter = THREE.NearestFilter
 	tex.needsUpdate = true
 	smooth2colorTexture.uniforms.u_tex.value = tex;
-});
+}
+
+const texture = new THREE.TextureLoader()
+
+texture.loadTex = function(filename, resetTarget = true){
+	this.load(filename, updateTex)
+	if (resetTarget) {
+		controls.target.set(0,0,0)
+		controls.update()
+	}	
+}
+
+texture.loadTex('testTex2.png', false)
 
 scene.add(plane)
 
@@ -262,6 +280,18 @@ scene.add(plane)
 // controls.update();
 
 const savedCamPos = new THREE.Matrix4(0.9998159060574803, 0.0005725390408026431, -0.019178795413335992, 7.764699633919173, -1.0842021724855044e-19, 0.9995547054243282, 0.029839417958203728, -0.4122224386428226, 0.019187339431506415, -0.02983392470210931, 0.9993706934578425, 5.160652285867052, 0, 0, 0, 1);
+savedCamPos.decompose( camera.position, camera.quaternion, camera.scale )
+controls.target = new THREE.Vector3(0,0,-10).applyMatrix4(savedCamPos)
+
+// Object.defineProperty(controls, 'target',{
+// 	set(v) {
+// 		this.specialTarget = v
+// 	},
+// 	get() {
+// 		return  this.specialTarget//
+// 	}
+// })
+
 
 // const helper = new THREE.CameraHelper( camera.clone() );
 // helper.applyMatrix4(savedCamPos)
@@ -271,10 +301,17 @@ const savedCamPos = new THREE.Matrix4(0.9998159060574803, 0.0005725390408026431,
 // arrowHelper.applyMatrix4(savedCamPos)
 // scene.add( arrowHelper );
 
+// const axesHelper = new THREE.AxesHelper( 5 )
+// axesHelper.position.copy( new THREE.Vector3(0,0,-10).applyMatrix4(savedCamPos) )
+// scene.add(axesHelper)
 
-savedCamPos.decompose( camera.position, camera.quaternion, camera.scale )
+
+
+
+
 function animate() {
 	requestAnimationFrame( animate );
+	// controls.target.normalize().multiplyScalar(10)
 	// controls.update();
 	renderer.render( scene, camera );	
 };
@@ -342,10 +379,10 @@ const props = {
 
 const textureFolder = gui.addFolder( 'texture' )
 textureFolder.add( props, 'test texture', {
-	'hi res font 2936x2048px': 'testTex.png',
-	'random yellow lines on blue background 64x64px': 'testTex1.png',
+	'hi res font 2936x2048px'                                : 'testTex.png',
+	'random yellow lines on blue background 64x64px'         : 'testTex1.png',
 	'blue circle and some lines on yellow background 32x16px': 'testTex2.png',
-})
+}).onChange(fname => { texture.loadTex(fname) })
 textureFolder.add( props, 'texture width (px)', 2, 100, 1)
 textureFolder.add( props, 'texture height (px)', 2, 100, 1)
 textureFolder.add( props, 'random texture')

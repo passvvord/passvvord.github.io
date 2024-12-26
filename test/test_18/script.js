@@ -7,9 +7,13 @@
 function rgbaTextureFromCanvas(c) {
 	const texture = new THREE.DataTexture(new Uint8Array(c.width*c.height*4), c.width, c.height, THREE.RGBAFormat)
 	const gl = c.getContext('webgl2')
-	gl.readPixels(0, 0, c.width, c.height, gl.RGBA, gl.UNSIGNED_BYTE, texture.source.data.data)
+	texture.canvasChanged = function() {
+		gl.readPixels(0, 0, c.width, c.height, gl.RGBA, gl.UNSIGNED_BYTE, this.source.data.data)
+		this.needsUpdate = true;
+	}
+	texture.canvasChanged()
 	// texture.flipY = false;
-	texture.needsUpdate = true;
+	
 	return texture
 }
 
