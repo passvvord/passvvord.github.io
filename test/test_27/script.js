@@ -95,11 +95,18 @@ function line3DbyBoxes(
 	// ,max = new THREE.Vector3(1,1,1)
 	,color = 0xff_ff_00
 ) {	
-	object3d.clear()
+	
 
 	if (object3d.children.length > 0) {
+		object3d.children.forEach(mesh=>{
+			mesh.geometry.dispose()
+			mesh.material.dispose()
 
+			delete mesh
+		})
 	}
+
+	object3d.clear()
 
 	const group = object3d//new THREE.Object3D()
 
@@ -117,6 +124,7 @@ function line3DbyBoxes(
 	const c2byc0 = simplifyedLineFuncYbyX(from[c0l],from[c2l],to[c0l],to[c2l])
 		
 
+	console.log( `${c0l}: ${c1l} ${c2l}` )
 	// console.log(`${c1l} = f1(${c0l}) = f1(a) =`,c1byc0)
 	// console.log(`${c2l} = f2(${c0l}) = f2(a) =`,c2byc0)
 
@@ -129,17 +137,21 @@ function line3DbyBoxes(
 	function addBox(pos,size,color) {
 		// const box = new THREE.Mesh(
 		// 	 new THREE.BoxGeometry(...size)
-		// 	,new THREE.MeshBasicMaterial({color: color})
+		// 	,new THREE.MeshBasicMaterial({color: 0x00_00_00})
 		// )
+		// box.position.set(...size.clone().multiplyScalar(0.5).add(pos))
+		
 		// box.geometry.computeBoundingBox()
 		// box.add( new THREE.Box3Helper( box.geometry.boundingBox, 0x20_20_20 ) )
 
 		// box.position.set(...pos)
 		// group.add(box)
 
+		// console.log(pos, pos.clone().add(size))
+
 		const box = new THREE.Box3Helper( new THREE.Box3(
-			 size.clone().multiplyScalar(-0.5).add(pos)
-			,size.clone().multiplyScalar(0.5).add(pos)
+			 pos.clone()//size.clone().multiplyScalar(-0.5).add(pos)
+			,pos.clone().add(size)//size.clone().multiplyScalar(0.5).add(pos)
 		), color )
 
 		group.add(box)
@@ -147,21 +159,59 @@ function line3DbyBoxes(
 	
 	const step = new THREE.Vector3(1,1,1).divide(stepCount)
 
-	const fromC0 = Math.round(from[c0l]*stepCount[c0l])
-	const toC0 = Math.round(to[c0l]*stepCount[c0l])
+	const fromC0 = Math.floor(from[c0l]*stepCount[c0l])
+	const toC0 = Math.floor(to[c0l]*stepCount[c0l])
 	const directionC0 = Math.sign(to[c0l] - from[c0l])
+
+	console.log( `${c0l}: ${c1l} ${c2l}`, directionC0)
 	
+	// const oldpos = new THREE.Vector3()
 	const pos = new THREE.Vector3()
+
+	pos[c0l] = fromC0/stepCount[c0l]
+	pos[c1l] = Math.floor( c1byc0( pos[c0l] )*stepCount[c1l] )/stepCount[c1l]
+	pos[c2l] = Math.floor( c2byc0( pos[c0l] )*stepCount[c2l] )/stepCount[c2l]
+
+	addBox(pos, step, 0xff_ff_ff)
+
 	// console.log(fromC0, directionC0, (toC0-fromC0)*directionC0, directionC0)
-	for (let i = fromC0; i*directionC0 <= toC0*directionC0; i+=directionC0 ) {
+	for (let i = fromC0+directionC0; i*directionC0 <= toC0*directionC0; i+=directionC0 ) {
 
-		pos[c0l] = i/stepCount[c0l]
-		pos[c1l] = Math.round( c1byc0(pos[c0l])*stepCount[c1l] )/stepCount[c1l]
-		pos[c2l] = Math.round( c2byc0(pos[c0l])*stepCount[c2l] )/stepCount[c2l]
+		// pos[c0l] = 
 
-		// pos.divide(stepCount)
 
-		addBox(pos, step, color)
+		const newPosC0l = i/stepCount[c0l]
+		const newPosC1l = Math.floor( c1byc0( newPosC0l )*stepCount[c1l] )/stepCount[c1l]
+		const newPosC2l = Math.floor( c2byc0( newPosC0l )*stepCount[c2l] )/stepCount[c2l]
+
+
+		if (directionC0 == 1) {
+			if (pos[c1l] != newPosC1l) {
+				pos[c1l] = newPosC1l
+				addBox(pos, step, 0x00_ff_00)
+			} 
+			if (pos[c2l] != newPosC2l) {
+				pos[c2l] = newPosC2l
+				addBox(pos, step, 0x00_00_ff)
+			}
+
+		} else {
+			if (pos[c1l] != newPosC1l) {
+				pos[c0l] = newPosC0l
+				addBox(pos, step, 0xff_00_ff)
+			}
+			if (pos[c2l] != newPosC2l) {
+				pos[c1l] = newPosC1l
+				addBox(pos, step, 0xff_ff_00)
+			}
+		}
+
+
+		pos[c0l] = newPosC0l
+		pos[c1l] = newPosC1l
+		pos[c2l] = newPosC2l
+
+		addBox(pos, step, 0x60_60_60)
 		// console.log(...pos)
 	}
 
@@ -173,8 +223,36 @@ function line3DbyBoxes(
 }
 
 
+const testPreset = [
+	{
+		 camera: [0.9958310061721231, -0.005798770592238078, 0.0910328589347583, 0.7622718576462858, 0, 0.9979773241781934, 0.06357090864643096, 0.5599102106352195, -0.09121736208758181, -0.06330588192065145, 0.9938167628733334, 2.9033758195221013, 0, 0, 0, 1]
+		,targetDistance: 1.0266841665589708
+		,dots: [[0.9986940151234525, 0.7384064613193234, 1.579303298927157], [0.46497686766975826, 0.3099763289744724, 2.114240314703029]]
+	},{
+		"camera":[0.09608929579729364,0.36321955631598424,-0.926735345793393,-0.20394686270292528,5.551115123125783e-17,0.9310435470764238,0.3649080890407211,1.3877604675210282,0.9953727177460614,-0.03506376130665908,0.08946331879518797,2.1009258174530814,0,0,0,1],
+		"targetDistance":1.3268408625780752,
+		"dots":[[1.1585300400749519,1.1071454294897785,2.3832147135150943],[0.6332081069984112,0.7239721691123184,1.1839470949713076]]
+	}
+]
+
+function useTestPreset(i,presets = testPreset) {
+	const matrix = new THREE.Matrix4(...testPreset[i].camera)
+	matrix.decompose( camera.position, camera.quaternion, camera.scale )
+	controls.target = new THREE.Vector3(0,0,-testPreset[i].targetDistance).applyMatrix4(matrix)	
+	dots[0].position.set(...testPreset[i].dots[0])
+	dots[1].position.set(...testPreset[i].dots[1])
+}
+
+function getCurentPreset() {
+	return {
+		 camera: camera.matrix.clone().transpose().elements
+		,targetDistance: camera.position.distanceTo( controls.target )
+		,dots: dots.map(a=>[...a.position])
+	}
+}
+//console.log( JSON.stringify(getCurentPreset()).replaceAll(/(?<=(?:\{|,))(?=")|(?=})/g, '\n\t') )
+
 const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 1000 );
-camera.position.set(0,0,6.5)
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -182,6 +260,28 @@ const canvas = document.body.appendChild( renderer.domElement )
 
 const controls = new OrbitControls( camera, renderer.domElement );
 
+const dots = new Array(2).fill().map(a=>new THREE.Object3D())
+
+useTestPreset(1)
+
+// function setCam(matrix, camera, controls, distanceToTarget = 10) {
+// 	matrix.decompose( camera.position, camera.quaternion, camera.scale )
+// 	controls.target = new THREE.Vector3(0,0,-distanceToTarget).applyMatrix4(matrix)
+// }
+
+// function setThisCam(matrix) {
+// 	setCam(matrix, camera, controls, 2)
+// }
+
+// function saveCam(camera, str = true) {
+// 	if (str === true) {
+// 		return `new THREE.Matrix4(${camera.matrix.clone().transpose().elements.join(', ')})`
+// 	} else {
+// 		return camera.matrix.clone()
+// 	}
+// }
+
+// setThisCam(new THREE.Matrix4(-0.240655532591459, 0.26875381158895234, -0.9326608726592595, -0.4957141889167924, 0, 0.9609011931745283, 0.27689148949682046, 0.9721476956234324, 0.970610588564292, 0.0666354688748997, -0.2312461884111845, 1.4157772640732529, 0, 0, 0, 1))
 
 
 const scene = new THREE.Scene();
@@ -203,10 +303,11 @@ const box1 = new THREE.Mesh(
 let controlsArray = [] // need to make only one controls active at the same time
 controlsArray.push(controls)
 
-const dots = new Array(2).fill().map(a=>new THREE.Object3D())
-dots[0].position.set(0.5314499266522039, 0.565301110853526, 1.5)
-dots[1].position.set(0.46497686766975826, 0.4862670411103879, 2.114240314703029)
 
+
+
+
+// 
 
 let boxedLine = new THREE.Object3D()
 line3DbyBoxes(boxedLine ,dots[1].position, dots[0].position)
@@ -232,9 +333,13 @@ for ( mesh of dots ) {
 		})
 	});
 
-	mesh.transformControls.addEventListener('mouseUp', _=>{
+	mesh.transformControls.addEventListener('change', _=>{
 		line3DbyBoxes(boxedLine ,dots[1].position, dots[0].position)
 	})
+
+	// mesh.transformControls.addEventListener('mouseUp', _=>{
+	// 	line3DbyBoxes(boxedLine ,dots[1].position, dots[0].position)
+	// })
 
 	mesh.transformControls.attach( mesh )
 
@@ -252,9 +357,9 @@ scene.add(
 	// ,transform.getHelper()
 )
 
-// scene.add(
-// 	getLineGrid( new THREE.Vector3(10,10,10), new THREE.Vector3(0,0,0), new THREE.Vector3(1,1,1), new Array(3).fill(0x20_20_20) )
-// )
+scene.add(
+	getLineGrid( new THREE.Vector3(20,20,20), new THREE.Vector3(0,0,0), new THREE.Vector3(5,5,5), new Array(3).fill(0x20_20_20) )
+)
 
 function animate() {
 	requestAnimationFrame( animate );
