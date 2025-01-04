@@ -16,7 +16,9 @@ THREE.Matrix4.prototype.print = function(print = true, f = v=>v.toFixed(4).padSt
 	const m = this.elements;
 	// const str = eval(generateMatStr(4,4))
 	const str = `⎡${f(m[0])}${f(m[4])}${f(m[8])}${f(m[12])}⎤\n⎢${f(m[1])}${f(m[5])}${f(m[9])}${f(m[13])}⎥\n⎢${f(m[2])}${f(m[6])}${f(m[10])}${f(m[14])}⎥\n⎣${f(m[3])}${f(m[7])}${f(m[11])}${f(m[15])}⎦`
-	console.log(str)
+	if (print) {
+		console.log(str)
+	}
 }
 
 

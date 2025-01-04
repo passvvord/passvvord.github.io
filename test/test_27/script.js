@@ -140,7 +140,7 @@ function line3DbyBoxes(
 		// 	,new THREE.MeshBasicMaterial({color: 0x00_00_00})
 		// )
 		// box.position.set(...size.clone().multiplyScalar(0.5).add(pos))
-		
+
 		// box.geometry.computeBoundingBox()
 		// box.add( new THREE.Box3Helper( box.geometry.boundingBox, 0x20_20_20 ) )
 
@@ -181,30 +181,48 @@ function line3DbyBoxes(
 
 
 		const newPosC0l = i/stepCount[c0l]
-		const newPosC1l = Math.floor( c1byc0( newPosC0l )*stepCount[c1l] )/stepCount[c1l]
-		const newPosC2l = Math.floor( c2byc0( newPosC0l )*stepCount[c2l] )/stepCount[c2l]
 
+		const newPosC1lraw = c1byc0( newPosC0l )*stepCount[c1l]
+		const newPosC1l_ = Math.floor( newPosC1lraw )/stepCount[c1l]
 
-		if (directionC0 == 1) {
-			if (pos[c1l] != newPosC1l) {
-				pos[c1l] = newPosC1l
-				addBox(pos, step, 0x00_ff_00)
-			} 
-			if (pos[c2l] != newPosC2l) {
-				pos[c2l] = newPosC2l
-				addBox(pos, step, 0x00_00_ff)
+		const newPosC2lraw = c2byc0( newPosC0l )*stepCount[c2l]
+		const newPosC2l_ = Math.floor( newPosC2lraw )/stepCount[c2l]
+
+		if ( newPosC1lraw - newPosC1l > 0) {
+			if (newPosC2lraw - newPosC2l > 0) {
+
+			} else {
+				
 			}
-
 		} else {
-			if (pos[c1l] != newPosC1l) {
-				pos[c0l] = newPosC0l
-				addBox(pos, step, 0xff_00_ff)
-			}
-			if (pos[c2l] != newPosC2l) {
-				pos[c1l] = newPosC1l
-				addBox(pos, step, 0xff_ff_00)
+			if (newPosC2lraw - newPosC2l > 0) {
+
+			} else {
+				
 			}
 		}
+
+
+		// if (directionC0 == 1) {
+		// 	if (pos[c1l] != newPosC1l) {
+		// 		pos[c1l] = newPosC1l
+		// 		addBox(pos, step, 0x00_ff_00)
+		// 	} 
+		// 	if (pos[c2l] != newPosC2l) {
+		// 		pos[c2l] = newPosC2l
+		// 		addBox(pos, step, 0x00_00_ff)
+		// 	}
+
+		// } else {
+		// 	if (pos[c1l] != newPosC1l) {
+		// 		pos[c0l] = newPosC0l
+		// 		addBox(pos, step, 0xff_00_ff)
+		// 	}
+		// 	if (pos[c2l] != newPosC2l) {
+		// 		pos[c1l] = newPosC1l
+		// 		addBox(pos, step, 0xff_ff_00)
+		// 	}
+		// }
 
 
 		pos[c0l] = newPosC0l
