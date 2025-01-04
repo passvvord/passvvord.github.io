@@ -47,10 +47,12 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 			return new THREE.Vector3(0,0,-1).applyMatrix4(new THREE.Matrix4().extractRotation(camera.matrix))
 		} },
 
-
 		u_Ni: {value: 24},
 		u_Nj: {value: 10},
 		u_fillType: {value: 0},
+
+		u_projectionMatrix: { get value() {return camera.projectionMatrix} },
+		u_modelViewMatrix: { get value() {return box.modelViewMatrix} },
 	},
 	vertexShader:`
 		varying vec3 vPosition;
@@ -71,6 +73,9 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		uniform int u_Ni;
 		uniform int u_Nj;
 		uniform int u_fillType;
+
+		uniform mat4 u_projectionMatrix;
+		uniform mat4 u_modelViewMatrix;
 
 		const float precisionFix = 0.00001;
 
@@ -166,6 +171,8 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 					vec3 surfPos = normalize(direction)*(-sqrt(3.0)/2.0) + vec3(0.5);
 					float distToPos = distanceFromDotToSurface(direction, surfPos, curentPos);
 
+					// gl_FragDepth = (u_projectionMatrix * u_modelViewMatrix * vec4( curentPos, 1.0 )).z*10.0;
+
 					if (u_fillType == 0) {
 						return vec4( vec2( distToPos/sqrt(3.0) ), 0.1, 1.0 );
 					} else if (u_fillType == 1) {
@@ -230,13 +237,14 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 			// color = getColor(vPosition, u_lookVec, u_val);
 
 			color = vec4(
-				 mod(gl_FragCoord.z, 1.0/10.0)*10.0
-				,0.0 //mod(gl_FragCoord.z, 1.0/10.0)*10.0
+				 gl_FragCoord.z
+				,mod(gl_FragCoord.z*10.0, 1.0) < 0.1 ? 1.0 : 0.0
 				,0.0 //mod(gl_FragCoord.z, 1.0/100.0)*100.0
 				,1.0
 			);
 
 
+			gl_FragDepth = (u_projectionMatrix * u_modelViewMatrix * vec4( vPosition, 1.0 )).z*5.0 + 5.0;
 			gl_FragColor = color;
 		}`
 });
