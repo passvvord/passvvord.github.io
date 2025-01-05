@@ -1,12 +1,49 @@
-function addBoundingBox(...meshes) {
-	for ( mesh of meshes ) {
-		if ( !(mesh?.geometry === undefined) ) {
-			if ( !(mesh?.geometry?.boundingBox instanceof THREE.Box3) ) {
-				mesh.geometry.computeBoundingBox()
-			}
-			mesh.add( new THREE.Box3Helper( mesh.geometry.boundingBox, 0x20_20_20 ) )		
-		}
+function computeBBifnoBB(mesh) {
+	if ( !(mesh?.geometry?.boundingBox instanceof THREE.Box3) ) {
+		mesh.geometry.computeBoundingBox()
+	}
+}
+
+function doIfMeshHasGeometry(mesh, f = (mesh)=>{console.log(' this function must do something with mesh ')}) {
+	if ( mesh instanceof THREE.Mesh ) {
+		if ( mesh.geometry instanceof THREE.BufferGeometry ) {
+			f(mesh)
+		} else {
+			console.warn(`no geometry in given Mesh`)
+		}			
+	} else {
+		console.warn(`${ mesh } (constructor: ${ mesh?.constructor.name }) is not instanceof THREE.Mesh`)
 	}	
+}
+
+function addBoundingBox(...meshes) {
+	let color = 0x20_20_20;
+	if ( typeof meshes.at(-1) === 'number' || meshes.at(-1) instanceof THREE.Color ) {
+		color = meshes.at(-1)
+		meshes = meshes.slice(0,-1)
+	}
+	for ( mesh of meshes ) {
+		computeBBifnoBB(mesh)
+		doIfMeshHasGeometry(mesh, _=>{
+			mesh.add( new THREE.Box3Helper( mesh.geometry.boundingBox, color ) )
+		})
+	}	
+}
+
+function addWireFrame(...meshes) {
+	let color = 0x20_20_20;
+	if ( typeof meshes.at(-1) === 'number' || meshes.at(-1) instanceof THREE.Color ) {
+		color = meshes.at(-1)
+		meshes = meshes.slice(0,-1)
+	}
+	for ( mesh of meshes ) {
+		doIfMeshHasGeometry(mesh, _=>{
+			mesh.add( new THREE.Mesh(
+				 mesh.geometry
+				,new THREE.MeshBasicMaterial({color: color, wireframe: true })
+			) )
+		})
+	}		
 }
 
 function getParamsToOrtoGraficCamera(perspectiveCamera, distance) {
@@ -30,7 +67,8 @@ camera.near = 0
 camera.position.set(0.5,0.5,-5)
 
 const renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(window.devicePixelRatio);
 const canvas = document.body.appendChild( renderer.domElement )
 
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -45,6 +83,27 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		// u_lookVec: { get value() {return new THREE.Vector3().subVectors( box.position, camera.position ).normalize()} },
 		u_lookVec: { get value() {
 			return new THREE.Vector3(0,0,-1).applyMatrix4(new THREE.Matrix4().extractRotation(camera.matrix))
+		} },
+
+		u_windowSpaceZcenter: {	get value() {
+				return box.geometry.boundingSphere.center.clone()
+					.applyMatrix4( box.modelViewMatrix )
+					.applyMatrix4( camera.projectionMatrix )
+					.z*0.5+0.5
+		} },
+		u_windowSpaceZnear: { get value() {
+			return box.geometry.boundingSphere.center.clone()
+					.applyMatrix4( box.modelViewMatrix )
+					.applyMatrix4( camera.projectionMatrix )
+					.z*0.5+0.5
+					-box.geometry.boundingSphere.radius/(camera.far - camera.near)
+		} },
+		u_windowSpaceZfar: { get value() {
+			return box.geometry.boundingSphere.center.clone()
+					.applyMatrix4( box.modelViewMatrix )
+					.applyMatrix4( camera.projectionMatrix )
+					.z*0.5+0.5
+					+box.geometry.boundingSphere.radius/(camera.far - camera.near)
 		} },
 
 		u_Ni: {value: 24},
@@ -76,6 +135,9 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 
 		uniform mat4 u_projectionMatrix;
 		uniform mat4 u_modelViewMatrix;
+
+		uniform float u_windowSpaceZnear;
+		uniform float u_windowSpaceZfar;
 
 		const float precisionFix = 0.00001;
 
@@ -171,7 +233,10 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 					vec3 surfPos = normalize(direction)*(-sqrt(3.0)/2.0) + vec3(0.5);
 					float distToPos = distanceFromDotToSurface(direction, surfPos, curentPos);
 
-					// gl_FragDepth = (u_projectionMatrix * u_modelViewMatrix * vec4( curentPos, 1.0 )).z*10.0;
+					vec4 preClipSpace = u_projectionMatrix * u_modelViewMatrix * vec4( curentPos, 1.0 );
+					vec3 clipSpace = preClipSpace.xyz / preClipSpace.w;
+					float windowSpaseZ = clipSpace.z*0.5 + 0.5;
+					gl_FragDepth = windowSpaseZ;
 
 					if (u_fillType == 0) {
 						return vec4( vec2( distToPos/sqrt(3.0) ), 0.1, 1.0 );
@@ -234,17 +299,25 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 
 			vec4 color = vec4(1.0);
 
-			// color = getColor(vPosition, u_lookVec, u_val);
-
-			color = vec4(
-				 gl_FragCoord.z
-				,mod(gl_FragCoord.z*10.0, 1.0) < 0.1 ? 1.0 : 0.0
-				,0.0 //mod(gl_FragCoord.z, 1.0/100.0)*100.0
-				,1.0
-			);
+			color = getColor(vPosition, u_lookVec, u_val);
 
 
-			gl_FragDepth = (u_projectionMatrix * u_modelViewMatrix * vec4( vPosition, 1.0 )).z*5.0 + 5.0;
+
+			// vec4 preClipSpace = u_projectionMatrix * u_modelViewMatrix * vec4( vPosition, 1.0 );
+			// vec3 clipSpace = preClipSpace.xyz / preClipSpace.w;
+			// float windowSpaseZ = clipSpace.z*0.5 + 0.5; 
+			// gl_FragDepth = windowSpaseZ; // == gl_FragCoord.z;
+
+
+			// color = vec4(
+			// 	 abs(gl_FragCoord.z - ehhhPos.z)
+			// 	,abs(gl_FragCoord.z - ehhhPos.z/ehhhPos.w)
+			// 	,0.0
+			// 	,1.0
+			// );
+
+			
+
 			gl_FragColor = color;
 		}`
 });
@@ -255,14 +328,95 @@ const box = new THREE.Mesh(
 )
 
 const plane = new THREE.Mesh(
-	new THREE.PlaneGeometry(1,1),
-	new THREE.MeshBasicMaterial({color: 0x80_80_80})
+	new THREE.PlaneGeometry(1.2, 1.2, 5,5),
+	new THREE.MeshBasicMaterial({color: 0x80_80_80, side: THREE.DoubleSide})
 )
 plane.position.set( 0.8, 0.8, 0.8 )
 plane.lookAt( 1,1,1 )
+addWireFrame(plane)
+
 scene.add(plane)
 
-addBoundingBox(box)
+
+const planeShader = new THREE.ShaderMaterial({
+	uniforms: {
+		u_check: {value: 0},
+		u_projectionMatrix: { get value() {return camera.projectionMatrix} },
+		u_modelViewMatrix: { get value() {return plane1.modelViewMatrix} },
+	},
+	vertexShader:`
+		varying vec3 vPosition;
+
+		void main() {
+			vPosition = position;
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+		}`,
+	fragmentShader:`
+		varying vec3 vPosition;
+
+		uniform mat4 u_projectionMatrix;
+		uniform mat4 u_modelViewMatrix;
+
+		uniform float u_check;
+
+
+		// float RGBtoGray(vec4 C) { return 0.299*C.r + 0.587*C.g + 0.114*C.b; }
+
+		// const float PI = 3.1415926535897932384626433832795;
+
+		// vec4 HrVtoRGBA(float H, float V) { // H: angle in radians
+		// 	H = mod(H,2.0*PI);
+		// 	return vec4(
+		// 		 min(  max(     abs(H-    PI    )*3.0/PI-1.0 , 0.0 ) , 1.0  )*V
+		// 		,min(  max( 2.0-abs(H-2.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+		// 		,min(  max( 2.0-abs(H-4.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+		// 		,1.0
+		// 	);
+		// }
+
+		void main() {
+
+			vec4 color = vec4(1.0);
+
+
+			vec4 ehhhPos = u_projectionMatrix * u_modelViewMatrix * vec4( vPosition, 1.0 );
+			vec3 NDCclipSpace = ehhhPos.xyz/ehhhPos.w;
+
+
+			if ( all(greaterThanEqual(NDCclipSpace,vec3(-1.0))) && all(lessThanEqual(NDCclipSpace,vec3(1.0))) ) {
+				color = vec4( NDCclipSpace*0.5 + 0.5 , 1.0);
+			} else {
+				color = vec4( 1.0, 0.0, 0.0, 1.0 );
+			}
+
+
+			if ( abs(gl_FragCoord.z - (NDCclipSpace.z*0.5 + 0.5)) < 0.01 ) {
+				color = vec4( 1.0, 1.0, 0.0, 1.0 );
+			}
+
+			// color = vec4(
+			// 	 abs(gl_FragCoord.z - ehhhPos.z)
+			// 	,abs(gl_FragCoord.z - ehhhPos.z/ehhhPos.w)
+			// 	,0.0
+			// 	,1.0
+			// );
+
+			// gl_FragDepth = ehhhPos.z/ehhhPos.w;
+
+			gl_FragColor = color;
+		}`
+});
+
+const plane1 = new THREE.Mesh(
+	new THREE.PlaneGeometry(2,20),
+	planeShader
+)
+// plane1.position.set( 0.8, 0.8, 0.8 )
+plane1.lookAt( 2,10,0 )
+// scene.add(plane1)
+
+addBoundingBox(box, 0x40_40_40)
 
 scene.add(
 	 box
@@ -288,7 +442,6 @@ function attachUniformValueToProps(props, name, linkToVal) {
 
 }
 
-
 const props = {
 	get surfaseEqual() {return box.material.uniforms.u_val.value},
 	set surfaseEqual(v) {      box.material.uniforms.u_val.value = v},
@@ -301,6 +454,12 @@ const props = {
 
 	get u_fillType() {return box.material.uniforms.u_fillType.value},
 	set u_fillType(v) {      box.material.uniforms.u_fillType.value = v},
+
+	// get u_check() {return plane1.material.uniforms.u_check.value},
+	// set u_check(v) {      plane1.material.uniforms.u_check.value = v},
+
+	get 'plane pos'() {return plane.position.x},
+	set 'plane pos'(v) {return plane.position.set(v,v,v)},
 }
 
 
@@ -308,3 +467,5 @@ gui.add( props, 'surfaseEqual', 0, 1, 0.0001)
 gui.add( props, 'u_Ni', 1, 200, 1)
 gui.add( props, 'u_Nj', 0, 50, 1)
 gui.add( props, 'u_fillType', 0, 4, 1)
+gui.add( props, 'plane pos', 0, 1, 0.001)
+// gui.add( props, 'u_check', -10, 10, 0.001)

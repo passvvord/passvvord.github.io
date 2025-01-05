@@ -35,6 +35,11 @@ function initTHREEprintMethods(params = {}) {
 		return ${ generateTHREEMatStr(4, 4, params.separator, params.leftTable, params.rightTable) };
 	`))
 
+	modifyToStringMethod(THREE.Matrix3, new Function('f = v=>v.toFixed(4).padStart(10)',`
+		const m = this.elements;
+		return ${ generateTHREEMatStr(3, 3, params.separator, params.leftTable, params.rightTable) };
+	`))
+
 }
 
 export { initTHREEprintMethods }
