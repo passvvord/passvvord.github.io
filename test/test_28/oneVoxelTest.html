@@ -46,8 +46,13 @@
 			import('three').then(m=>{window.THREE = m}),
 			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
 			// import('three/addons/controls/TransformControls.js').then(m=>{window.TransformControls = m.TransformControls}),
-			import('../export/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
 			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
+
+			import('../export/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
+			import('../export/addTHREEwireOrBox.js').then(m=>{
+				window.addBoundingBox = m.addBoundingBox;
+				window.addWireFrame = m.addWireFrame;
+			}),
 		]).then(()=>{
 			window.initTHREEprintMethods()
 			loadScriptWhenThisDOMloaded('script.js')
