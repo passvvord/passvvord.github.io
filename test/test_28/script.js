@@ -1,51 +1,3 @@
-// function computeBBifnoBB(mesh) {
-// 	if ( !(mesh?.geometry?.boundingBox instanceof THREE.Box3) ) {
-// 		mesh.geometry.computeBoundingBox()
-// 	}
-// }
-
-// function doIfMeshHasGeometry(mesh, f = (mesh)=>{console.log(' this function must do something with mesh ')}) {
-// 	if ( mesh instanceof THREE.Mesh ) {
-// 		if ( mesh.geometry instanceof THREE.BufferGeometry ) {
-// 			f(mesh)
-// 		} else {
-// 			console.warn(`no geometry in given Mesh`)
-// 		}			
-// 	} else {
-// 		console.warn(`${ mesh } (constructor: ${ mesh?.constructor.name }) is not instanceof THREE.Mesh`)
-// 	}	
-// }
-
-// function addBoundingBox(...meshes) {
-// 	let color = 0x20_20_20;
-// 	if ( typeof meshes.at(-1) === 'number' || meshes.at(-1) instanceof THREE.Color ) {
-// 		color = meshes.at(-1)
-// 		meshes = meshes.slice(0,-1)
-// 	}
-// 	for ( mesh of meshes ) {
-// 		computeBBifnoBB(mesh)
-// 		doIfMeshHasGeometry(mesh, _=>{
-// 			mesh.add( new THREE.Box3Helper( mesh.geometry.boundingBox, color ) )
-// 		})
-// 	}	
-// }
-
-// function addWireFrame(...meshes) {
-// 	let color = 0x20_20_20;
-// 	if ( typeof meshes.at(-1) === 'number' || meshes.at(-1) instanceof THREE.Color ) {
-// 		color = meshes.at(-1)
-// 		meshes = meshes.slice(0,-1)
-// 	}
-// 	for ( mesh of meshes ) {
-// 		doIfMeshHasGeometry(mesh, _=>{
-// 			mesh.add( new THREE.Mesh(
-// 				 mesh.geometry
-// 				,new THREE.MeshBasicMaterial({color: color, wireframe: true })
-// 			) )
-// 		})
-// 	}		
-// }
-
 function getParamsToOrtoGraficCamera(perspectiveCamera, distance) {
 	const size = perspectiveCamera.getViewSize(distance, new THREE.Vector2())
 	return {
@@ -174,12 +126,68 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 			);
 		}
 
+		// vec3 pow2(vec3 a) { return a*a; }
 		vec3 pow2(vec3 a) { return a*a; }
 		float multxyz(vec3 a) { return a.x*a.y*a.z; }
 
+		// float f0dx(float x) {
+		// 	// expanded: 16x^4 - 8x^2 + 1
+		// 	return pow2( 4.0*pow2(x) - 1.0 );
+		// }
+
+		// float f1dx(float x) {
+		// 	// expanded: 64x^3 - 16x
+		// 	return (4.0*pow2(x) - 1.0)*16.0*x;
+		// }
+
+		vec3 f0dxyz(vec3 xyz) {
+			// expanded: 16x^4 - 8x^2 + 1
+			return pow2( 4.0*pow2(xyz) - 1.0 );
+		}
+
+		vec3 f1dxyz(vec3 xyz) {
+			// expanded: 64x^3 - 16x
+			return (4.0*pow2(xyz) - 1.0)*16.0*xyz;
+		}
+
+		vec3 getNormal(vec3 xyz) {
+			vec3 f0 = f0dxyz(xyz);
+			vec3 f1 = f1dxyz(xyz);
+
+			return -normalize(vec3(
+				 f1.x*f0.y*f0.z
+				,f0.x*f1.y*f0.z
+				,f0.x*f0.y*f1.z
+			));
+		}
+
 		float fff(vec3 a, vec3 b, float t) {
+			// line:
+			// vec3(x,y,z) = a*t + b 
+			// crosses surface:
+			// (4*vec3(x,y,z)^2 - 1) = constant
 			return multxyz( pow2(4.0 * pow2(a * t + b) - 1.0) );
 		}
+
+
+		vec3 linesByStepsAndLimit(vec3 value ,float steps, float limit) {
+			return vec3(
+				 mod(value.x + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
+				,mod(value.y + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
+				,mod(value.z + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
+			);
+		}
+
+		vec3 gradientBySteps(vec3 value ,float steps) {
+			return vec3(
+				 mod(value, 1.0/steps)*steps
+				// ,mod(value, 1.0/steps)*steps
+				// ,mod(value, 1.0/steps)*steps
+			);
+		}
+
+
+		// float fdxfdyfdz
 
 		vec4 getColor(vec3 position, vec3 direction, float value) {
 			// position always >= vec3(0.0) and <= vec3(1.0)
@@ -238,37 +246,42 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 					float windowSpaseZ = clipSpace.z*0.5 + 0.5;
 					gl_FragDepth = windowSpaseZ;
 
+					float steps = 40.0;
+					float limit = 0.1;
+
 					if (u_fillType == 0) {
 						return vec4( vec2( distToPos/sqrt(3.0) ), 0.1, 1.0 );
 					} else if (u_fillType == 1) {
-						float steps = 40.0;
 						return vec4( vec2( mod(distToPos, sqrt(3.0)/steps ) )*steps, 0.1, 1.0 );						
 					} else if (u_fillType == 2) {
 						return HrVtoRGBA(distToPos/sqrt(3.0)*2.0*PI, 1.0);
 					} else if (u_fillType == 3) {
-						float steps = 40.0;
 						return HrVtoRGBA(distToPos/sqrt(3.0)*2.0*PI, mod(distToPos, sqrt(3.0)/steps)*steps);
 					} else if (u_fillType == 4) {
-						float steps = 40.0;
-						float limit = 0.1;
-
 						return vec4(
-							 mod(curentPos.x, 1.0/steps)*steps < limit ? 1.0 : 0.0
-							,mod(curentPos.y, 1.0/steps)*steps < limit ? 1.0 : 0.0
-							,mod(curentPos.z, 1.0/steps)*steps < limit ? 1.0 : 0.0
+							linesByStepsAndLimit(curentPos, steps, limit)
 							,1.0
 						);
-
-
-						// vec3 findMaxComp = abs(curentPos - 0.5);
-						// if (findMaxComp.x > findMaxComp.y && findMaxComp.x > findMaxComp.z) { // x max
-						// 	return vec4( mod(curentPos.xyz, 1.0/steps)*steps, 1.0);
-						// } else if (findMaxComp.y > findMaxComp.x && findMaxComp.y > findMaxComp.z) { // y max
-						// 	return vec4( vec3( mod(curentPos.y, 1.0/steps)*steps ), 1.0);
-						// } else { // z max
-						// 	return vec4( vec3( mod(curentPos.z, 1.0/steps)*steps ), 1.0);
-						// }
-
+					} else if (u_fillType == 5) {
+						return vec4(
+							gradientBySteps(curentPos, steps)
+							,1.0
+						);
+					} else if (u_fillType == 6) {
+						return vec4(
+							getNormal(curentPos - vec3(0.5))*0.5 + 0.5
+							,1.0
+						);
+					} else if (u_fillType == 7) {
+						return vec4(
+							linesByStepsAndLimit( getNormal(curentPos - vec3(0.5))*0.5 + 0.5, steps, limit)
+							,1.0
+						);
+					} else if (u_fillType == 8) {
+						return vec4(
+							gradientBySteps( getNormal(curentPos - vec3(0.5))*0.5 + 0.5, steps)
+							,1.0
+						);
 					}
 
 				}
@@ -466,6 +479,6 @@ const props = {
 gui.add( props, 'surfaseEqual', 0, 1, 0.0001)
 gui.add( props, 'u_Ni', 1, 200, 1)
 gui.add( props, 'u_Nj', 0, 50, 1)
-gui.add( props, 'u_fillType', 0, 4, 1)
+gui.add( props, 'u_fillType', 0, 8, 1)
 gui.add( props, 'plane pos', 0, 1, 0.001)
 // gui.add( props, 'u_check', -10, 10, 0.001)
