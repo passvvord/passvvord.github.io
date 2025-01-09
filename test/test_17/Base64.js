@@ -1,4 +1,4 @@
-export class Base64 {
+class Base64 {
 	static alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; //defined in RFC 4648
 	static padding  = '=';                                                                //defined in RFC 4648
 	static reverseAlphabet = Object.fromEntries(this.alphabet.split('').map((a,i)=>[a,i]));
@@ -153,3 +153,5 @@ export class Base64 {
 		return Uint8
 	}
 }
+
+export { Base64 }

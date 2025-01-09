@@ -64,6 +64,9 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 
 		u_projectionMatrix: { get value() {return camera.projectionMatrix} },
 		u_modelViewMatrix: { get value() {return box.modelViewMatrix} },
+
+		u_step: {value: 40},
+		u_limit: {value: 0.1},
 	},
 	vertexShader:`
 		varying vec3 vPosition;
@@ -90,6 +93,9 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 
 		uniform float u_windowSpaceZnear;
 		uniform float u_windowSpaceZfar;
+
+		uniform float u_step;
+		uniform float u_limit;
 
 		const float precisionFix = 0.00001;
 
@@ -205,7 +211,7 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 				float tval = tvals[ i/3 ][ imod(i,3) ];
 
 				vec3 pos = direction*tval + position;
-				if ( all(greaterThanEqual(pos,vec3(-precisionFix))) && all(lessThanEqual(pos,vec3(1.0+precisionFix))) && tval > 0.0 ) { // > 0 but i am afraid about precision
+				if ( all(greaterThanEqual(pos,vec3(-precisionFix))) && all(lessThanEqual(pos,vec3(1.0+precisionFix))) && tval > precisionFix ) { // > 0 but i am afraid about precision
 					tto = tval;
 					// break;
 				}					
@@ -246,8 +252,8 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 					float windowSpaseZ = clipSpace.z*0.5 + 0.5;
 					gl_FragDepth = windowSpaseZ;
 
-					float steps = 40.0;
-					float limit = 0.1;
+					float steps = u_step; // 40.0
+					float limit = u_limit; // 0.1
 
 					if (u_fillType == 0) {
 						return vec4( vec2( distToPos/sqrt(3.0) ), 0.1, 1.0 );
@@ -445,40 +451,76 @@ animate();
 
 
 
-// ------------------------------------------------------------------------
+function getUrlByCurentCamAndGui(gui, camera, controls) {
+	const data = {
+		//gui
+		g: gui.save(),
+		//camera matrix
+		cm: Base64.Uint8ToBase64(new Uint8Array( new Float32Array( camera.matrix.clone().transpose().elements ).buffer )),
+		//distance to target
+		dt: camera.position.distanceTo( controls.target ),
+	}
+
+	if ( camera.zoom != undefined && camera.zoom != 1 ) {
+		// zoom
+		data.z = camera.zoom
+	}
+
+	return window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
+}
+
+function setCamAndGuiBySearch(gui, camera, controls, search = window.location.search) {
+	if ( search?.length <= 1 ) { return; }
+
+	const data = JSON.parse(atob( search.slice(1) ))
+	console.log('state from window.location.search\n',data)
+
+	gui.load( data.g )
+
+	const matrix = new THREE.Matrix4( ...new Float32Array( Base64.Base64ToUint8( data.cm ).buffer ) )
+	matrix.decompose( camera.position, camera.quaternion, camera.scale )
+	controls.target = new THREE.Vector3(0,0,-data.dt).applyMatrix4(matrix)
+
+	if (data.z) {
+		camera.zoom = data.z
+		camera.updateProjectionMatrix()
+	}
+}
+
+// gui start ------------------------------------------------------------------------
 const gui = new GUI()
 
-function attachUniformValueToProps(props, name, linkToVal) {
-	// linkToVal is material.uniforms.u_val NOT material.uniforms.u_val.value !!!
-	
+attachUniformValueToProps(gui, 'surfaseEqual', box.material.uniforms.u_val, [0, 1, 0.0001])
 
+attachUniformValueToProps(gui, 'u_Ni', box.material.uniforms.u_Ni, [1, 200, 1])
+attachUniformValueToProps(gui, 'u_Nj', box.material.uniforms.u_Nj, [0, 50 , 1])
 
-}
+attachUniformValueToProps(gui, 'u_step' , box.material.uniforms.u_step , [1, 100, 0.1])
+attachUniformValueToProps(gui, 'u_limit', box.material.uniforms.u_limit, [0, 1, 0.001])
 
-const props = {
-	get surfaseEqual() {return box.material.uniforms.u_val.value},
-	set surfaseEqual(v) {      box.material.uniforms.u_val.value = v},
+attachUniformValueToProps(gui, 'u_fillType', box.material.uniforms.u_fillType, [0, 8, 1])
 
-	get u_Ni() {return box.material.uniforms.u_Ni.value},
-	set u_Ni(v) {      box.material.uniforms.u_Ni.value = v},
+const planeFolder = gui.addFolder('plane to check gl_FragCoord.z')
 
-	get u_Nj() {return box.material.uniforms.u_Nj.value},
-	set u_Nj(v) {      box.material.uniforms.u_Nj.value = v},
-
-	get u_fillType() {return box.material.uniforms.u_fillType.value},
-	set u_fillType(v) {      box.material.uniforms.u_fillType.value = v},
-
-	// get u_check() {return plane1.material.uniforms.u_check.value},
-	// set u_check(v) {      plane1.material.uniforms.u_check.value = v},
-
+addVisibilityChangerToGui(planeFolder, 'show plane', plane)
+planeFolder.add({
 	get 'plane pos'() {return plane.position.x},
-	set 'plane pos'(v) {return plane.position.set(v,v,v)},
-}
+	set 'plane pos'(v) {      plane.position.set(v,v,v)}	
+},      'plane pos', 0, 1, 0.001)
 
+const controlsFolder = gui.addFolder('controls')
 
-gui.add( props, 'surfaseEqual', 0, 1, 0.0001)
-gui.add( props, 'u_Ni', 1, 200, 1)
-gui.add( props, 'u_Nj', 0, 50, 1)
-gui.add( props, 'u_fillType', 0, 8, 1)
-gui.add( props, 'plane pos', 0, 1, 0.001)
-// gui.add( props, 'u_check', -10, 10, 0.001)
+//controls.enabled
+controlsFolder.add({
+	get 'on/off'() {return controls.enabled},
+	set 'on/off'(v) {      controls.enabled = v}	
+},      'on/off')
+
+controlsFolder.add({
+	get 'rotate'() {return controls.enableRotate},
+	set 'rotate'(v) {      controls.enableRotate = v}	
+},      'rotate')
+
+// gui end ------------------------------------------------------------------------
+
+setCamAndGuiBySearch(gui, camera, controls, window.location.search)
