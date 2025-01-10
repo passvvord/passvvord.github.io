@@ -483,12 +483,27 @@ controlsFolder.add({
 	set 'rotate'(v) {      controls.enableRotate = v}	
 },      'rotate')
 
-let ctrl = gui.add({
+const copyUrlController = gui.add({
 	'copy url on this state'() {
-		navigator.clipboard.writeText(
-			guiHelpers.getUrlByGuiCameraOrbitControls(gui, camera, controls)
-		)
-		console.log(this)
+		try {
+			navigator.clipboard.writeText(
+				guiHelpers.getUrlByGuiCameraOrbitControls(gui, camera, controls)
+			)
+			copyUrlController.name('copied')
+		} catch(e) {
+			console.log(e);
+			copyUrlController.name('error'+e)
+		}
+
+		if (this.interval != undefined) {
+			clearTimeout(this.interval)
+			this.interval = undefined;
+		}
+		this.interval = setTimeout(()=>{
+			copyUrlController.name( copyUrlController.property );
+			//delete this.interval;
+			this.interval = undefined;
+		}, 2000)
 	}
 },  'copy url on this state')
 
