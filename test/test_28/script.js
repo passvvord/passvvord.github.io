@@ -449,60 +449,22 @@ function animate() {
 };
 animate();
 
-
-
-function getUrlByCurentCamAndGui(gui, camera, controls) {
-	const data = {
-		//gui
-		g: gui.save(),
-		//camera matrix
-		cm: Base64.Uint8ToBase64(new Uint8Array( new Float32Array( camera.matrix.clone().transpose().elements ).buffer )),
-		//distance to target
-		dt: camera.position.distanceTo( controls.target ),
-	}
-
-	if ( camera.zoom != undefined && camera.zoom != 1 ) {
-		// zoom
-		data.z = camera.zoom
-	}
-
-	return window.location.origin + window.location.pathname + '?' + btoa(JSON.stringify(data))
-}
-
-function setCamAndGuiBySearch(gui, camera, controls, search = window.location.search) {
-	if ( search?.length <= 1 ) { return; }
-
-	const data = JSON.parse(atob( search.slice(1) ))
-	console.log('state from window.location.search\n',data)
-
-	gui.load( data.g )
-
-	const matrix = new THREE.Matrix4( ...new Float32Array( Base64.Base64ToUint8( data.cm ).buffer ) )
-	matrix.decompose( camera.position, camera.quaternion, camera.scale )
-	controls.target = new THREE.Vector3(0,0,-data.dt).applyMatrix4(matrix)
-
-	if (data.z) {
-		camera.zoom = data.z
-		camera.updateProjectionMatrix()
-	}
-}
-
 // gui start ------------------------------------------------------------------------
 const gui = new GUI()
 
-attachUniformValueToProps(gui, 'surfaseEqual', box.material.uniforms.u_val, [0, 1, 0.0001])
+guiHelpers.attachUniformValueToProps(gui, 'surfaseEqual', box.material.uniforms.u_val, [0, 1, 0.0001])
 
-attachUniformValueToProps(gui, 'u_Ni', box.material.uniforms.u_Ni, [1, 200, 1])
-attachUniformValueToProps(gui, 'u_Nj', box.material.uniforms.u_Nj, [0, 50 , 1])
+guiHelpers.attachUniformValueToProps(gui, 'u_Ni', box.material.uniforms.u_Ni, [1, 200, 1])
+guiHelpers.attachUniformValueToProps(gui, 'u_Nj', box.material.uniforms.u_Nj, [0, 50 , 1])
 
-attachUniformValueToProps(gui, 'u_step' , box.material.uniforms.u_step , [1, 100, 0.1])
-attachUniformValueToProps(gui, 'u_limit', box.material.uniforms.u_limit, [0, 1, 0.001])
+guiHelpers.attachUniformValueToProps(gui, 'u_step' , box.material.uniforms.u_step , [1, 100, 0.1])
+guiHelpers.attachUniformValueToProps(gui, 'u_limit', box.material.uniforms.u_limit, [0, 1, 0.001])
 
-attachUniformValueToProps(gui, 'u_fillType', box.material.uniforms.u_fillType, [0, 8, 1])
+guiHelpers.attachUniformValueToProps(gui, 'u_fillType', box.material.uniforms.u_fillType, [0, 8, 1])
 
 const planeFolder = gui.addFolder('plane to check gl_FragCoord.z')
 
-addVisibilityChangerToGui(planeFolder, 'show plane', plane)
+guiHelpers.addVisibilityChangerToGui(planeFolder, 'show plane', plane)
 planeFolder.add({
 	get 'plane pos'() {return plane.position.x},
 	set 'plane pos'(v) {      plane.position.set(v,v,v)}	
@@ -521,6 +483,15 @@ controlsFolder.add({
 	set 'rotate'(v) {      controls.enableRotate = v}	
 },      'rotate')
 
+let ctrl = gui.add({
+	'copy url on this state'() {
+		navigator.clipboard.writeText(
+			guiHelpers.getUrlByGuiCameraOrbitControls(gui, camera, controls)
+		)
+		console.log(this)
+	}
+},  'copy url on this state')
+
 // gui end ------------------------------------------------------------------------
 
-setCamAndGuiBySearch(gui, camera, controls, window.location.search)
+guiHelpers.setGuiCameraOrbitControlsBySearch(gui, camera, controls, window.location.search)

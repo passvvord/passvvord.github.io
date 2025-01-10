@@ -54,8 +54,9 @@
 				window.addWireFrame = m.addWireFrame;
 			}),
 			import('../export/lilguiTHREEhelpers.js').then(m=>{
-				window.attachUniformValueToProps = m.attachUniformValueToProps;
-				window.addVisibilityChangerToGui = m.addVisibilityChangerToGui;
+				window.guiHelpers = m
+				// window.attachUniformValueToProps = m.attachUniformValueToProps;
+				// window.addVisibilityChangerToGui = m.addVisibilityChangerToGui;
 			}),
 
 			import('../export/Base64.js').then(m=>{window.Base64 = m.Base64}),
