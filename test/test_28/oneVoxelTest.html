@@ -59,7 +59,10 @@
 				// window.addVisibilityChangerToGui = m.addVisibilityChangerToGui;
 			}),
 
-			import('../export/Base64.js').then(m=>{window.Base64 = m.Base64}),
+			import('../export/Base64.js').then(m=>{
+				window.Base64 = m.Base64;
+				window.Base64module = m;
+			}),
 		]).then(()=>{
 			window.initTHREEprintMethods()
 			loadScriptWhenThisDOMloaded('script.js')
