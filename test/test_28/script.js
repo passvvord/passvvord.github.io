@@ -510,3 +510,9 @@ const copyUrlController = gui.add({
 // gui end ------------------------------------------------------------------------
 
 guiHelpers.setGuiCameraOrbitControlsBySearch(gui, camera, controls, window.location.search)
+
+
+// OrbitControls.prototype.upVectorChanged = function() {
+// 	this._quat = new THREE.Quaternion().setFromUnitVectors( this.object.up, new THREE.Vector3( 0, 1, 0 ) );
+// 	this._quatInverse = this._quat.clone().invert();
+// }
