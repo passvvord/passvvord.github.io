@@ -4,66 +4,48 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Document</title>
-</head>
-<body>
 
-	 <script type="importmap">
-	{
-		"imports": {
-			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
-			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
-		}
-	}
-	</script>
-<!-- 	<script type="importmap">
-	{
-		"imports": {
-			"three": "./v0.170.0/build/three.module.js",
-			"three/addons/": "./v0.170.0/examples/jsm/"
-		}
-	}
-	</script> -->
+	<script type="text/javascript" src="../export/syncImport.js"></script>
 	<script type="text/javascript">
-		function loadScript(name, defer = false, async = false) {
-			const script = document.createElement('script')
-			script.defer = defer
-			script.async = async
-			script.src = name
-			document.body.appendChild(script)
-		}
+		addImportMap(
 
-		function loadScriptWhenThisDOMloaded(name) {
-			if (document.readyState == 'loading') {
-				document.addEventListener('DOMContentLoaded', ()=>{
-					loadScript(name)
-				})
-			} else { // document.readyState == 'interactive' || document.readyState == 'complete'
-				loadScript(name)
-			}
-		}
+			'../modules/importmaps/three@v0.170.0local.json' // local
+			// or
+			// ,{
+			// 	"three": "../modules/v0.170.0/build/three.module.js",
+			// 	"three/addons/": "../modules/v0.170.0/examples/jsm/"
+			// }
+			,{'myExport/': '../export/'} // local
 
-		Promise.all([
+			// ,'../modules/importmaps/three@v0.170.0global.json' // global
+			// or
+			// ,{
+			// 	"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			// 	"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+			// }			
+			// ,{'myExport/': 'https://passvvord.github.io/test/export/'} // global
+
+		).then(()=>Promise.all([
 			import('three').then(m=>{window.THREE = m}),
 			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
 			// import('three/addons/controls/TransformControls.js').then(m=>{window.TransformControls = m.TransformControls}),
 			import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
 
-			import('../export/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
-			import('../export/addTHREEwireOrBox.js').then(m=>{
+			import('myExport/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
+			import('myExport/addTHREEwireOrBox.js').then(m=>{
 				window.addBoundingBox = m.addBoundingBox;
 				window.addWireFrame = m.addWireFrame;
 			}),
-			import('../export/lilguiTHREEhelpers.js').then(m=>{
+			import('myExport/lilguiTHREEhelpers.js').then(m=>{
 				window.guiHelpers = m
 				// window.attachUniformValueToProps = m.attachUniformValueToProps;
 				// window.addVisibilityChangerToGui = m.addVisibilityChangerToGui;
 			}),
-
-			import('../export/Base64.js').then(m=>{
+			import('myExport/Base64.js').then(m=>{
 				window.Base64 = m.Base64;
 				window.Base64module = m;
 			}),
-		]).then(()=>{
+		])).then(()=>{
 			window.initTHREEprintMethods()
 			window.Base64module.test()
 
@@ -76,6 +58,8 @@
 /*			overflow: hidden;*/
 		}
 	</style>
+</head>
+<body>
 	
 </body>
 </html>
