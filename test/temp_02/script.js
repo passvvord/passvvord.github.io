@@ -113,6 +113,8 @@ const mesh4 = new THREE.Mesh(
 	,new THREE.MeshBasicMaterial({color: 0xff_ff_ff})
 )
 mesh4.position.set(0, 1,2)
+// mesh4.renderOrder = 1;
+// mesh4.material.depthTest = false
 
 
 for (mesh of [specialMesh,mesh1,mesh2,mesh3,mesh4]) {

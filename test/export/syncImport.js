@@ -47,14 +47,16 @@ function addImportMap(...srcOrObj) {
 				})
 			)).then(r=>{
 				const importMapAsObj = srcOrObj.filter(s=>s instanceof Object).map(a=>{
-					console.log(`added importmap ${a}`)
+					console.log(`added importmap \n${ JSON.stringify(a,'','\t') }`)
 					return {imports: a}
 				})
 				const importmap = r.concat(importMapAsObj).reduce((ac,a)=>{
 					if ( a?.imports ) { Object.assign(ac.imports, a.imports) }
 					return ac
 				}, {imports:{}} )
-				resolve( addImportMapByText( JSON.stringify(importmap,'','\t') ) )
+				const importmapStr = JSON.stringify(importmap,'','\t')
+				console.log(`combined importmap: \n${importmapStr}`)
+				resolve( addImportMapByText( importmapStr ) )
 			})
 		})
 	} else {

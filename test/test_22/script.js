@@ -119,6 +119,9 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 		// 	}
 		// }
 
+		vec3 pow2(vec3 a) { return a*a; }
+		float pow2(float a) { return a*a; }
+
 		const highp float PI = 3.141592653589793;
 		vec3 getColor(sampler2D tex, vec2 pos, vec3 col0, vec3 col1) {
 
@@ -152,8 +155,11 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 					// highp float h = (xComponent-boundVal)*(yComponent-boundVal);
 
 
-					float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow( (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0, 1.6455) : 0.0;
-					float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow( (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0, 1.6455) : 0.0;
+					float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2(pow2( pow2( (pos.x-newPos.x)/limiter2.x ) - 1.0 )) : 0.0;
+					float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2(pow2( pow2( (pos.y-newPos.y)/limiter2.y ) - 1.0 )) : 0.0;
+
+					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow( (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0, 1.6455) : 0.0;
+					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow( (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0, 1.6455) : 0.0;
 
 					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0 : 0.0;
 					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0 : 0.0;
@@ -384,6 +390,7 @@ textureFolder.add( props, 'test texture', {
 	'hi res font 2936x2048px'                                : 'testTex.png',
 	'random yellow lines on blue background 64x64px'         : 'testTex1.png',
 	'blue circle and some lines on yellow background 32x16px': 'testTex2.png',
+	'font example 8x12px'                                    :'fontExampleColor.png',
 }).onChange(fname => { texture.loadTex(fname) })
 textureFolder.add( props, 'texture width (px)', 2, 100, 1)
 textureFolder.add( props, 'texture height (px)', 2, 100, 1)
