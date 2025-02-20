@@ -15,7 +15,6 @@
 		})
 
 		addImportMap(
-
 			'../modules/importmaps/three@v0.170.0local.json' // local
 			// or
 			// ,{
@@ -31,38 +30,20 @@
 			// 	"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
 			// }			
 			// ,{'myExport/': 'https://passvvord.github.io/test/export/'} // global
-
 		).then(()=>Promise.all(
-		// [
-		// 	import('three').then(m=>{window.THREE = m}),
-		// 	import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
-		// 	// import('three/addons/controls/TransformControls.js').then(m=>{window.TransformControls = m.TransformControls}),
-		// 	import('three/addons/libs/lil-gui.module.min.js').then(m=>{window.GUI = m.GUI}),
-
-		// 	import('myExport/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
-		// 	import('myExport/addTHREEwireOrBox.js').then(m=>{
-		// 		window.addBoundingBox = m.addBoundingBox;
-		// 		window.addWireFrame = m.addWireFrame;
-		// 	}),
-		// 	import('myExport/lilguiTHREEhelpers.js').then(m=>{
-		// 		window.guiHelpers = m
-		// 		// window.attachUniformValueToProps = m.attachUniformValueToProps;
-		// 		// window.addVisibilityChangerToGui = m.addVisibilityChangerToGui;
-		// 	}),
-		// 	import('myExport/Base64.js').then(m=>{
-		// 		window.Base64 = m.Base64;
-		// 		window.Base64module = m;
-		// 	}),
-		// ]
 			[
 				['three', m=>{window.THREE = m}],
 				['three/addons/controls/OrbitControls.js', m=>{window.OrbitControls = m.OrbitControls}],
+				['three/addons/controls/TransformControls.js',m=>{window.TransformControls = m.TransformControls}],
 				['three/addons/libs/lil-gui.module.min.js', m=>{window.GUI = m.GUI}],
 
 				['myExport/printTHREE.js',m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}],
 				['myExport/addTHREEwireOrBox.js',m=>{
 					window.addBoundingBox = m.addBoundingBox;
 					window.addWireFrame = m.addWireFrame;
+				}],
+				['myExport/SurfaceByFunction.js',m=>{
+					window.SurfaceByFunction = m.SurfaceByFunction
 				}],
 				['myExport/lilguiTHREEhelpers.js',m=>{
 					window.guiHelpers = m
@@ -72,7 +53,7 @@
 					window.Base64module = m;
 				}],
 			].map(a=>{
-				console.log( datef.format(Date.now()), 'start importing', a[0] )
+				//console.log( datef.format(Date.now()), 'start importing', a[0] )
 				console.time( a[0] )
 				return import(a[0]).then(b=>{
 					a[1](b);
@@ -81,7 +62,6 @@
 			}) 
 		)).then(()=>{
 			window.initTHREEprintMethods()
-			window.Base64module.test()
 
 			loadScriptWhenThisDOMloaded('script.js')
 		})
