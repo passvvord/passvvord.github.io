@@ -1,5 +1,3 @@
-// const testFunctionGLSLready = '0.5*(pow(x,4.) + pow(y,4.) + pow(z,4.)) - 8.(pow(x,2.) + pow(y,2.) + pow(z,2.)) + 60. = 0'
-
 function getParamsToOrtoGraficCamera(perspectiveCamera, distance) {
 	const size = perspectiveCamera.getViewSize(distance, new THREE.Vector2())
 	return {
@@ -18,10 +16,11 @@ const perspectiveCamera = new THREE.PerspectiveCamera( 75, window.innerWidth / w
 const camera = new THREE.OrthographicCamera( ...Object.values( getParamsToOrtoGraficCamera(perspectiveCamera,15) ) )
 camera.near = -1000
 camera.position.set(0,0,-15)
+camera.up.set(0,0,1);
 
 const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+// renderer.setPixelRatio(window.devicePixelRatio);
 const canvas = document.body.appendChild( renderer.domElement )
 
 const controls = new OrbitControls( camera, renderer.domElement );
@@ -30,377 +29,32 @@ const controls = new OrbitControls( camera, renderer.domElement );
 
 const scene = new THREE.Scene();
 
-const renderByFunc = new THREE.ShaderMaterial({
-	uniforms: {
-		// u_val: {value: 0.5},
-		// u_lookVec: { get value() {return new THREE.Vector3().subVectors( box.position, camera.position ).normalize()} },
-		u_lookVec: { get value() {
-			return new THREE.Vector3(0,0,-1).applyMatrix4(new THREE.Matrix4().extractRotation(camera.matrix))
-		} },
 
-		// u_windowSpaceZcenter: {	get value() {
-		// 		return box.geometry.boundingSphere.center.clone()
-		// 			.applyMatrix4( box.modelViewMatrix )
-		// 			.applyMatrix4( camera.projectionMatrix )
-		// 			.z*0.5+0.5
-		// } },
-		// u_windowSpaceZnear: { get value() {
-		// 	return box.geometry.boundingSphere.center.clone()
-		// 			.applyMatrix4( box.modelViewMatrix )
-		// 			.applyMatrix4( camera.projectionMatrix )
-		// 			.z*0.5+0.5
-		// 			-box.geometry.boundingSphere.radius/(camera.far - camera.near)
-		// } },
-		// u_windowSpaceZfar: { get value() {
-		// 	return box.geometry.boundingSphere.center.clone()
-		// 			.applyMatrix4( box.modelViewMatrix )
-		// 			.applyMatrix4( camera.projectionMatrix )
-		// 			.z*0.5+0.5
-		// 			+box.geometry.boundingSphere.radius/(camera.far - camera.near)
-		// } },
-
-		u_Ni: {value: 100},
-		u_Nj: {value: 10},
-		u_fillType: {value: 4},
-
-		u_projectionMatrix: { get value() {return camera.projectionMatrix} },
-		u_modelViewMatrix: { get value() {return box.modelViewMatrix} },
-
-		u_step: {value: 5},
-		u_limit: {value: 0.1},
-
-		u_min: { get value() {return box.geometry.boundingBox.min} },
-		u_max: { get value() {return box.geometry.boundingBox.max} },
-	},
-	vertexShader:`
-		varying vec3 vPosition;
-		// varying vec3 vNormal;
-
-		void main() {
-			vPosition = position;
-			// vNormal = normal;
-			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-		}`,
-	fragmentShader:`
-		varying vec3 vPosition;
-		// varying vec3 vNormal;
-
-		uniform vec3 u_lookVec;
-		// uniform float u_val;
-
-		uniform int u_Ni;
-		uniform int u_Nj;
-		uniform int u_fillType;
-
-		uniform mat4 u_projectionMatrix;
-		uniform mat4 u_modelViewMatrix;
-
-		// uniform float u_windowSpaceZnear;
-		// uniform float u_windowSpaceZfar;
-
-		uniform float u_step;
-		uniform float u_limit;
-
-		uniform vec3 u_min;
-		uniform vec3 u_max;
-
-		const float precisionFix = 0.00001;
-
-		float distanceFromDotToSurface(vec3 A, vec3 B, vec3 C) {
-			// distance:
-			// from surface: A.x*(x-B.x)+A.y*(y-B.y)+A.z*(z-B.z) = 0 OR dot(A, vec3(x,y,z) - B) = 0
-			// to dot: C
-
-			return abs(dot(A, B-C))/length(A);
-		} 
-
-		float tValWhereLineCrossSurface(vec3 A, vec3 B, vec3 C, vec3 D) {
-			// surface: dot(A, vec3(x,y,z) - B) = 0 (OR A.x*(x-B.x)+A.y*(y-B.y)+A.z*(z-B.z) = 0)
-			// line: vec3(x,y,z) = C*t + D
-
-			return dot(A, B-D)/dot(A,C);
-		}
-
-		int imod(int x, int y) { return x - y*(x/y); }
-
-		// float RGBtoGray(vec4 C) { return 0.299*C.r + 0.587*C.g + 0.114*C.b; }
-
-		const float PI = 3.1415926535897932384626433832795;
-
-		vec4 HrVtoRGBA(float H, float V) { // H: angle in radians
-			H = mod(H,2.0*PI);
-			return vec4(
-				 min(  max(     abs(H-    PI    )*3.0/PI-1.0 , 0.0 ) , 1.0  )*V
-				,min(  max( 2.0-abs(H-2.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
-				,min(  max( 2.0-abs(H-4.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
-				,1.0
-			);
-		}
-
-		
-
-
-		vec3 pow2(vec3 a) { return a*a; }           // faster than pow(float, float)
-		vec3 pow3(vec3 a) { return a*a*a; }         // faster than pow(float, float)
-		vec3 pow4(vec3 a) { return pow2(pow2(a)); } // faster than pow(float, float)
-		float multxyz(vec3 a) { return a.x*a.y*a.z; }
-
-		vec3 pow2_4(vec3 a) { return (0.48274*abs(a) + 0.52165)*pow2(a); } // works good only from -1 to 1 but still faster than pow()
-
-		// float f0dx(float x) {
-		// 	// expanded: 16x^4 - 8x^2 + 1
-		// 	return pow2( 4.0*pow2(x) - 1.0 );
-		// }
-
-		// float f1dx(float x) {
-		// 	// expanded: 64x^3 - 16x
-		// 	return (4.0*pow2(x) - 1.0)*16.0*x;
-		// }
-
-		// vec3 f0dxyz(vec3 xyz) {
-		// 	// expanded: 16x^4 - 8x^2 + 1
-		// 	return pow2( 4.0*pow2(xyz) - 1.0 );
-		// }
-
-		// vec3 f1dxyz(vec3 xyz) {
-		// 	// expanded: 64x^3 - 16x
-		// 	return (4.0*pow2(xyz) - 1.0)*16.0*xyz;
-		// }
-
-		vec3 f0dxyz(vec3 xyz) {
-			// (4x^2 - 1)^4 = 256x^8 - 256x^6 + 96x^4 + 1
-			return pow4(4.0*pow2(xyz) - 1.0);
-		}
-
-		vec3 f1dxyz(vec3 xyz) {
-			// (4x^2 - 1)^4 d/dx = 32x(4x^2 - 1)^3
-			// expanded: 2048x^7 - 1536x^5 + 384x^3 - 32x
-			return pow3(4.0*pow2(xyz) - 1.0)*32.0*xyz;
-		}
-
-		vec3 getNormal(vec3 xyz) {
-			vec3 f0 = f0dxyz(xyz);
-			vec3 f1 = f1dxyz(xyz);
-
-			return -normalize(vec3(
-				 f1.x*f0.y*f0.z
-				,f0.x*f1.y*f0.z
-				,f0.x*f0.y*f1.z
-			));
-		}
-
-		float fff(vec3 a, vec3 b, float t) {
-			// line:
-			// vec3(x,y,z) = a*t + b 
-			// crosses surface:
-			// (4*vec3(x,y,z)^2 - 1)^2 = constant
-			return multxyz( pow4(4.0 * pow2(a * t + b) - 1.0) );
-		}
-
-
-		vec3 linesByStepsAndLimit(vec3 value ,float steps, float limit) {
-			return vec3(
-				 mod(value.x + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-				,mod(value.y + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-				,mod(value.z + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-			);
-		}
-
-		vec3 linesByStepsAndLimit(vec3 value ,vec3 steps, vec3 limit) {
-			return vec3( lessThan( mod(value + limit/(2.0*steps), 1.0/steps)*steps , limit ) );
-		}
-
-		vec3 gradientBySteps(vec3 value ,float steps) {
-			return mod(value, 1.0/steps)*steps;
-		}
-
-		vec3 gradientBySteps(vec3 value ,vec3 steps) {
-			return mod(value, 1.0/steps)*steps;
-		}
-
-
-		// float fdxfdyfdz
-
-		bool inBounds(vec3 pos, vec3 min, vec3 max) {
-			return pos.x >= min.x && pos.y >= min.y && pos.z >= min.z && pos.x <= max.x && pos.y <= max.y && pos.z <= max.z;
-		}
-
-		// bool inBoundsv1(vec3 pos) {
-		// 	return all(greaterThanEqual(pos,u_min)) && all(lessThanEqual(pos,u_max));
-		// }
-
-		float pow2(float a) { return a*a; }
-		float pow3(float a) { return a*a*a; }
-		float pow4(float a) { return pow2(pow2(a)); }
-
-		bool func(vec3 v) {
-			return 0.5*(pow4(v.x) + pow4(v.y) + pow4(v.z)) - 8.*(pow2(v.x) + pow2(v.y) + pow2(v.z)) + 60. < 0.;
-		}
-
-		vec3 gradFunc(vec3 v) {
-			return vec3(
-				 (2.0*pow2(v.x)-16.0)*v.x
-				,(2.0*pow2(v.y)-16.0)*v.y
-				,(2.0*pow2(v.z)-16.0)*v.z
-			);
-		}
-
-		// bool func(vec3 v) {
-		// 	return cos(v.x)*cos(v.y)*cos(v.z) > 0.5;
-		// }
-
-		// //grad(cos(x) cos(y) cos(z)) = (-cos(y) cos(z) sin(x), -cos(x) cos(z) sin(y), -cos(x) cos(y) sin(z))
-		// vec3 gradFunc(vec3 v) {
-		// 	return vec3(
-		// 		 -cos(v.y)*cos(v.z)*sin(v.x)
-		// 		,-cos(v.x)*cos(v.z)*sin(v.y)
-		// 		,-cos(v.x)*cos(v.y)*sin(v.z)
-		// 	);
-		// }
-
-		float windowSpaseZByPos(vec3 position) {
-			vec4 preClipSpace = u_projectionMatrix * u_modelViewMatrix * vec4(position, 1.0);
-			vec3 clipSpace = preClipSpace.xyz / preClipSpace.w;
-			float windowSpaseZ = clipSpace.z*0.5 + 0.5;
-			//gl_FragDepth = windowSpaseZ;
-
-			return windowSpaseZ;
-		}
-
-
-
-		vec3 adjustByFunc(in vec3 from, in vec3 to, in int iteratoins) {
-			// expected: func(from) == false && func(to) == true
-
-			vec3 valToTest;
-
-			for (int i = 0; i < iteratoins; i++) {
-				valToTest = (from + to)/2.0;
-
-				if ( func( valToTest ) ) {
-					to = valToTest;
-				} else {
-					from = valToTest;
-				}
-			}
-
-			return valToTest; // (from + to)/2.0			
-		}
-
-		void pushRay(in vec3 position, in vec3 direction, in vec3 min, in vec3 max, in int Ni, in int Nii, out vec3 endPosition, out vec3 normal) {
-
-			vec3 goBy = length(max - min)*normalize(direction);
-
-			float Ni_f = float(Ni);
-
-			vec3 lastPosition = position;
-
-			for (int i = 0; i <= Ni; i++) {
-				vec3 currentPosition = float(i)/Ni_f*goBy + position;
-
-				if ( !inBounds(currentPosition, min, max) ) {
-					//!inBounds(currentPosition, min-precisionFix, max+precisionFix)
-					discard;
-				}
-
-				if ( func(currentPosition) ) {
-
-					if (Nii > 0) {
-						endPosition = adjustByFunc(lastPosition, currentPosition, Nii);
-					} else {
-						endPosition = currentPosition;
-					}
-
-					normal = normalize(gradFunc(endPosition));
-
-					gl_FragDepth = windowSpaseZByPos(endPosition);
-
-					return;
-
-				}
-
-				lastPosition = currentPosition;
-			}
-
-			//discard;
-		}
-
-		vec4 colorByFillType(vec3 pos, vec3 normal, int fill, float steps, float limit) {
-
-			if (fill == 0) {
-				return vec4(
-					linesByStepsAndLimit(pos, steps, limit)
-					,1.0
-				);
-			} else if (fill == 1) {
-				return vec4(
-					gradientBySteps(pos, steps)
-					,1.0
-				);
-			} else if (fill == 2) {
-				return vec4(
-					normal*0.5 + 0.5
-					,1.0
-				);
-			} else if (fill == 3) {
-				return vec4(
-					linesByStepsAndLimit(normal*0.5 + 0.5, 20.0, limit)
-					,1.0
-				);
-			} else if (fill == 4) {
-				return vec4(
-					gradientBySteps(normal*0.5 + 0.5, 20.0)
-					,1.0
-				);
-			} else {
-				return vec4(1.0, 0.0, 0.0, 1.0);
-			}
-		}
-
-
-		void main() {
-			vec4 color = vec4(1.0);
-
-			vec3 endPos = vec3(2.5);
-			vec3 normal = vec3(1.0, 0.0, 0.0);
-
-			pushRay(vPosition, u_lookVec, u_min, u_max, u_Ni, u_Nj, endPos, normal);
-
-			color = colorByFillType(endPos, normal, u_fillType, u_step, u_limit);
-
-			gl_FragColor = color;
-		}`
-});
-
-const funcShader1 = `
-	float pow2(float a) { return a*a; }
-	float pow3(float a) { return a*a*a; }
-	float pow4(float a) { return pow2(pow2(a)); }
-
-	bool func(vec3 v) {
-		return 0.5*(pow4(v.x) + pow4(v.y) + pow4(v.z)) - 8.*(pow2(v.x) + pow2(v.y) + pow2(v.z)) + 60. < 0.;
-	}
-
-	vec3 gradFunc(vec3 v) {
-		return vec3(
-			 (2.0*pow2(v.x)-16.0)*v.x
-			,(2.0*pow2(v.y)-16.0)*v.y
-			,(2.0*pow2(v.z)-16.0)*v.z
-		);
-	}`
-
-const box = new SurfaceByFunction(
-	funcShader1, camera, new THREE.Vector3(-5,-5,-5), new THREE.Vector3(5,5,5)
-)
-box.material.uniforms.u_fillType.value = 2
-addBoundingBox(box)
-
-
-// const box1 = new THREE.Mesh(
-// 	 new THREE.BoxGeometry(4.5*2,4.5*2,4.5*2)
-// 	//,renderByFunc
+// const funcShader1 = `
+// 	float pow2(float a) { return a*a; }
+// 	float pow3(float a) { return a*a*a; }
+// 	float pow4(float a) { return pow2(pow2(a)); }
+
+// 	bool func(vec3 v) {
+// 		return 0.5*(pow4(v.x) + pow4(v.y) + pow4(v.z)) - 8.*(pow2(v.x) + pow2(v.y) + pow2(v.z)) + 60. < 0.;
+// 	}
+
+// 	vec3 gradFunc(vec3 v) {
+// 		return vec3(
+// 			 (2.0*pow2(v.x)-16.0)*v.x
+// 			,(2.0*pow2(v.y)-16.0)*v.y
+// 			,(2.0*pow2(v.z)-16.0)*v.z
+// 		);
+// 	}`
+
+// const box = new SurfaceByFunction(
+// 	funcShader1, camera, new THREE.Vector3(-5,-5,-5), new THREE.Vector3(5,5,5)
 // )
-// box1.material = SurfaceByFunction.getMaterial(`
+// box.material.uniforms.u_fillType.value = 2
+// addBoundingBox(box)
+
+
+// const box1 = new SurfaceByFunction(`
 // 	const float PI = 3.141592653589793;
 // 	const float scale = PI*1.0;
 
@@ -416,56 +70,223 @@ addBoundingBox(box)
 // 		);
 // 	}
 // 	`
-// 	,box1, camera
+// 	,camera
+// 	,new THREE.Vector3(-4.5,-4.5,-4.5), new THREE.Vector3(4.5,4.5,4.5)
 // )
 // addBoundingBox(box1)
 // box1.material.uniforms.u_fillType.value = 2
 
-const box2 = new SurfaceByFunction(
-	funcShader1, camera, new THREE.Vector3(-5,-5,-5), new THREE.Vector3(5,5,5)
+
+const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0, 0,0,0')=>`
+	const int pxAround[27] = int[27](${a});
+
+	float pow2(float a) { return a*a; }
+	float pow3(float a) { return a*a*a; }
+	float pow4(float a) { return pow2(pow2(a)); }
+
+	vec3 pow2(vec3 a) { return a*a; }
+	vec3 pow3(vec3 a) { return a*a*a; }
+	vec3 pow4(vec3 a) { return pow2(pow2(a)); }
+	float multxyz(vec3 a) { return a.x*a.y*a.z; }
+
+	// ------------------------------------- pow2
+	vec3 f0dxyz(vec3 xyz, float w) {
+		// expanded: 16x^4 - 8x^2 + 1
+		return all(lessThanEqual(abs(xyz),vec3(w/2.0))) ? pow2( 4.0*pow2(xyz/w) - 1.0 ) : vec3(0.0);
+	}
+
+	vec3 f1dxyz(vec3 xyz, float w) {
+		// expanded: 64x^3 - 16x
+		// return (4.0*pow2(xyz/w) - 1.0)*16.0*xyz/w;
+		return all(lessThanEqual(abs(xyz),vec3(w/2.0))) ? (4.0*pow2(xyz/w) - 1.0)*16.0*xyz/w : vec3(0.0);
+	}
+
+	// ------------------------------------- pow4
+	// vec3 f0dxyz(vec3 xyz, float w) {
+	// 	// (4x^2 - 1)^4 = 256x^8 - 256x^6 + 96x^4 + 1
+	// 	return all(lessThanEqual(abs(xyz),vec3(w/2.0))) ? pow4(4.0*pow2(xyz/w) - 1.0) : vec3(0.0);
+	// }
+
+	// vec3 f1dxyz(vec3 xyz, float w) {
+	// 	// (4x^2 - 1)^4 d/dx = 32x(4x^2 - 1)^3
+	// 	// expanded: 2048x^7 - 1536x^5 + 384x^3 - 32x
+	// 	return all(lessThanEqual(abs(xyz),vec3(w/2.0))) ? pow3(4.0*pow2(xyz/w) - 1.0)*32.0*xyz/w : vec3(0.0);
+	// }
+
+	bool func(vec3 v) {
+		const float w = 2.0;
+		const int wi = 1; // int(ceil(w/2));
+
+		float count[2] = float[2](0. ,0. );
+
+		const int delta = 2*wi+1;
+		for (int z = -wi; z <= wi; z++) {
+			for (int y = -wi; y <= wi; y++) {
+				for (int x = -wi; x <= wi; x++) {
+					int pos = ((z+wi)*delta + y+wi)*delta + x+wi;
+					
+					count[ pxAround[ pos ] ] += multxyz( f0dxyz( v - ( vec3(0.0) + vec3(ivec3(x,y,z)) ), w ) );
+					
+				}
+			}			
+		}
+		//multxyz( f0dxyz( v - ( vec3(0.0) + vec3(ivec3(0,0,0)) ), w ) ) + multxyz( f0dxyz( v - ( vec3(0.0) + vec3(ivec3(0,-1,0)) ), w ) ) > 0.01;
+		return count[1] - count[0] >= 0.0;
+	}
+
+	vec3 gradFunc(vec3 v) {
+		const float w = 2.0;
+		const int wi = 1; //int(ceil(w));
+
+		vec3 count[2] = vec3[2](vec3(0.0),vec3(0.0));
+
+		const int delta = 2*wi+1;
+		for (int z = -wi; z <= wi; z++) {
+			for (int y = -wi; y <= wi; y++) {
+				for (int x = -wi; x <= wi; x++) {
+					int pos = ((z+wi)*delta + y+wi)*delta + x+wi;
+
+					vec3 f0 = f0dxyz( v - ( vec3(0.0) + vec3(ivec3(x,y,z)) ), w );
+					vec3 f1 = f1dxyz( v - ( vec3(0.0) + vec3(ivec3(x,y,z)) ), w );
+					
+					count[ pxAround[ pos ] ] += vec3(
+						 f1.x*f0.y*f0.z
+						,f0.x*f1.y*f0.z
+						,f0.x*f0.y*f1.z
+					);
+					
+				}
+			}			
+		}
+
+		return -(count[1]-count[0]);//count[1];//;
+	}
+	`
+
+// const box2 = new SurfaceByFunction(
+// 	shaderByArr('1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0, 0,0,0')
+// 	,camera, new THREE.Vector3(-0.5,-0.5,-0.5), new THREE.Vector3(0.5,0.5,0.5)
+// )
+// box2.material.uniforms.u_fillType.value = 2
+// addBoundingBox(box2)
+// box2.position.set(0,0,0)
+
+
+
+const pixels = Uint8Array.of(
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
+	0,1,1,1,0,
+	0,1,1,1,0,
+	0,1,1,1,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
+	0,0,1,0,0,
+	0,0,1,1,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,1,0,0,
+	0,0,1,0,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
 )
-box2.material.uniforms.u_fillType.value = 2
-addBoundingBox(box2)
-box2.position.set(4,0,0)
 
+function pxByPos(x,y,z) {
+	const pxPart = new Uint8Array(27)
 
+	for (let zi = -1; zi <=1; zi++) {
+		for (let yi = -1; yi <=1; yi++) {
+			for (let xi = -1; xi <=1; xi++) {
+				const globalPos = ((zi+z+2)*5 + yi+y+2)*5 + xi+x+2;
+				const localPos = ((zi+1)*3 + yi+1)*3 + xi+1;
 
+				// console.log(globalPos, '->' ,localPos)
 
-const mm = new THREE.Mesh(
-	 new THREE.BoxGeometry(10,10,10)
-	,new THREE.MeshBasicMaterial( { color: 0xff_ff_00 } )
-)
-addWireFrame(mm)
-
-scene.add( mm )
-
-
-let controlsArray = [] // need to make only one controls active at the same time
-controlsArray.push(controls)
-
-for (mesh of [box, box2, mm]) {
-	mesh.transformControls = new TransformControls( camera, renderer.domElement )
-	controlsArray.push(mesh.transformControls)
-
-	mesh.transformControls.addEventListener( 'dragging-changed', event=>{
-		controlsArray.forEach(control=>{
-			if (control != event.target) {
-				control.enabled = !event.value;
+				pxPart[localPos] = pixels[globalPos];
 			}
-		})
-	});
+		}
+	}
 
-	mesh.transformControls.attach( mesh )
-	scene.add( mesh.transformControls.getHelper() )
+	return pxPart;
 }
+
+
+
+const meshes = []// = new Array(27);
+
+for (let zi = -1; zi <=1; zi++) {
+	for (let yi = -1; yi <=1; yi++) {
+		for (let xi = -1; xi <=1; xi++) {
+			const arr = pxByPos(xi,yi,zi).join(',')
+
+			const mesh = new SurfaceByFunction(
+				shaderByArr(arr)
+				,camera, new THREE.Vector3(-0.5,-0.5,-0.5), new THREE.Vector3(0.5,0.5,0.5)
+			)
+			mesh.material.uniforms.u_fillType.value = 1
+			// addBoundingBox(mesh)
+			mesh.position.set(xi,yi,zi)
+
+
+
+			meshes.push(mesh)
+			scene.add(mesh)
+		}
+	}
+}
+
+
+
+// const mm = new THREE.Mesh(
+// 	 new THREE.BoxGeometry(10,10,10)
+// 	,new THREE.MeshBasicMaterial( { color: 0x10_10_00 } )
+// )
+// addWireFrame(mm)
+
+// scene.add( mm )
+
+
+// let controlsArray = [] // need to make only one controls active at the same time
+// controlsArray.push(controls)
+
+// for (mesh of [box, box1, box2]) {
+// 	mesh.transformControls = new TransformControls( camera, renderer.domElement )
+// 	controlsArray.push(mesh.transformControls)
+
+// 	mesh.transformControls.addEventListener( 'dragging-changed', event=>{
+// 		controlsArray.forEach(control=>{
+// 			if (control != event.target) {
+// 				control.enabled = !event.value;
+// 			}
+// 		})
+// 	});
+
+// 	mesh.transformControls.attach( mesh )
+// 	scene.add( mesh.transformControls.getHelper() )
+// }
 
 
 // box.visible = false
 scene.add(
-	 box
+	//  box
 	// ,box1
-	,box2
-	,new THREE.AxesHelper( 15 )
+	// box2
+	// ,
+	new THREE.AxesHelper( 15 )
 )
 
 function animate() {
@@ -477,16 +298,43 @@ function animate() {
 animate();
 
 
-// gui start ------------------------------------------------------------------------
+//gui start ------------------------------------------------------------------------
 const gui = new GUI()
 
-guiHelpers.attachUniformValueToProps(gui, 'u_Ni', box.material.uniforms.u_Ni, [1, 200, 1])
-guiHelpers.attachUniformValueToProps(gui, 'u_Nj', box.material.uniforms.u_Nj, [0, 50 , 1])
+// guiHelpers.attachUniformValueToProps(gui, 'u_Ni', box2.material.uniforms.u_Ni, [1, 200, 1])
 
-guiHelpers.attachUniformValueToProps(gui, 'u_step' , box.material.uniforms.u_step , [1, 100, 0.1])
-guiHelpers.attachUniformValueToProps(gui, 'u_limit', box.material.uniforms.u_limit, [0, 1, 0.001])
+gui.add({
+	get 'u_Ni'() {return meshes[0].material.uniforms.u_Ni.value},
+	set 'u_Ni'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_Ni.value = v }) }	
+},      'u_Ni',1, 500, 1)
 
-guiHelpers.attachUniformValueToProps(gui, 'u_fillType', box.material.uniforms.u_fillType, [0, 8, 1])
+gui.add({
+	get 'u_Nj'() {return meshes[0].material.uniforms.u_Nj.value},
+	set 'u_Nj'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_Nj.value = v }) }	
+},      'u_Nj',1, 20, 1)
+
+// guiHelpers.attachUniformValueToProps(gui, 'u_Nj', box2.material.uniforms.u_Nj, [0, 50 , 1])
+
+
+gui.add({
+	get 'u_step'() {return meshes[0].material.uniforms.u_step.value},
+	set 'u_step'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_step.value = v }) }	
+},      'u_step',1, 100, 0.1)
+
+gui.add({
+	get 'u_limit'() {return meshes[0].material.uniforms.u_limit.value},
+	set 'u_limit'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_limit.value = v }) }	
+},      'u_limit',0, 1, 0.001)
+
+// guiHelpers.attachUniformValueToProps(gui, 'u_step' , box2.material.uniforms.u_step , [1, 100, 0.1])
+// guiHelpers.attachUniformValueToProps(gui, 'u_limit', box2.material.uniforms.u_limit, [0, 1, 0.001])
+
+gui.add({
+	get 'u_fillType'() {return meshes[0].material.uniforms.u_fillType.value},
+	set 'u_fillType'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_fillType.value = v }) }	
+},      'u_fillType',0, 5, 1)
+
+// guiHelpers.attachUniformValueToProps(gui, 'u_fillType', box2.material.uniforms.u_fillType, [0, 8, 1])
 
 const controlsFolder = gui.addFolder('controls')
 

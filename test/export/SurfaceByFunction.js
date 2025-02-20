@@ -55,7 +55,7 @@ class SurfaceByFunction {
 
 				//u_matrixWorld: { get value() {return mesh.matrixWorld} },
 
-				u_step: {value: 5},
+				u_step: {value: 10},
 				u_limit: {value: 0.1},
 
 				u_min: {value: from},//{ get value() {return mesh.geometry.boundingBox.min} },
@@ -156,7 +156,7 @@ class SurfaceByFunction {
 					for (int i = 0; i <= Ni; i++) {
 						vec3 currentPosition = float(i)/Ni_f*goBy + position;
 
-						if ( !inBounds(currentPosition, min, max) ) {
+						if ( !inBounds(lastPosition, min, max) ) {
 							//!inBounds(currentPosition, min-precisionFix, max+precisionFix)
 							discard;
 						}
@@ -204,12 +204,24 @@ class SurfaceByFunction {
 						);
 					} else if (fill == 3) {
 						return vec4(
-							linesByStepsAndLimit(normal*0.5 + 0.5, 20.0, limit)
+							linesByStepsAndLimit(normal*0.5 + 0.5, steps, limit)
 							,1.0
 						);
 					} else if (fill == 4) {
 						return vec4(
-							gradientBySteps(normal*0.5 + 0.5, 20.0)
+							gradientBySteps(normal*0.5 + 0.5, steps)
+							,1.0
+						);
+					} else if (fill == 5) {
+						vec3 tv = linesByStepsAndLimit(pos, steps, limit);
+						return vec4(
+							max(max(tv.x,tv.y),tv.z) > 0. ? vec3(0.15) : vec3(0.9)
+							,1.0
+						);
+					} else if (fill == 6) {
+						vec3 tv = linesByStepsAndLimit(normal*0.5 + 0.5, steps, limit);
+						return vec4(
+							max(max(tv.x,tv.y),tv.z) > 0. ? vec3(0.15) : vec3(0.9)
 							,1.0
 						);
 					} else {
