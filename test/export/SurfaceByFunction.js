@@ -20,7 +20,8 @@ class SurfaceByFunction {
 			}`
 		,camera
 		,from = THREE.Vector3(0,0,0)
-		,to = THREE.Vector3(1,1,1)	
+		,to = THREE.Vector3(1,1,1)
+		,uniforms = {}
 	) {
 		if ( !(camera instanceof THREE.OrthographicCamera) ) {
 			console.warn('currently support only OrthographicCamera it will also work on PerspectiveCamera but will look not good')
@@ -61,6 +62,25 @@ class SurfaceByFunction {
 				u_min: {value: from},//{ get value() {return mesh.geometry.boundingBox.min} },
 				u_max: {value: to  },//{ get value() {return mesh.geometry.boundingBox.max} },
 
+				// u_windowSpaceZcenter: {	get value() {
+				// 		return mesh.geometry.boundingSphere.center.clone()
+				// 			.applyMatrix4( mesh.modelViewMatrix )
+				// 			.applyMatrix4( camera.projectionMatrix )
+				// 			.z*0.5+0.5
+				// } },
+				u_windowSpaceZnear: { get value() {
+					return mesh.geometry.boundingSphere.center.clone()
+							.applyMatrix4( mesh.modelViewMatrix )
+							.applyMatrix4( camera.projectionMatrix )
+							.z*0.5+0.5
+							-mesh.geometry.boundingSphere.radius/(camera.far - camera.near)
+				} },
+				u_windowSpaceZdelta: { get value() {
+					return mesh.geometry.boundingSphere.radius*2/(camera.far - camera.near)
+				} },
+
+				u_localZmin: {value: 0},
+				u_localZmax: {value: 1},
 			},
 			vertexShader:`
 				varying vec3 vPosition;
@@ -88,18 +108,32 @@ class SurfaceByFunction {
 				uniform vec3 u_min;
 				uniform vec3 u_max;
 
+				uniform float u_windowSpaceZnear;
+				uniform float u_windowSpaceZdelta;
+
+				uniform float u_localZmin;
+				uniform float u_localZmax;
+
 				//const float precisionFix = 0.00001;
 
+				bvec3 v3lessThan(vec3 a, vec3 b) {
+					return bvec3(a.x < b.x, a.y < b.y, a.z < b.z);
+				}
+
+				float linesByStepsAndLimit(float value ,float steps, float limit) {
+					return float( mod(value + limit/(2.0*steps), 1.0/steps)*steps < limit );
+				}
+
 				vec3 linesByStepsAndLimit(vec3 value ,float steps, float limit) {
-					return vec3(
-						 mod(value.x + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-						,mod(value.y + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-						,mod(value.z + limit/(2.0*steps), 1.0/steps)*steps < limit ? 1.0 : 0.0
-					);
+					return vec3( v3lessThan( mod(value + limit/(2.0*steps), 1.0/steps)*steps , vec3(limit) ) );
 				}
 
 				vec3 linesByStepsAndLimit(vec3 value ,vec3 steps, vec3 limit) {
 					return vec3( lessThan( mod(value + limit/(2.0*steps), 1.0/steps)*steps , limit ) );
+				}
+
+				float gradientBySteps(float value ,float steps) {
+					return mod(value, 1.0/steps)*steps;
 				}
 
 				vec3 gradientBySteps(vec3 value ,float steps) {
@@ -143,7 +177,7 @@ class SurfaceByFunction {
 					return valToTest; // (from + to)/2.0			
 				}
 
-				void pushRay(in vec3 position, in vec3 direction, in vec3 min, in vec3 max, in int Ni, in int Nii, out vec3 endPosition, out vec3 normal) {
+				void pushRay(in vec3 position, in vec3 direction, in vec3 min, in vec3 max, in int Ni, in int Nii, out vec3 endPosition, out vec3 normal, out float windowZPosition) {
 
 					vec3 goBy = normalize(direction)*length(max - min);
 
@@ -173,7 +207,9 @@ class SurfaceByFunction {
 
 							// vec3 localEndPos = (endPosition - min)/(max - min);
 							// vec4 worldPos = u_matrixWorld*vec4(endPosition, 1.0);
-							gl_FragDepth = windowSpaseZByPos( endPosition ); //worldPos.xyz ); // worldPos.xyz
+
+							windowZPosition = windowSpaseZByPos( endPosition ); //worldPos.xyz ); // worldPos.xyz
+							gl_FragDepth = windowZPosition;
 
 							return;
 
@@ -185,7 +221,23 @@ class SurfaceByFunction {
 					discard;
 				}
 
-				vec4 colorByFillType(vec3 pos, vec3 normal, int fill, float steps, float limit) {
+				// float RGBtoGray(vec4 C) { return 0.299*C.r + 0.587*C.g + 0.114*C.b; }
+
+				// const float PI = 3.1415926535897932384626433832795;
+				// vec4 HrVtoRGBA(float H, float V) { // H: angle in radians
+				// 	H = mod(H,2.0*PI);
+				// 	return vec4(
+				// 		 min(  max(     abs(H-    PI    )*3.0/PI-1.0 , 0.0 ) , 1.0  )*V
+				// 		,min(  max( 2.0-abs(H-2.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+				// 		,min(  max( 2.0-abs(H-4.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+				// 		,1.0
+				// 	);
+				// }
+
+				const vec3 darkGray = vec3(0.15);
+				const vec3 darkWhite = vec3(0.9);
+				vec4 colorByFillType(vec3 pos, vec3 normal, float zPos, int fill, float steps, float limit) {
+					
 
 					if (fill == 0) {
 						return vec4(
@@ -215,13 +267,45 @@ class SurfaceByFunction {
 					} else if (fill == 5) {
 						vec3 tv = linesByStepsAndLimit(pos, steps, limit);
 						return vec4(
-							max(max(tv.x,tv.y),tv.z) > 0. ? vec3(0.15) : vec3(0.9)
+							max(max(tv.x,tv.y),tv.z) > 0. ? darkGray : darkWhite
 							,1.0
 						);
 					} else if (fill == 6) {
 						vec3 tv = linesByStepsAndLimit(normal*0.5 + 0.5, steps, limit);
 						return vec4(
-							max(max(tv.x,tv.y),tv.z) > 0. ? vec3(0.15) : vec3(0.9)
+							max(max(tv.x,tv.y),tv.z) > 0. ? darkGray : darkWhite
+							,1.0
+						);
+					} else if (fill == 7) {
+						return vec4(
+							linesByStepsAndLimit(zPos, steps, limit) > 0. ? darkGray : darkWhite
+							,1.0
+						);
+					} else if (fill == 8) {
+						return vec4(
+							vec3( gradientBySteps(zPos, steps) ) //*(darkWhite - darkGray) + darkWhite
+							,1.0
+						);
+					} else if (fill == 9) {
+						float zPos1 = (1.0-zPos);
+						return vec4(
+							vec3(zPos1, mod(zPos1, 1./255.)*255., mod(zPos1, 1./255./255.)*255.*255. )
+							,1.0
+						);
+					} else if (fill == 10) {
+						vec3 tv = linesByStepsAndLimit(pos, steps, limit);
+						float zPos1 = 1.0 - min( max( (zPos - u_localZmin)/(u_localZmax - u_localZmin), 0. ), 1. );
+
+						return vec4(
+							max(max(tv.x,tv.y),tv.z) > 0. ? darkGray : (normal*0.5 + 0.5)*zPos1
+							,1.0
+						);
+					} else if (fill == 11) {
+						vec3 tv = linesByStepsAndLimit(pos, steps, limit);
+						float zPos1 = 1.0 - min( max( (zPos - u_localZmin)/(u_localZmax - u_localZmin), 0. ), 1. );
+
+						return vec4(
+							max(max(tv.x,tv.y),tv.z) > 0. ? darkGray : darkWhite*zPos1
 							,1.0
 						);
 					} else {
@@ -235,16 +319,23 @@ class SurfaceByFunction {
 
 					vec3 endPos = vec3(2.5);
 					vec3 normal = vec3(1.0, 0.0, 0.0);
+					float zPos = 0.0;
 
-					pushRay(vPosition, u_lookVec, u_min, u_max, u_Ni, u_Nj, endPos, normal);
+					pushRay(vPosition, u_lookVec, u_min, u_max, u_Ni, u_Nj, endPos, normal, zPos);
 
-					color = colorByFillType(endPos, normal, u_fillType, u_step, u_limit);
+					float selfZpos = (zPos - u_windowSpaceZnear)/u_windowSpaceZdelta; // exprcted to be 0...1
+
+					color = colorByFillType(endPos, normal, selfZpos, u_fillType, u_step, u_limit);
+
+
 
 					gl_FragColor = color;
 				}`
 		});
 		
 		mesh.material = material;
+		Object.assign(mesh.material.uniforms, uniforms)
+
 		this.mesh = mesh;
 
 		return mesh

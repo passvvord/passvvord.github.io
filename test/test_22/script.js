@@ -122,6 +122,9 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 		vec3 pow2(vec3 a) { return a*a; }
 		float pow2(float a) { return a*a; }
 
+		vec3 pow4(vec3 a) { return pow2(pow2(a)); }
+		float pow4(float a) { return pow2(pow2(a)); }
+
 		const highp float PI = 3.141592653589793;
 		vec3 getColor(sampler2D tex, vec2 pos, vec3 col0, vec3 col1) {
 
@@ -147,16 +150,19 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 					vec2 newPos = texelCenterPos + fTexelSize*vec2( float(x), float(y) );
 					vec4 texel = texture2D( tex, newPos );
 
-					// float xComponent = exp(-limiter.x*pow(pos.x-newPos.x,2.0));
-					// float yComponent = exp(-limiter.y*pow(pos.y-newPos.y,2.0));
+					float xComponent = exp(-limiter.x*pow(pos.x-newPos.x,2.0));
+					float yComponent = exp(-limiter.y*pow(pos.y-newPos.y,2.0));
 
 					// if (xComponent < boundVal || yComponent < boundVal) {continue;}
 					// // // highp float h = xComponent*yComponent;
 					// highp float h = (xComponent-boundVal)*(yComponent-boundVal);
 
 
-					float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2(pow2( pow2( (pos.x-newPos.x)/limiter2.x ) - 1.0 )) : 0.0;
-					float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2(pow2( pow2( (pos.y-newPos.y)/limiter2.y ) - 1.0 )) : 0.0;
+					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2(pow2( pow2( (pos.x-newPos.x)/limiter2.x ) - 1.0 )) : 0.0;
+					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2(pow2( pow2( (pos.y-newPos.y)/limiter2.y ) - 1.0 )) : 0.0;
+
+					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2( 1.0 - pow2( (pos.x-newPos.x)/limiter2.x ) ) : 0.0;
+					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2( 1.0 - pow2( (pos.y-newPos.y)/limiter2.y ) ) : 0.0;
 
 					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow( (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0, 1.6455) : 0.0;
 					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow( (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0, 1.6455) : 0.0;
@@ -390,7 +396,7 @@ textureFolder.add( props, 'test texture', {
 	'hi res font 2936x2048px'                                : 'testTex.png',
 	'random yellow lines on blue background 64x64px'         : 'testTex1.png',
 	'blue circle and some lines on yellow background 32x16px': 'testTex2.png',
-	'font example 8x12px'                                    :'fontExampleColor.png',
+	'font example 8x12px'                                    : 'fontExampleColor.png',
 }).onChange(fname => { texture.loadTex(fname) })
 textureFolder.add( props, 'texture width (px)', 2, 100, 1)
 textureFolder.add( props, 'texture height (px)', 2, 100, 1)
