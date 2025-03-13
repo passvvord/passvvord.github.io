@@ -23,6 +23,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // renderer.setPixelRatio(window.devicePixelRatio);
 const canvas = document.body.appendChild( renderer.domElement )
 
+const gl = canvas.getContext('webgl2')
+
 const controls = new OrbitControls( camera, renderer.domElement );
 // controls.target.set(0.5,0.5,0.5)
 // controls.update();
@@ -105,9 +107,11 @@ renderer.setClearColor(0xff_ff_ff, 1)
 // box1.material.uniforms.u_fillType.value = 2
 
 
-const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0, 0,0,0', funcType = 'pow2')=>`
+const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0, 0,0,0', funcType = 'pow2_2')=>`
 
 	uniform float u_w;
+	uniform float u_0modif;
+	uniform float u_1modif;
 
 	const int pxAround[27] = int[27](${a});
 
@@ -121,6 +125,21 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 	vec3 pow4(vec3 a) { return pow2(pow2(a)); }
 	float multxyz(vec3 a) { return a.x*a.y*a.z; }
 
+	vec3 powV3(vec3 a, float b) {return vec3(pow(a.x,b), pow(a.y,b), pow(a.z,b)); }
+
+
+	//uniform sampler3D u_tex;
+
+	// int getPx(int x, int y, int z, int delta, int move) {
+	// 	if (x >= -1 && x <= 1 && y >= -1 && y <= 1 && z >= -1 && z <= 1) {      //pos >= 0 && pos < 27) {
+	// 		int pos = ((z*delta + y)*delta + x) + move;
+	// 		return pxAround[pos];
+	// 	} else {
+	// 		return 0;
+	// 	}
+	// }
+
+	// must be fixed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	int getPx(int x, int y, int z, int delta, int move) {
 		int pos = ((z*delta + y)*delta + x) + move;
 		if (pos >= 0 && pos < 27) {
@@ -130,36 +149,39 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 		}
 	}
 
+	// bool inBounds(in vec3 xyz, in float w_2) {
+	// 	return abs(xyz.x) <= w_2 && abs(xyz.y) <= w_2 && abs(xyz.z) <= w_2;
+	// }
+
 	bool inBounds(in vec3 xyz, in float w_2) {
-		return abs(xyz.x) <= w_2 && abs(xyz.y) <= w_2 && abs(xyz.z) <= w_2;
+		return all(lessThanEqual(abs(xyz),vec3(w_2)));
 	}
 	
 	${(ft=>{
-		if (ft === 'pow2') {
+		if (ft === 'pow2_2') {
 			return `
 				// ------------------------------------- pow2
 				vec3 f0dxyz(in vec3 xyz, in float w_2, in float w_2_4) {
-					// expanded: 16x^4 - 8x^2 + 1
-					return inBounds(xyz, w_2) ? pow2( w_2_4*pow2(xyz) - 1.0 ) : vec3(0.0);
+					// (1.0 - 4.0/w^2*(xyz)^2)^2
+					return inBounds(xyz, w_2) ? pow2( 1.0 - pow2(xyz/w_2) ) : vec3(0.0);
 				}
 
-				// vec3 f1dxyz(in vec3 xyz, in float w_2, in float w_2_4, in float w_16) {
-				// 	// expanded: 64x^3 - 16x
-				// 	// return (4.0*pow2(xyz/w) - 1.0)*16.0*xyz/w;
-				// 	return inBounds(xyz, w_2) ? (w_2_4*pow2(xyz) - 1.0)*w_16*xyz : vec3(0.0);
+				// vec3 f1dxyz(in vec3 xyz, in float w_2, in float w_s2, in float w_16_4) {
+				// 	// (1.0 - 4.0*pow2(xyz/w))^2 d/dx = -(w^2 - 4*xyz^2)*xyz*16/w^4;
+				// 	return inBounds(xyz, w_2) ? -(w_s2 - 4.0*pow2(xyz))*w_16_4*xyz : vec3(0.0);
 				// }
 
-				vec3 f1dxyz(in vec3 xyz, in float w_2, in float w_s2, in float w_16_4) {
-					// (1.0 - 4.0*pow2(xyz/w))^2 d/dx = -(w^2 - 4*xyz^2)*xyz*16/w^4;
-					return inBounds(xyz, w_2) ? -(w_s2 - 4.0*pow2(xyz))*w_16_4*xyz : vec3(0.0);
+				vec3 f1dxyz(in vec3 xyz, in float r) {
+					// d/dx((1 - (x/r)^2)^2) = (4 x (x^2 - r^2))/r^4
+					return inBounds(xyz, r) ? 4.0*xyz*(powV3(xyz, 2.0)-pow(r, 2.0))/pow(r, 4.0) : vec3(0.0);
 				}
 			`
-		} else if (ft === 'pow4') {
+		} else if (ft === 'pow2_4') {
 			return `
 				// ------------------------------------- pow4
 				vec3 f0dxyz(in vec3 xyz, in float w_2, in float w_2_4) {
 					// (4x^2 - 1)^4 = 256x^8 - 256x^6 + 96x^4 + 1
-					return inBounds(xyz, w_2) ? pow4(1.0 - w_2_4*pow2(xyz)) : vec3(0.0);
+					return inBounds(xyz, w_2) ? pow4(1.0 - pow2(xyz/w_2)) : vec3(0.0);
 				}
 
 				// vec3 f1dxyz(in vec3 xyz, in float w_2, in float w_2_4, in float w_32) {
@@ -173,6 +195,22 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 					return inBounds(xyz, w_2) ? -pow3(w_s2 - 4.0*pow2(xyz))*xyz*w_32_8 : vec3(0.0);
 				}
 			`
+		} else if (ft === 'powa_b') {
+			return `
+				uniform float u_a;
+				uniform float u_b;
+
+				vec3 f0dxyz(in vec3 xyz, in float w_2) {
+					return inBounds(xyz, w_2) ? powV3(1.0 - powV3(abs(xyz)/w_2, u_a), u_b) : vec3(0.0);
+				}
+
+				vec3 f1dxyz(in vec3 xyz, in float w_2) {
+					// -((a b (x/w)^a (1 - (x/w)^a)^(-1 + b))/x)
+					// float temp = pow(1.0/w_2, u_a);
+					// return inBounds(xyz, w_2) ? -u_a*u_b*temp*powV3( abs(xyz), u_a-1.0 )*powV3( 1.0 - temp*powV3( abs(xyz), u_a ), u_b - 1.0 ) : vec3(0.0);
+					return inBounds(xyz, w_2) ? -u_a*u_b*powV3( abs(xyz), u_a-1.0 )*powV3( pow( w_2, u_a ) - powV3( abs(xyz), u_a ), u_b - 1.0 )/pow( w_2, u_a*u_b ) : vec3(0.0);
+				}
+			`
 		}
 	})(funcType)}
 
@@ -180,9 +218,9 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 		float w = u_w;
 		float w_2 = w/2.;          // w/2
 		float w_2_4 = 4.0/pow2(w); // 4.0/w^2
-		// float w_16 = 16.0/w;       // 16/w
+		// float w_16 = 16.0/w;    // 16/w
 
-		int wi = int(ceil(w_2));       // ceil( w )
+		int wi = int(ceil(w_2-0.5));       // ceil( w )
 		int delta = 2*1+1; // 2*wi+1
 		int move = ((1)*delta + 1)*delta + 1;		
 
@@ -195,13 +233,30 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 					// int pos = ((z*delta + y)*delta + x) + move;
 
 					//count[ pxAround[ pos ] ] += multxyz( f0dxyz( v - ( vec3(0.0) + vec3(ivec3(x,y,z)) ), w ) );
-					count[ getPx(x,y,z,delta,move) ] += multxyz(f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 ));
-					
+
+					${(ft=>{
+						if (ft === 'pow2_2') {
+							return `
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 );
+							`
+						} else if (ft === 'pow2_4') {
+							return `
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 );
+							`
+						} else if (ft === 'powa_b') {
+							return `
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2 );
+							`
+						}
+					})(funcType)}
+
+					count[ getPx(x,y,z,delta,move) ] += multxyz( f0 );
 				}
 			}			
 		}
 		
-		return count[1] - count[0] >= 0.0;
+		// return count[1] >= u_1modif;
+		return count[1]*u_1modif >= count[0]*u_0modif ;
 	}
 
 	vec3 gradFunc(vec3 v) {
@@ -213,7 +268,7 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 		float w_16_4 = 16.0/pow4(w); // 16/w^4
 		float w_s2 = pow2(w);
 
-		int wi = int(ceil(w_2));              // ceil( w )
+		int wi = int(ceil(w_2-0.5));              // ceil( w )
 		int delta = 2*1+1;
 		int move = ((1)*delta + 1)*delta + 1;	
 
@@ -225,15 +280,35 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 					//int pos = ((z+wi)*delta + y+wi)*delta + x+wi;
 					//int pos = ((z*delta + y)*delta + x) + move;
 
-					vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 );
 					${(ft=>{
-						if (ft === 'pow2') {
+						if (ft === 'pow2_2') {
 							return `
-								vec3 f1 = f1dxyz( v - vec3(ivec3(x,y,z)), w_2, w_s2, w_16_4 );
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 );
 							`
-						} else if (ft === 'pow4') {
+						} else if (ft === 'pow2_4') {
+							return `
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2, w_2_4 );
+							`
+						} else if (ft === 'powa_b') {
+							return `
+								vec3 f0 = f0dxyz( v - vec3(ivec3(x,y,z)), w_2 );
+							`
+						}
+					})(funcType)}
+
+					${(ft=>{
+						if (ft === 'pow2_2') {
+							return `
+								//vec3 f1 = f1dxyz( v - vec3(ivec3(x,y,z)), w_2, w_s2, w_16_4 );
+								vec3 f1 = f1dxyz( v - vec3(ivec3(x,y,z)), w_2 );
+							`
+						} else if (ft === 'pow2_4') {
 							return `
 								vec3 f1 = f1dxyz( v - vec3(ivec3(x,y,z)), w_2, w_s2, w_32_8 );
+							`
+						} else if (ft === 'powa_b') {
+							return `
+								vec3 f1 = f1dxyz( v - vec3(ivec3(x,y,z)), w_2);
 							`
 						}
 					})(funcType)}
@@ -248,7 +323,7 @@ const shaderByArr = (a='1,1,1, 1,1,1, 1,1,1,  0,0,0, 0,1,0, 0,0,0,  0,0,0, 0,1,0
 			}			
 		}
 
-		return -(count[1]-count[0]);//count[1];//;
+		return -(count[1]*u_1modif-count[0]*u_0modif);//count[1];//;
 	}
 	`
 
@@ -296,33 +371,58 @@ const pixels = Uint8Array.of(
 	0,0,0,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
-	0,0,1,0,0,
-	0,0,1,0,0,
-
-	0,0,0,0,0,
-	0,0,0,0,0,
-	0,0,1,0,0,
-	0,0,1,0,0,
-	0,0,0,0,0,
-
-	0,0,0,0,0,
-	0,0,1,0,0,
-	0,0,1,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 
-	0,0,1,0,0,
-	0,0,1,0,0,
 	0,0,0,0,0,
+	0,1,1,1,0,
+	0,1,0,1,0,
+	0,1,0,0,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,0,1,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 
-	0,0,1,0,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+	0,0,1,1,0,
+	0,0,0,0,0,
+	0,0,0,0,0,
+
+	0,0,0,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 	0,0,0,0,0,
 )
+
+
+// const tex = gl.createTexture();
+// gl.bindTexture(gl.TEXTURE_3D, tex);
+// gl.texImage3D(
+// 	gl.TEXTURE_3D,                              //gl.TEXTURE_2D,
+// 	0,               // mip level
+// 	gl.R8UI,         // internal format
+// 	5,              // width
+// 	5,              // height
+// 	5,               // depth
+// 	0,               // border
+// 	gl.RED_INTEGER,  // source format
+//     gl.UNSIGNED_BYTE         	//gl.SHORT,        // source type
+// 	pixels                                     //new Int16Array([ 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000 ])
+// );
+// // can't filter integer textures
+// gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+// gl.texParameteri(gl.TEXTURE_3D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  
+
+
+
+// const texture = new THREE.Data3DTexture(pixels, 5, 5, 5, THREE.RedFormat);
+// texture.needsUpdate = true;
 
 function pxByPos(x,y,z) {
 	const pxPart = new Uint8Array(27)
@@ -347,19 +447,40 @@ const meshes = []// = new Array(27);
 
 let center;
 
+const funcType = 'pow2_4'
+
+console.time('init objects')
+
 for (let zi = -1; zi <=1; zi++) {
 	for (let yi = -1; yi <=1; yi++) {
 		for (let xi = -1; xi <=1; xi++) {
 			const arr = pxByPos(xi,yi,zi).join(',')
 
 			const mesh = new SurfaceByFunction(
-				shaderByArr(arr, 'pow2')
+				shaderByArr(arr, funcType)
 				,camera, new THREE.Vector3(-0.5,-0.5,-0.5), new THREE.Vector3(0.5,0.5,0.5),
-				{u_w: { value: 2.0 }}
+				Object.assign({
+						u_w: { value: 2.0 },
+						u_0modif: {value: 1 },
+						u_1modif: {value: 1 },
+						// , u_tex: {value: texture}
+					},
+					(funcType === 'powa_b'?{
+						u_a: {value: 2 },
+						u_b: {value: 4 },					
+					} : {})
+				)
 			)
 			mesh.material.uniforms.u_fillType.value = 1
 			addBoundingBox(mesh)
-			mesh.position.set(xi,yi,zi)
+			// mesh.position.set(3*xi,3*yi,3*zi)
+
+			mesh.setPosByD = function(d) {
+				this.dScaleVal = d
+				this.position.set(d*xi,d*yi,d*zi)
+			}
+			mesh.setPosByD(1)
+
 
 			if (xi == 0 && yi == 0 && zi == 0) {
 				center = mesh;
@@ -371,7 +492,7 @@ for (let zi = -1; zi <=1; zi++) {
 	}
 }
 
-for (mesh of meshes) {
+for (let mesh of meshes) {
 	mesh.material.uniforms.u_windowSpaceZnear = { get value() {
 		return center.geometry.boundingSphere.center.clone()
 				.applyMatrix4( center.modelViewMatrix )
@@ -381,9 +502,11 @@ for (mesh of meshes) {
 	} }
 
 	mesh.material.uniforms.u_windowSpaceZdelta = { value: Math.sqrt(3*(1.5)**2)/(camera.far - camera.near)*2  }
+
+	mesh.material.needsUpdate = true;
 }
 
-
+console.timeEnd('init objects')
 
 // const mm = new THREE.Mesh(
 // 	 new THREE.BoxGeometry(10,10,10)
@@ -419,6 +542,15 @@ for (mesh of meshes) {
 const axHelper = new THREE.AxesHelper( 15 )
 scene.add(axHelper)
 
+
+console.time('first render when shaders must compile')
+renderer.render( scene, camera );
+console.timeEnd('first render when shaders must compile')
+
+console.time('second render must be much faster')
+renderer.render( scene, camera );
+console.timeEnd('second render must be much faster')
+
 function animate() {
 	requestAnimationFrame( animate );
 	// controls.update();
@@ -431,13 +563,17 @@ animate();
 //gui start ------------------------------------------------------------------------
 const gui = new GUI()
 
+gui.add({
+	get 'space between'()  { return meshes[0].dScaleVal},
+	set 'space between'(v) {meshes.forEach(m=>{ m.setPosByD(v) }) }	
+},      'space between',1, 3, 0.01)
 
 const funcParams = gui.addFolder('function paremeters')
 
 funcParams.add({
 	get 'u_w'() {return meshes[0].material.uniforms.u_w.value},
 	set 'u_w'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_w.value = v }) }	
-},      'u_w',1.01, 10, 0.01)
+},      'u_w',1.01, 3, 0.01)
 
 funcParams.add({
 	get 'u_Ni'() {return meshes[0].material.uniforms.u_Ni.value},
@@ -458,9 +594,31 @@ shaderParams.add({
 },      'u_step',1, 100, 0.1)
 
 shaderParams.add({
+	get 'u_0modif'() {return meshes[0].material.uniforms.u_0modif.value},
+	set 'u_0modif'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_0modif.value = v }) }	
+},      'u_0modif',0, 2, 0.001)
+
+shaderParams.add({
+	get 'u_1modif'() {return meshes[0].material.uniforms.u_1modif.value},
+	set 'u_1modif'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_1modif.value = v }) }	
+},      'u_1modif',0, 2, 0.001)
+
+shaderParams.add({
 	get 'u_limit'() {return meshes[0].material.uniforms.u_limit.value},
 	set 'u_limit'(v) {      meshes.forEach(m=>{ m.material.uniforms.u_limit.value = v }) }	
 },      'u_limit',0, 1, 0.001)
+
+if (funcType === 'powa_b') {
+	shaderParams.add({
+		get 'u_a'()  {     return meshes[0].material.uniforms.u_a.value},
+		set 'u_a'(v) {meshes.forEach(m=>{ m.material.uniforms.u_a.value = v }) }	
+	},      'u_a',0, 10, 0.001)
+
+	shaderParams.add({
+		get 'u_b'()  {     return meshes[0].material.uniforms.u_b.value},
+		set 'u_b'(v) {meshes.forEach(m=>{ m.material.uniforms.u_b.value = v }) }	
+	},      'u_b',0, 10, 0.001)	
+}
 
 shaderParams.add({
 	get 'u_fillType'() {return meshes[0].material.uniforms.u_fillType.value},

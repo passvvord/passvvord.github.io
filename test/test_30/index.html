@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+
+	<script type="text/javascript" src="../export/syncImport.js"></script>
+	<script type="text/javascript">
+		const datef = new Intl.DateTimeFormat(undefined, {
+			hour: 'numeric',
+			minute: 'numeric',
+			second: 'numeric',
+			fractionalSecondDigits: 3
+		})
+
+		addImportMap(
+			'../modules/importmaps/three@v0.170.0local.json' // local
+			// or
+			// ,{
+			// 	"three": "../modules/v0.170.0/build/three.module.js",
+			// 	"three/addons/": "../modules/v0.170.0/examples/jsm/"
+			// }
+			,{'myExport/': '../export/'} // local
+
+			// ,'../modules/importmaps/three@v0.170.0global.json' // global
+			// or
+			// ,{
+			// 	"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
+			// 	"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+			// }			
+			// ,{'myExport/': 'https://passvvord.github.io/test/export/'} // global
+		).then(()=>Promise.all(
+			[
+				['three', m=>{window.THREE = m}],
+				['three/addons/controls/OrbitControls.js', m=>{window.OrbitControls = m.OrbitControls}],
+				['three/addons/controls/TransformControls.js',m=>{window.TransformControls = m.TransformControls}],
+				['three/addons/libs/lil-gui.module.min.js', m=>{window.GUI = m.GUI}],
+
+				['myExport/printTHREE.js',m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}],
+				['myExport/addTHREEwireOrBox.js',m=>{
+					window.addBoundingBox = m.addBoundingBox;
+					window.addWireFrame = m.addWireFrame;
+				}],
+				// ['myExport/SurfaceByFunction.js',m=>{
+				// 	window.SurfaceByFunction = m.SurfaceByFunction
+				// }],
+				['myExport/lilguiTHREEhelpers.js',m=>{
+					window.guiHelpers = m
+				}],
+				['myExport/Base64.js',m=>{
+					window.Base64 = m.Base64;
+					window.Base64module = m;
+				}],
+			].map(a=>{
+				//console.log( datef.format(Date.now()), 'start importing', a[0] )
+				console.time( a[0] )
+				return import(a[0]).then(b=>{
+					a[1](b);
+					console.timeEnd( a[0] )
+				})
+			}) 
+		)).then(()=>{
+			window.initTHREEprintMethods()
+
+			loadScriptWhenThisDOMloaded('script.js')
+		})
+	</script>
+	<style type="text/css">
+		body { 
+			margin: 0;
+/*			overflow: hidden;*/
+			background: #333;
+		}
+	</style>
+</head>
+<body>
+
+</body>
+</html>

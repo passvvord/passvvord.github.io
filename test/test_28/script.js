@@ -14,8 +14,10 @@ function getParamsToOrtoGraficCamera(perspectiveCamera, distance) {
 
 const perspectiveCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10 );
 
-const camera = new THREE.OrthographicCamera( ...Object.values( getParamsToOrtoGraficCamera(perspectiveCamera,5) ) )
-camera.near = 0
+// const camera = new THREE.OrthographicCamera( ...Object.values( getParamsToOrtoGraficCamera(perspectiveCamera,5) ) )
+// camera.near = 0
+
+camera = perspectiveCamera
 camera.position.set(0.5,0.5,-5)
 
 const renderer = new THREE.WebGLRenderer();
@@ -36,6 +38,8 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		u_lookVec: { get value() {
 			return new THREE.Vector3(0,0,-1).applyMatrix4(new THREE.Matrix4().extractRotation(camera.matrix))
 		} },
+
+		u_camPos: { get value() { return camera.position; } },
 
 		u_windowSpaceZcenter: {	get value() {
 				return box.geometry.boundingSphere.center.clone()
@@ -64,24 +68,34 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 
 		u_projectionMatrix: { get value() {return camera.projectionMatrix} },
 		u_modelViewMatrix: { get value() {return box.modelViewMatrix} },
+		u_modelMatrixWorld: { get value() {return box.matrixWorld} },
 
 		u_step: {value: 40},
 		u_limit: {value: 0.1},
 	},
 	vertexShader:`
+		uniform vec3 u_camPos;
+
 		varying vec3 vPosition;
-		varying vec3 vNormal;
+		//varying vec3 vNormal;
+		varying vec3 vDirection;
+
+		uniform mat4 u_modelMatrixWorld;
 
 		void main() {
 			vPosition = position;
-			vNormal = normal;
+			//vNormal = normal;
+			//vDirection = normalize( u_modelMatrixWorld * vec4(position, 1.0) );
+
+			vDirection = normalize( (u_modelMatrixWorld * vec4(position, 1.0)).xyz - u_camPos );
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}`,
 	fragmentShader:`
 		varying vec3 vPosition;
-		varying vec3 vNormal;
+		//varying vec3 vNormal;
+		varying vec3 vDirection;
 
-		uniform vec3 u_lookVec;
+		//uniform vec3 u_lookVec;
 		uniform float u_val;
 
 		uniform int u_Ni;
@@ -121,7 +135,6 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		// float RGBtoGray(vec4 C) { return 0.299*C.r + 0.587*C.g + 0.114*C.b; }
 
 		const float PI = 3.1415926535897932384626433832795;
-
 		vec4 HrVtoRGBA(float H, float V) { // H: angle in radians
 			H = mod(H,2.0*PI);
 			return vec4(
@@ -133,8 +146,12 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		}
 
 		// vec3 pow2(vec3 a) { return a*a; }
-		vec3 pow2(vec3 a) { return a*a; }
+		vec3 pow2(vec3 a) { return a*a; }           // faster than pow(float, float)
+		vec3 pow3(vec3 a) { return a*a*a; }         // faster than pow(float, float)
+		vec3 pow4(vec3 a) { return pow2(pow2(a)); } // faster than pow(float, float)
 		float multxyz(vec3 a) { return a.x*a.y*a.z; }
+
+		// vec3 pow2_4(vec3) { return (0.48274*abs(vec3) + 0.52165)*pow2(vec3); } // works good only from -1 to 1 but still faster than pow()
 
 		// float f0dx(float x) {
 		// 	// expanded: 16x^4 - 8x^2 + 1
@@ -146,14 +163,25 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		// 	return (4.0*pow2(x) - 1.0)*16.0*x;
 		// }
 
+		// vec3 f0dxyz(vec3 xyz) {
+		// 	// expanded: 16x^4 - 8x^2 + 1
+		// 	return pow2( 4.0*pow2(xyz) - 1.0 );
+		// }
+
+		// vec3 f1dxyz(vec3 xyz) {
+		// 	// expanded: 64x^3 - 16x
+		// 	return (4.0*pow2(xyz) - 1.0)*16.0*xyz;
+		// }
+
 		vec3 f0dxyz(vec3 xyz) {
-			// expanded: 16x^4 - 8x^2 + 1
-			return pow2( 4.0*pow2(xyz) - 1.0 );
+			// (4x^2 - 1)^4 = 256x^8 - 256x^6 + 96x^4 + 1
+			return pow4(4.0*pow2(xyz) - 1.0);
 		}
 
 		vec3 f1dxyz(vec3 xyz) {
-			// expanded: 64x^3 - 16x
-			return (4.0*pow2(xyz) - 1.0)*16.0*xyz;
+			// (4x^2 - 1)^4 d/dx = 32x(4x^2 - 1)^3
+			// expanded: 2048x^7 - 1536x^5 + 384x^3 - 32x
+			return pow3(4.0*pow2(xyz) - 1.0)*32.0*xyz;
 		}
 
 		vec3 getNormal(vec3 xyz) {
@@ -171,8 +199,8 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 			// line:
 			// vec3(x,y,z) = a*t + b 
 			// crosses surface:
-			// (4*vec3(x,y,z)^2 - 1) = constant
-			return multxyz( pow2(4.0 * pow2(a * t + b) - 1.0) );
+			// (4*vec3(x,y,z)^2 - 1)^2 = constant
+			return multxyz( pow4(4.0 * pow2(a * t + b) - 1.0) );
 		}
 
 
@@ -315,6 +343,8 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		}
 
 		void main() {
+
+			vec3 u_lookVec = vDirection;
 
 			vec4 color = vec4(1.0);
 

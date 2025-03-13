@@ -83,6 +83,7 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 		u_color1: {value: new THREE.Color(0x0000ff)},
 		u_color0modifier: {value: 1},
 		u_color1modifier: {value: 1},
+		u_posteriseFactor: {value: 255},
 		u_showDiffWithRealColor: {value: false},
 	},
 	vertexShader:`
@@ -110,6 +111,8 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 		uniform float u_color1modifier;
 		uniform bool u_showDiffWithRealColor;
 
+		uniform float u_posteriseFactor;
+
 
 		// vec4 getPx(sampler2D tex, vec2 pos, vec4 background) {
 		// 	if (pos.x < 0.0 || pos.x > 1.0 || pos.y < 0.0 || pos.y > 1.0) {
@@ -124,6 +127,22 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 
 		vec3 pow4(vec3 a) { return pow2(pow2(a)); }
 		float pow4(float a) { return pow2(pow2(a)); }
+
+		int argmax256(in float[256] S) {
+			int j = 0;
+			for (int i = 1; i < S.length(); i++) {
+				j = S[i] > S[j] ? i : j ;
+			}
+			return j;
+		}
+
+		void fillself256(inout float[256] array, float value) {
+			for (int i = 0; i < array.length(); i++) {
+				array[i] = value;
+			}
+		}
+
+
 
 		const highp float PI = 3.141592653589793;
 		vec3 getColor(sampler2D tex, vec2 pos, vec3 col0, vec3 col1) {
@@ -140,8 +159,13 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 			vec2 limiter2 = u_usePixels*fTexelSize;
 			highp float boundVal = exp(-9.0/2.0);
 
-			highp float col0sum = 0.0;
-			highp float col1sum = 0.0;
+			// highp float col0sum = 0.0;
+			// highp float col1sum = 0.0;
+
+			float S[256];
+
+			fillself256(S, 0.0);
+
 			
 			for (int y = -pxLimit.y; y <= pxLimit.y; y++) {
 				for (int x = -pxLimit.x; x <= pxLimit.x; x++) {
@@ -150,19 +174,19 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 					vec2 newPos = texelCenterPos + fTexelSize*vec2( float(x), float(y) );
 					vec4 texel = texture2D( tex, newPos );
 
-					float xComponent = exp(-limiter.x*pow(pos.x-newPos.x,2.0));
-					float yComponent = exp(-limiter.y*pow(pos.y-newPos.y,2.0));
+					// float xComponent = exp(-limiter.x*pow(pos.x-newPos.x,2.0));
+					// float yComponent = exp(-limiter.y*pow(pos.y-newPos.y,2.0));
 
 					// if (xComponent < boundVal || yComponent < boundVal) {continue;}
 					// // // highp float h = xComponent*yComponent;
 					// highp float h = (xComponent-boundVal)*(yComponent-boundVal);
 
 
-					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2(pow2( pow2( (pos.x-newPos.x)/limiter2.x ) - 1.0 )) : 0.0;
-					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2(pow2( pow2( (pos.y-newPos.y)/limiter2.y ) - 1.0 )) : 0.0;
+					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2(pow2( 1.0 - pow2( (pos.x-newPos.x)/limiter2.x ) )) : 0.0;
+					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2(pow2( 1.0 - pow2( (pos.y-newPos.y)/limiter2.y ) )) : 0.0;
 
-					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2( 1.0 - pow2( (pos.x-newPos.x)/limiter2.x ) ) : 0.0;
-					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2( 1.0 - pow2( (pos.y-newPos.y)/limiter2.y ) ) : 0.0;
+					float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow2( 1.0 - pow2( (pos.x-newPos.x)/limiter2.x ) ) : 0.0;
+					float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow2( 1.0 - pow2( (pos.y-newPos.y)/limiter2.y ) ) : 0.0;
 
 					// float xComponent = abs(pos.x-newPos.x)<=limiter2.x ? pow( (cos(PI*(pos.x-newPos.x)/limiter2.x)+1.0)/2.0, 1.6455) : 0.0;
 					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? pow( (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0, 1.6455) : 0.0;
@@ -171,42 +195,48 @@ const smooth2colorTexture = new THREE.ShaderMaterial({
 					// float yComponent = abs(pos.y-newPos.y)<=limiter2.y ? (cos(PI*(pos.y-newPos.y)/limiter2.y)+1.0)/2.0 : 0.0;
 					highp float h = xComponent*yComponent;
 
-					if (all(equal(texel.rgb,col0))) {
-						col0sum+=h;
-					} else if (all(equal(texel.rgb,col1))) {
-						col1sum+=h;
-					} else {
-						return vec3(0.0, 1.0, 0.0); // idk why, maybe strange compilation but this makes random wrong pixels disappear 
-					}
+					// if (all(equal(texel.rgb,col0))) {
+					// 	col0sum+=h;
+					// } else if (all(equal(texel.rgb,col1))) {
+					// 	col1sum+=h;
+					// } else {
+					// 	return vec3(0.0, 1.0, 0.0); // idk why, maybe strange compilation but this makes random wrong pixels disappear 
+					// }
+
+					S[ int(round(texel.r*u_posteriseFactor)) ] += h;
 				}
 			}
 
-			col0sum*=u_color0modifier;
-			col1sum*=u_color1modifier;
+			int jMax = argmax256(S);
 
-			if (u_onlyColor) {
-				// return col0*col0sum/(col0sum+col1sum) + col1*col1sum/(col0sum+col1sum);
+			return vec3( float( jMax )/u_posteriseFactor );
 
-				if (col0sum > col1sum) {
-					return col0;
-				} else {
-					return col1;
-				}
-			} else {
-				if (u_stepAsGrad) {
-					if (col0sum > col1sum) {
-						return col0*(1.0-mod(col0sum, u_step)/u_step);
-					} else {
-						return col1*(1.0-mod(col1sum, u_step)/u_step);
-					}					
-				} else {
-					if (col0sum > col1sum) {
-						return mod(col0sum, u_step)/u_step <= 0.5 ? col0 : vec3(0.0);
-					} else {
-						return mod(col1sum, u_step)/u_step <= 0.5 ? col1 : vec3(0.0);
-					}
-				}
-			}
+			// col0sum*=u_color0modifier;
+			// col1sum*=u_color1modifier;
+
+			// if (u_onlyColor) {
+			// 	// return col0*col0sum/(col0sum+col1sum) + col1*col1sum/(col0sum+col1sum);
+
+			// 	if (col0sum > col1sum) {
+			// 		return col0;
+			// 	} else {
+			// 		return col1;
+			// 	}
+			// } else {
+			// 	if (u_stepAsGrad) {
+			// 		if (col0sum > col1sum) {
+			// 			return col0*(1.0-mod(col0sum, u_step)/u_step);
+			// 		} else {
+			// 			return col1*(1.0-mod(col1sum, u_step)/u_step);
+			// 		}					
+			// 	} else {
+			// 		if (col0sum > col1sum) {
+			// 			return mod(col0sum, u_step)/u_step <= 0.5 ? col0 : vec3(0.0);
+			// 		} else {
+			// 			return mod(col1sum, u_step)/u_step <= 0.5 ? col1 : vec3(0.0);
+			// 		}
+			// 	}
+			// }
 		}		
 
 		void main() {
@@ -377,6 +407,9 @@ const props = {
 	get color1modifier() {return smooth2colorTexture.uniforms.u_color1modifier.value},
 	set color1modifier(v) {      smooth2colorTexture.uniforms.u_color1modifier.value = v},
 
+	get u_posteriseFactor() {return smooth2colorTexture.uniforms.u_posteriseFactor.value},
+	set u_posteriseFactor(v) {      smooth2colorTexture.uniforms.u_posteriseFactor.value = v},
+
 	get showDiffWithRealColor() {return smooth2colorTexture.uniforms.u_showDiffWithRealColor.value},
 	set showDiffWithRealColor(v) {      smooth2colorTexture.uniforms.u_showDiffWithRealColor.value = v},
 
@@ -397,6 +430,10 @@ textureFolder.add( props, 'test texture', {
 	'random yellow lines on blue background 64x64px'         : 'testTex1.png',
 	'blue circle and some lines on yellow background 32x16px': 'testTex2.png',
 	'font example 8x12px'                                    : 'fontExampleColor.png',
+	'test'                                                   : 'dicomTestImage.png',
+	'test1'                                                  : 'dicomTestImage1.png',
+	'test2'                                                  : 'testTex5.png',
+	'test3'                                                  : 'mask.png',
 }).onChange(fname => { texture.loadTex(fname) })
 textureFolder.add( props, 'texture width (px)', 2, 100, 1)
 textureFolder.add( props, 'texture height (px)', 2, 100, 1)
@@ -411,5 +448,6 @@ gui.add( props, 'gridDots')
 gui.add( props, 'showRealTexColor')
 gui.add( props, 'color0modifier',0,2)
 gui.add( props, 'color1modifier',0,2)
+gui.add( props, 'u_posteriseFactor',1, 255, 0.01)
 gui.add( props, 'showDiffWithRealColor')
 gui.add( props, 'onOfControls')

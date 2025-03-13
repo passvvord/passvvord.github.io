@@ -8,7 +8,8 @@
 	{
 		"imports": {
 			"three": "https://cdn.jsdelivr.net/npm/three@v0.170.0/build/three.module.js",
-			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/"
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.170.0/examples/jsm/",
+			"myExport/": "../export/"
 		}
 	}
 	</script>
@@ -26,12 +27,14 @@
 		Promise.all([
 			import('three').then(m=>{window.THREE = m}),
 			import('three/addons/controls/OrbitControls.js').then(m=>{window.OrbitControls = m.OrbitControls}),
+			import('myExport/printTHREE.js').then(m=>{window.initTHREEprintMethods =  m.initTHREEprintMethods}),
 		]).then(()=>{
 			// const initScript = document.createElement('script')
 			// initScript.src = 'script.js'
 			// document.body.appendChild(initScript)
+			window.initTHREEprintMethods()
 
-			const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 10000 );
+			const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.01, 100 );
 			camera.position.set(0,0,2)
 
 			const renderer = new THREE.WebGLRenderer();
@@ -79,6 +82,21 @@
 
 					uniform sampler2D u_tex;
 					uniform int u_widthSegments;
+
+					const float PI = 3.1415926535897932384626433832795;
+					vec4 HrVtoRGBA(float H, float V) { // H: angle in radians
+						H = mod(H,2.0*PI);
+						return vec4(
+							 min(  max(     abs(H-    PI    )*3.0/PI-1.0 , 0.0 ) , 1.0  )*V
+							,min(  max( 2.0-abs(H-2.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+							,min(  max( 2.0-abs(H-4.0*PI/3.0)*3.0/PI     , 0.0 ) , 1.0  )*V
+							,1.0
+						);
+					}
+
+					float normByBounds(in float v, in float min, in float max) {
+						return (v-min)/(max-min);
+					}
 					
 					void main() {
 
@@ -102,7 +120,25 @@
 						// color = vec4( 0.0 , vSid/(24.0 - 1.0), 0.0, 1.0);
 						// color = vec4( mod(vxyi.x, 1.0), mod(vxyi.y, 1.0), 0.0, 1.0);
 
-						gl_FragColor = color;
+						float step = 0.5;
+						
+						//gl_FragCoord.xy/2000.,
+
+						// gl_FragColor = vec4( vec3( mod( gl_FragCoord.z*gl_FragCoord.w, step )/step ) , 1.0);
+
+
+						// if ( gl_FragCoord.z >= 0. && gl_FragCoord.z <= 1. ) {
+						// 	gl_FragColor = vec4( mod( (gl_FragCoord.z*2.0-1.0)/gl_FragCoord.w , step)/step, 0.0, 0.0 , 1.0);
+						// } else {
+						// 	gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+						// }
+
+						// gl_FragColor = HrVtoRGBA( normByBounds( (gl_FragCoord.z*2.0-1.0)/gl_FragCoord.w , 0.01, 100.) *2.0*PI , 1.0);
+						gl_FragColor = HrVtoRGBA( (gl_FragCoord.z*0.5+0.5) *2.0*PI , 1.0);
+
+						
+
+						// gl_FragColor = color;
 					}`
 			});
 
@@ -157,11 +193,11 @@
 				material.map = tex
 			});
 
-
+			cube.add( wire )
 
 			scene.add(
 				cube
-				,wire
+				// ,wire
 				// ,cube1
 				,new THREE.AxesHelper( 5 )
 			)
