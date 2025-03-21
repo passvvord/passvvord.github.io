@@ -365,8 +365,8 @@ animate();
 // ------------------------------------------------------------------------
 const gui = new GUI()
 const props = {
-	get gausRadius() {return smooth2colorTexture.uniforms.u_usePixels.value},
-	set gausRadius(v) {      smooth2colorTexture.uniforms.u_usePixels.value = v},
+	get radius() {return smooth2colorTexture.uniforms.u_usePixels.value},
+	set radius(v) {      smooth2colorTexture.uniforms.u_usePixels.value = v},
 
 	preventRecursiveSet: false,
 	notRecThisSet: function(name, value) {
@@ -439,7 +439,7 @@ textureFolder.add( props, 'texture width (px)', 2, 100, 1)
 textureFolder.add( props, 'texture height (px)', 2, 100, 1)
 textureFolder.add( props, 'random texture')
 
-gui.add( props, 'gausRadius', 0.5, 10, 0.1)
+gui.add( props, 'radius', 0.5, 10, 0.1)
 gui.add( props, 'step', 0.001, 0.5)
 gui.add( props, 'stepsCountFrom0to1', 1, 50, 0.1)
 gui.add( props, 'stepAsGrad')

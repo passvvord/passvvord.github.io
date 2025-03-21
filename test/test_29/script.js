@@ -553,7 +553,16 @@ console.timeEnd('second render must be much faster')
 
 function animate() {
 	requestAnimationFrame( animate );
-	// controls.update();
+	controls.update();
+
+	if ( controls.autoRotate ) {
+		const uwMin = 1.01
+		const uwMax = 3
+		const seconds = Date.now()/1000;
+		const periodsPerOneRotate = 2;
+		const curentVal = (Math.cos( (seconds*periodsPerOneRotate*2*Math.PI)/(60/controls.autoRotateSpeed) )*0.5+0.5)*(uwMax - uwMin) + uwMin;
+		funcParams.load({controllers: {u_w: curentVal}})
+	}
 
 	renderer.render( scene, camera );
 };

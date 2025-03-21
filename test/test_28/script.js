@@ -14,10 +14,10 @@ function getParamsToOrtoGraficCamera(perspectiveCamera, distance) {
 
 const perspectiveCamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10 );
 
-// const camera = new THREE.OrthographicCamera( ...Object.values( getParamsToOrtoGraficCamera(perspectiveCamera,5) ) )
-// camera.near = 0
+const camera = new THREE.OrthographicCamera( ...Object.values( getParamsToOrtoGraficCamera(perspectiveCamera,5) ) )
+camera.near = -1
 
-camera = perspectiveCamera
+// camera = perspectiveCamera
 camera.position.set(0.5,0.5,-5)
 
 const renderer = new THREE.WebGLRenderer();
@@ -74,6 +74,7 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 		u_limit: {value: 0.1},
 	},
 	vertexShader:`
+		uniform vec3 u_lookVec;
 		uniform vec3 u_camPos;
 
 		varying vec3 vPosition;
@@ -87,7 +88,9 @@ const oneVoxelShaderTest = new THREE.ShaderMaterial({
 			//vNormal = normal;
 			//vDirection = normalize( u_modelMatrixWorld * vec4(position, 1.0) );
 
-			vDirection = normalize( (u_modelMatrixWorld * vec4(position, 1.0)).xyz - u_camPos );
+			//vDirection = normalize( (u_modelMatrixWorld * vec4(position, 1.0)).xyz - u_camPos );
+			vDirection = u_lookVec;
+
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
 		}`,
 	fragmentShader:`

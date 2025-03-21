@@ -1,0 +1,70 @@
+{
+	"controllers": {},
+	"folders": {
+		"meshes": {
+			"controllers": {
+				"dicom": true,
+				"filter": false
+			},
+			"folders": {}
+		},
+		"historgam normalisation": {
+			"controllers": {
+				"min color": "#070024",
+				"min alpha": 0,
+				"max color": "#ffffff",
+				"max alpha": 0.7201,
+				"return first": false,
+				"window min (HU)": 1000,
+				"window max (HU)": 3000,
+				"cut min (HU)": 700,
+				"cut max (HU)": 4143
+			},
+			"folders": {}
+		},
+		"cut": {
+			"controllers": {
+				"enable cut": true,
+				"show cut box": true,
+				"cut min x": 0.0966796875,
+				"cut max x": 0.9111328125,
+				"cut min y": 0.134765625,
+				"cut max y": 0.7841796875,
+				"cut min z": 0,
+				"cut max z": 0.9111328125
+			},
+			"folders": {}
+		},
+		"edges detection": {
+			"controllers": {
+				"min color": "#fbff00",
+				"min alpha": 0.5,
+				"max color": "#ff0000",
+				"max alpha": 1,
+				"return first": true,
+				"window min": 24908,
+				"window max": 42597,
+				"cut min": 24850,
+				"cut max": 59474
+			},
+			"folders": {}
+		},
+		"animation params": {
+			"controllers": {
+				"radius": 0.2,
+				"duration (s)": 10,
+				"hide interactive": false,
+				"hide 1x1x1mm box": false
+			},
+			"folders": {}
+		},
+		"controls": {
+			"controllers": {
+				"on/off": true,
+				"auto rotate": false,
+				"rotate speed": 2
+			},
+			"folders": {}
+		}
+	}
+}
